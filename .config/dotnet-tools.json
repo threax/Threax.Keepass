@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "threax.modelgen": {
+      "version": "12.0.0-pre01",
+      "commands": [
+        "threax-modelgen"
+      ]
+    }
+  }
+}

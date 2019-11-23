@@ -69,6 +69,12 @@
     </load>
     <main>
         <item-edit-form class="form-horizontal" data-hr-form-component="hr.forms.horizontal"></item-edit-form>
+        <div data-hr-form="password" class="password-wrapper">
+            <input type="text" data-hr-handle="copyElement" />
+        </div>
+        <button class="btn" data-hr-on-click="copyPassword">
+            Copy
+        </button>
     </main>
     <error class="modal-body">
         <p>An error occured loading the value. Please try again later.</p>

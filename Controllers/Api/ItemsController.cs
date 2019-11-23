@@ -32,7 +32,7 @@ namespace KeePassWeb.Controllers.Api
 
         [HttpGet("{ItemId}")]
         [HalRel(CrudRels.Get)]
-        public async Task<Item> Get(String itemId)
+        public async Task<Item> Get(Guid itemId)
         {
             return await repo.Get(itemId);
         }
@@ -48,14 +48,14 @@ namespace KeePassWeb.Controllers.Api
         [HttpPut("{ItemId}")]
         [HalRel(CrudRels.Update)]
         [AutoValidate("Cannot update item")]
-        public async Task<Item> Update(String itemId, [FromBody]ItemInput item)
+        public async Task<Item> Update(Guid itemId, [FromBody]ItemInput item)
         {
             return await repo.Update(itemId, item);
         }
 
         [HttpDelete("{ItemId}")]
         [HalRel(CrudRels.Delete)]
-        public async Task Delete(String itemId)
+        public async Task Delete(Guid itemId)
         {
             await repo.Delete(itemId);
         }

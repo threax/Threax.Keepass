@@ -32,15 +32,15 @@ namespace KeePassWeb.Services
             db.Close();
         }
 
-        private ItemEntity GroupToItemEntity(PwGroup group)
+        private ItemEntity GroupToItemEntity(PwGroup i)
         {
             return new ItemEntity()
             {
-                Created = group.CreationTime,
-                Modified = group.LastAccessTime,
+                Created = i.CreationTime,
+                Modified = i.LastAccessTime,
                 IsGroup = true,
-                ItemId = Convert.ToBase64String(group.Uuid.UuidBytes),
-                Name = group.Name
+                ItemId = new Guid(i.Uuid.UuidBytes),
+                Name = i.Name
             };
         }
 
@@ -51,7 +51,7 @@ namespace KeePassWeb.Services
                 Created = i.CreationTime,
                 Modified = i.LastAccessTime,
                 IsGroup = false,
-                ItemId = Convert.ToBase64String(i.Uuid.UuidBytes),
+                ItemId = new Guid(i.Uuid.UuidBytes),
                 Name = i.Strings.Get("Title").ReadString()
             };
         }
@@ -67,7 +67,7 @@ namespace KeePassWeb.Services
             var group = db.RootGroup;
             if (query.ItemId != null)
             {
-                var bytes = Convert.FromBase64String(query.ItemId);
+                var bytes = query.ItemId.Value.ToByteArray();
                 var id = new PwUuid(bytes);
                 group = group.FindGroup(id, true);
             }
@@ -75,11 +75,11 @@ namespace KeePassWeb.Services
             return Task.FromResult(GetItems(group));
         }
 
-        public Task<ItemEntity> Get(String itemId)
+        public Task<ItemEntity> Get(Guid itemId)
         {
             if (itemId != null)
             {
-                var bytes = Convert.FromBase64String(itemId);
+                var bytes = itemId.ToByteArray();
                 var id = new PwUuid(bytes);
                 var group = db.RootGroup.FindGroup(id, true);
                 if (group != null)
@@ -101,12 +101,12 @@ namespace KeePassWeb.Services
             throw new NotImplementedException();
         }
 
-        public async Task<Item> Update(String itemId, ItemInput item)
+        public async Task<Item> Update(Guid itemId, ItemInput item)
         {
             throw new NotImplementedException();
         }
 
-        public async Task Delete(String id)
+        public async Task Delete(Guid id)
         {
             throw new NotImplementedException();
         }

@@ -6,7 +6,6 @@ using Threax.AspNetCore.Models;
 
 namespace KeePassWeb.ModelSchemas
 {
-    [KeyType(typeof(String))]
     public class Item
     {
         public String Name { get; set; }

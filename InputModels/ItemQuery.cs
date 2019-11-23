@@ -18,7 +18,7 @@ namespace KeePassWeb.InputModels
         /// <summary>
         /// Lookup a item by id.
         /// </summary>
-        public String ItemId { get; set; }
+        public Guid? ItemId { get; set; }
 
         /// <summary>
         /// Populate an IQueryable. Does not apply the skip or limit.

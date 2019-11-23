@@ -11,10 +11,10 @@ namespace KeePassWeb.Repository
     {
         Task<Item> Add(ItemInput value);
         Task AddRange(IEnumerable<ItemInput> values);
-        Task Delete(String id);
-        Task<Item> Get(String itemId);
+        Task Delete(Guid id);
+        Task<Item> Get(Guid itemId);
         Task<bool> HasItems();
         Task<ItemCollection> List(ItemQuery query);
-        Task<Item> Update(String itemId, ItemInput value);
+        Task<Item> Update(Guid itemId, ItemInput value);
     }
 }

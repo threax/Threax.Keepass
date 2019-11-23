@@ -13,11 +13,11 @@ namespace KeePassWeb.Database
     public partial class ItemEntity : ICreatedModified
     {
         [Key]
-        public String ItemId { get; set; }
-
-        public bool IsGroup { get; set; }
+        public Guid ItemId { get; set; }
 
         public String Name { get; set; }
+
+        public bool IsGroup { get; set; }
 
         public DateTime Created { get; set; }
 

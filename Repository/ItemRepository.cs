@@ -36,7 +36,7 @@ namespace KeePassWeb.Repository
             return new ItemCollection(query, total, results);
         }
 
-        public async Task<Item> Get(String itemId)
+        public async Task<Item> Get(Guid itemId)
         {
             var entity = await keepass.Get(itemId);
             return mapper.MapItem(entity, new Item());
@@ -51,7 +51,7 @@ namespace KeePassWeb.Repository
             //return mapper.MapItem(entity, new Item());
         }
 
-        public async Task<Item> Update(String itemId, ItemInput item)
+        public async Task<Item> Update(Guid itemId, ItemInput item)
         {
             throw new NotImplementedException();
             //var entity = await this.Entity(itemId);
@@ -64,7 +64,7 @@ namespace KeePassWeb.Repository
             //throw new KeyNotFoundException($"Cannot find item {itemId.ToString()}");
         }
 
-        public async Task Delete(String id)
+        public async Task Delete(Guid id)
         {
             throw new NotImplementedException();
             //var entity = await this.Entity(id);

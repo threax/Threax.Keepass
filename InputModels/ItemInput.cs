@@ -13,9 +13,9 @@ namespace KeePassWeb.InputModels
     [HalModel]
     public partial class ItemInput
     {
-        public bool IsGroup { get; set; }
-
         public String Name { get; set; }
+
+        public bool IsGroup { get; set; }
 
     }
 }

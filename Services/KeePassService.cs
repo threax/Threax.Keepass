@@ -1,4 +1,5 @@
 ﻿using KeePassLib;
+using KeePassLib.Collections;
 using KeePassLib.Interfaces;
 using KeePassLib.Keys;
 using KeePassWeb.Database;
@@ -38,6 +39,18 @@ namespace KeePassWeb.Services
             {
                 var item = await Get(query.ItemId.Value);
                 return new ItemEntity[] { item };
+            }
+
+            if (query.Search != null)
+            {
+                var resultList = new PwObjectList<PwEntry>();
+                db.RootGroup.SearchEntries(new SearchParameters()
+                {
+                    SearchInTitles = true,
+                    SearchString = query.Search
+                }, resultList);
+
+                return resultList.Select(i => EntryToItemEntity(i));
             }
 
             var group = db.RootGroup;

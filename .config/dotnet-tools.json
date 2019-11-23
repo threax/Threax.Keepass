@@ -3,7 +3,7 @@
   "isRoot": true,
   "tools": {
     "threax.modelgen": {
-      "version": "12.0.0-pre01",
+      "version": "12.0.0",
       "commands": [
         "threax-modelgen"
       ]

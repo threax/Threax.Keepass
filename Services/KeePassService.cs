@@ -19,17 +19,17 @@ namespace KeePassWeb.Services
         {
             db = new PwDatabase();
             var keys = new CompositeKey();
-            keys.AddUserKey(new KcpPassword("test"));
+            keys.AddUserKey(new KcpPassword(config.Password));
 
             db.Open(new KeePassLib.Serialization.IOConnectionInfo()
             {
-                Path = "Test.kdbx",
-                Password = "test"
+                Path = config.DbFile,
+                Password = config.Password
             }, keys, statusLogger);
 
             var first = db.RootGroup.Entries.First();
 
-            var prot = first.Strings.Where(i => i.Key == "Password").First();
+            var prot = first.Strings.Where(i => i.Key == config.Password).First();
         }
         public void Dispose()
         {

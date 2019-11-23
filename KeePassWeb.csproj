@@ -51,4 +51,14 @@
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\KeePassLib\KeePassLib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Test.kdbx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

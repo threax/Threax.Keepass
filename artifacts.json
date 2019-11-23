@@ -1,0 +1,14 @@
+[
+  {
+    "typescript": {
+      "compile": true
+    }
+  },
+  {
+    "pathBase": "Client",
+    "outDir": ".",
+    "copy": [
+      "Client/Images/*"
+    ]
+  }
+]

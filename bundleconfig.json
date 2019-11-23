@@ -1,0 +1,27 @@
+﻿// Configure bundling and minification for the project.
+// More info at https://go.microsoft.com/fwlink/?LinkId=808241
+[
+  {
+    "outputFileName": "wwwroot/bundle.min.css",
+    "inputFiles": [
+      "wwwroot/lib/bootstrap/dist/css/threax.bootstrap.css",
+      "wwwroot/lib/htmlrapier.bootstrap.datetime/css/bootstrap-datetimepicker.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/bundle.min.js",
+    "inputFiles": [
+      "wwwroot/lib/jquery/dist/jquery.min.js",
+      "wwwroot/lib/bootstrap/dist/js/bootstrap.min.js",
+      "wwwroot/lib/moment/min/moment.min.js",
+      "wwwroot/lib/polyfill.js",
+      "wwwroot/lib/tslib.js",
+      "wwwroot/lib/tsbin.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  }
+]

@@ -1,0 +1,99 @@
+﻿@{
+    ViewData["Title"] = "Api Explorer";
+}
+
+<h1 data-hr-run="Views/ApiExplorer/Index">Halcyon Api Browser</h1>
+<div data-hr-controller="halcyonbrowser">
+    <load></load>
+    <main>
+        <h2>Data</h2>
+        <pre data-hr-model="data" data-hr-model-component="dataProperty"></pre>
+        <h2>Links</h2>
+        <ul class="list-group" data-hr-model="links" data-hr-model-component="linksComponent"></ul>
+        <h2>Embedded Data</h2>
+        <div data-hr-model="embeds" data-hr-model-component="embedsComponent"></div>
+    </main>
+</div>
+
+<template data-hr-component="subBrowser">
+    <div class="card">
+        <div class="card-body">
+            <div class="card-header">
+                <div class="row">
+                    <h3 class="col-10 mt-0">Data</h3>
+                    <div class="col-2">
+                        <button class="btn btn-default float-right" data-hr-on-click="toggleHiddenArea">
+                            <span data-hr-toggle="expandButton" data-hr-style-on="display:none">
+                                +
+                            </span>
+                            <span class="startHidden" data-hr-toggle="expandButton" data-hr-style-on="display:inline">
+                                -
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <pre data-hr-model="data" data-hr-model-component="dataProperty"></pre>
+                <div data-hr-toggle="hiddenArea" data-hr-style-off="display:none;">
+                    <h4>Links</h4>
+                    <ul class="list-group" data-hr-model="links" data-hr-model-component="linksComponent"></ul>
+                    <h4>Embedded Data</h4>
+                    <div data-hr-model="embeds" data-hr-model-component="embedsComponent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template data-hr-component="dataProperty">
+    {{this}}
+</template>
+
+<template data-hr-component="linksComponent">
+    <a href="{{href}}">
+        <li class="list-group-item">
+            {{rel}}
+        </li>
+    </a>
+</template>
+<template data-hr-variant="form">
+    <li class="list-group-item">
+        <div class="row">
+            <h2 class="mt-0 col-10 h3">{{rel}}</h2>
+            <div class="col-2">
+                <button class="btn btn-default float-right" data-hr-on-click="toggleHiddenArea">
+                    <span data-hr-toggle="expandButton" data-hr-style-on="display:none">
+                        +
+                    </span>
+                    <span class="startHidden" data-hr-toggle="expandButton" data-hr-style-on="display:inline">
+                        -
+                    </span>
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <load></load>
+                <main>
+                    <form data-hr-on-submit="submit" data-hr-form="form" data-hr-toggle="hiddenArea" data-hr-style-off="display:none;">
+                        <button class="btn btn-default" type="submit" data-hr-form-end>{{rel}}</button>
+                    </form>
+                </main>
+            </div>
+        </div>
+    </li>
+</template>
+
+<template data-hr-component="embedsComponent">
+    <div data-hr-model="items" data-hr-model-component="subBrowser"></div>
+</template>
+
+<h2>Visit Url</h2>
+<form>
+    <div class="form-group">
+        <label class="control-label">Entry Point</label>
+        <input type="text" name="entry" class="form-control" value="@Html.Raw("https://" + Context.Request.Host + Url.Content("~/api"))" />
+    </div>
+    <button class="btn btn-default" type="submit">Go</button>
+</form>

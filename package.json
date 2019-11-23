@@ -1,0 +1,25 @@
+{
+  "name": "asp.net",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "bootstrap": "^4.2.1",
+    "htmlrapier": "^20.0.2",
+    "htmlrapier.bootstrap": "^7.1.0",
+    "htmlrapier.bootstrap.datetime": "^3.5.0",
+    "htmlrapier.form.bootstrap4": "^2.1.0",
+    "htmlrapier.halcyon": "^7.0.0",
+    "htmlrapier.halcyon-explorer": "^8.0.0",
+    "htmlrapier.relogin": "^1.0.4",
+    "htmlrapier.roleclient": "^4.0.0",
+    "htmlrapier.widgets": "^15.8.0",
+    "jsns": "^5.0.0",
+    "threax.bootstrap4": "^0.0.1"
+  },
+  "scripts": {
+    "build": "threax-npm-tk build && dotnet bundle",
+    "clean": "threax-npm-tk clean",
+    "trash-modules": "threax-npm-tk clean -o node_modules",
+    "import-tsconfig": "threax-npm-tk tsconfig"
+  }
+}

@@ -1,0 +1,115 @@
+﻿@{
+    ViewData["Title"] = "Users";
+}
+
+<div class="row">
+    <div data-hr-controller="mainTable" class="col-sm-8">
+        <h1>Users</h1>
+        <load visible="true">
+            <p>Working...</p>
+        </load>
+        <main>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Edit</th>
+                        </tr>
+                    </thead>
+                    <tbody data-hr-model="listing" data-hr-model-component="mainTableBody"></tbody>
+                </table>
+                <template data-hr-component="mainTableBody">
+                    <table>
+                        <tr>
+                            <td>{{name}}</td>
+                            <td>
+                                <button data-hr-on-click="edit" class="btn btn-default" data-hr-toggle="edit" data-hr-style-off="display:none;">Edit</button>
+                                <button data-hr-on-click="del" class="btn btn-default" data-hr-toggle="del" data-hr-style-off="display:none;">Delete</button>
+                            </td>
+                        </tr>
+                    </table>
+                </template>
+            </div>
+            <button data-hr-on-click="add" class="btn btn-default" data-hr-toggle="add" data-hr-style-off="display:none;">Add</button>
+
+            <page-numbers></page-numbers>
+        </main>
+
+        <error>
+            An error occured loading the users. Please try again later.
+        </error>
+    </div>
+
+    <div class="col-sm-4">
+        <h3>Search</h3>
+        <div data-hr-controller="search">
+            <load visible="true">
+                <p>Loading Search...</p>
+            </load>
+            <main>
+                <form data-hr-on-submit="submit" data-hr-form="input">
+                    <p class="bg-danger hiddenToggler" data-hr-toggle="mainError" data-hr-view="mainError" data-hr-style-on="display:block;">{{message}}</p>
+
+                    <button type="submit" class="btn btn-primary" data-hr-form-end>Search</button>
+                </form>
+            </main>
+            <error>
+                An error occured loading the search form. Please try again later.
+            </error>
+        </div>
+    </div>
+</div>
+
+<modal data-hr-controller="addEntryEditor" title-text="Find User">
+    <load class="modal-body" visible="true">
+        <p>Working...</p>
+    </load>
+    <main class="modal-body">
+        <h2>Search Users</h2>
+        <form data-hr-on-submit="runSearch" data-hr-model="search">
+            <button type="submit" class="btn btn-default" data-hr-form-end>Search</button>
+        </form>
+
+        <h3>Search Results</h3>
+        <div data-hr-model="searchResults">
+            <template>
+                <div data-hr-config-rooturl="@Url.Content("~/")">
+                    <h3>{{userName}}</h3>
+                    <p>Guid: {{userId}}</p>
+                    <button class="btn btn-default startHidden" data-hr-on-click="editRoles" data-hr-toggle="editRoles" data-hr-style-on="display:inline;">Edit Roles</button>
+                </div>
+            </template>
+        </div>
+        <toggle hr-toggle="noResults" data-hr-model="noResults">
+            <p>No results found for search <b>{{term}}</b></p>
+        </toggle>
+        <h2>Add User Manually</h2>
+        <form data-hr-form="fromGuidForm" data-hr-on-submit="addFromGuid">
+            <div class="form-group">
+                <label>Guid</label>
+                <input class="form-control" type="text" name="id" />
+            </div>
+            <div class="form-group">
+                <label>Name</label>
+                <input class="form-control" type="text" name="name" />
+            </div>
+            <button type="submit" class="btn btn-default">Add Manually</button>
+        </form>
+    </main>
+    <error class="modal-body">
+        <p class="bg-danger">Cannot complete search at this time, please try again later.</p>
+    </error>
+</modal>
+
+<modal data-hr-controller="entryEditor" title-text="Edit User Roles">
+    <load class="modal-body">
+        <p>Working...</p>
+    </load>
+    <main>
+        <item-edit-form></item-edit-form>
+    </main>
+    <error class="modal-body">
+        <p>An error occured loading the user. Please try again later.</p>
+    </error>
+</modal>

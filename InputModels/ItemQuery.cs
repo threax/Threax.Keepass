@@ -21,6 +21,12 @@ namespace KeePassWeb.InputModels
         public Guid? ItemId { get; set; }
 
         /// <summary>
+        /// Lookup the items contained in a given parent id.
+        /// </summary>
+        [HiddenUiType]
+        public Guid? ParentItemId { get; set; }
+
+        /// <summary>
         /// Populate an IQueryable. Does not apply the skip or limit.
         /// </summary>
         /// <param name="query">The query to populate.</param>

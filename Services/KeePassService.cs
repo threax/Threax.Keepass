@@ -32,47 +32,23 @@ namespace KeePassWeb.Services
             db.Close();
         }
 
-        private ItemEntity GroupToItemEntity(PwGroup i)
+        public async Task<IEnumerable<ItemEntity>> List(ItemQuery query)
         {
-            return new ItemEntity()
-            {
-                Created = i.CreationTime,
-                Modified = i.LastAccessTime,
-                IsGroup = true,
-                ItemId = new Guid(i.Uuid.UuidBytes),
-                Name = i.Name
-            };
-        }
-
-        private ItemEntity EntryToItemEntity(PwEntry i)
-        {
-            return new ItemEntity()
-            {
-                Created = i.CreationTime,
-                Modified = i.LastAccessTime,
-                IsGroup = false,
-                ItemId = new Guid(i.Uuid.UuidBytes),
-                Name = i.Strings.Get("Title").ReadString()
-            };
-        }
-
-        private IEnumerable<ItemEntity> GetItems(PwGroup group)
-        {
-            return group.Groups.Select(i => GroupToItemEntity(i))
-                .Concat(group.Entries.Select(i => EntryToItemEntity(i)));
-        }
-
-        public Task<IEnumerable<ItemEntity>> List(ItemQuery query)
-        {
-            var group = db.RootGroup;
             if (query.ItemId != null)
+            {
+                var item = await Get(query.ItemId.Value);
+                return new ItemEntity[] { item };
+            }
+
+            var group = db.RootGroup;
+            if (query.ParentItemId != null)
             {
                 var bytes = query.ItemId.Value.ToByteArray();
                 var id = new PwUuid(bytes);
-                group = group.FindGroup(id, true);
+                group = db.RootGroup.FindGroup(id, true);
             }
 
-            return Task.FromResult(GetItems(group));
+            return GetItems(group);
         }
 
         public Task<ItemEntity> Get(Guid itemId)
@@ -109,6 +85,36 @@ namespace KeePassWeb.Services
         public async Task Delete(Guid id)
         {
             throw new NotImplementedException();
+        }
+
+        private static ItemEntity GroupToItemEntity(PwGroup i)
+        {
+            return new ItemEntity()
+            {
+                Created = i.CreationTime,
+                Modified = i.LastAccessTime,
+                IsGroup = true,
+                ItemId = new Guid(i.Uuid.UuidBytes),
+                Name = i.Name
+            };
+        }
+
+        private static ItemEntity EntryToItemEntity(PwEntry i)
+        {
+            return new ItemEntity()
+            {
+                Created = i.CreationTime,
+                Modified = i.LastAccessTime,
+                IsGroup = false,
+                ItemId = new Guid(i.Uuid.UuidBytes),
+                Name = i.Strings.Get("Title").ReadString()
+            };
+        }
+
+        private static IEnumerable<ItemEntity> GetItems(PwGroup group)
+        {
+            return group.Groups.Select(i => GroupToItemEntity(i))
+                .Concat(group.Entries.Select(i => EntryToItemEntity(i)));
         }
     }
 }

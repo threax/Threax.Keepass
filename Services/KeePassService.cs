@@ -44,9 +44,22 @@ namespace KeePassWeb.Services
             };
         }
 
+        private ItemEntity EntryToItemEntity(PwEntry i)
+        {
+            return new ItemEntity()
+            {
+                Created = i.CreationTime,
+                Modified = i.LastAccessTime,
+                IsGroup = false,
+                ItemId = Convert.ToBase64String(i.Uuid.UuidBytes),
+                Name = i.Strings.Get("Title").ReadString()
+            };
+        }
+
         private IEnumerable<ItemEntity> GetItems(PwGroup group)
         {
-            return group.Groups.Select(i => GroupToItemEntity(i));
+            return group.Groups.Select(i => GroupToItemEntity(i))
+                .Concat(group.Entries.Select(i => EntryToItemEntity(i)));
         }
 
         public Task<IEnumerable<ItemEntity>> List(ItemQuery query)
@@ -64,15 +77,20 @@ namespace KeePassWeb.Services
 
         public Task<ItemEntity> Get(String itemId)
         {
-            var group = db.RootGroup;
             if (itemId != null)
             {
                 var bytes = Convert.FromBase64String(itemId);
                 var id = new PwUuid(bytes);
-                group = group.FindGroup(id, true);
+                var group = db.RootGroup.FindGroup(id, true);
                 if (group != null)
                 {
                     return Task.FromResult(GroupToItemEntity(group));
+                }
+
+                var entry = db.RootGroup.FindEntry(id, true);
+                if (entry != null)
+                {
+                    return Task.FromResult(EntryToItemEntity(entry));
                 }
             }
             return Task.FromResult(default(ItemEntity));

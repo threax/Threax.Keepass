@@ -9,8 +9,8 @@ namespace KeePassWeb.ModelSchemas
     [KeyType(typeof(String))]
     public class Item
     {
-        public bool IsGroup { get; set; }
-
         public String Name { get; set; }
+
+        public bool IsGroup { get; set; }
     }
 }

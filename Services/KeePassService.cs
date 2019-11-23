@@ -26,10 +26,6 @@ namespace KeePassWeb.Services
                 Path = config.DbFile,
                 Password = config.Password
             }, keys, statusLogger);
-
-            var first = db.RootGroup.Entries.First();
-
-            var prot = first.Strings.Where(i => i.Key == config.Password).First();
         }
         public void Dispose()
         {

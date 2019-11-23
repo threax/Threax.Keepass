@@ -23,9 +23,9 @@ namespace KeePassWeb.Mappers
             return mapper.Map(src, dest);
         }
 
-        public IQueryable<Item> ProjectItem(IQueryable<ItemEntity> query)
+        public IEnumerable<Item> ProjectItem(IEnumerable<ItemEntity> query)
         {
-            return mapper.ProjectTo<Item>(query);
+            return query.Select(i => mapper.Map<Item>(i));
         }
     }
 

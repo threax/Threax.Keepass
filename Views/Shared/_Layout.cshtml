@@ -20,6 +20,7 @@
                     <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
                     @* if (User.IsInRole(Roles.EditValues))
                         {*@
+                    <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Items">Items</a></li>
                     <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Values">Values</a></li>
                     @*}*@
                     @if (User.IsInRole(Threax.AspNetCore.UserBuilder.Entities.AuthorizationAdminRoles.EditRoles))

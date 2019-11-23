@@ -10,51 +10,83 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Threax.AspNetCore.Halcyon.Ext;
+using KeePassWeb.Services;
 
 namespace KeePassWeb.Repository
 {
     public partial class ItemRepository : IItemRepository
     {
+        private IKeePassService keepass;
         private AppMapper mapper;
 
-        public ItemRepository(AppMapper mapper)
+        public ItemRepository(IKeePassService dbContext, AppMapper mapper)
         {
+            this.keepass = dbContext;
             this.mapper = mapper;
         }
 
         public async Task<ItemCollection> List(ItemQuery query)
         {
-            throw new NotImplementedException();
+            var dbQuery = await keepass.List(query);
+
+            var total = dbQuery.Count();
+            dbQuery = dbQuery.Skip(query.SkipTo(total)).Take(query.Limit);
+            var results = mapper.ProjectItem(dbQuery).ToList();
+
+            return new ItemCollection(query, total, results);
         }
 
         public async Task<Item> Get(String itemId)
         {
-            throw new NotImplementedException();
+            var entity = await keepass.Get(itemId);
+            return mapper.MapItem(entity, new Item());
         }
 
         public async Task<Item> Add(ItemInput item)
         {
             throw new NotImplementedException();
+            //var entity = mapper.MapItem(item, new ItemEntity());
+            //this.dbContext.Add(entity);
+            //await SaveChanges();
+            //return mapper.MapItem(entity, new Item());
         }
 
         public async Task<Item> Update(String itemId, ItemInput item)
         {
             throw new NotImplementedException();
+            //var entity = await this.Entity(itemId);
+            //if (entity != null)
+            //{
+            //    mapper.MapItem(item, entity);
+            //    await SaveChanges();
+            //    return mapper.MapItem(entity, new Item());
+            //}
+            //throw new KeyNotFoundException($"Cannot find item {itemId.ToString()}");
         }
 
         public async Task Delete(String id)
         {
             throw new NotImplementedException();
+            //var entity = await this.Entity(id);
+            //if (entity != null)
+            //{
+            //    Entities.Remove(entity);
+            //    await SaveChanges();
+            //}
         }
 
         public virtual async Task<bool> HasItems()
         {
-            throw new NotImplementedException();
+            return true;
+            //return await Entities.CountAsync() > 0;
         }
 
         public virtual async Task AddRange(IEnumerable<ItemInput> items)
         {
             throw new NotImplementedException();
+            //var entities = items.Select(i => mapper.MapItem(i, new ItemEntity()));
+            //this.dbContext.Items.AddRange(entities);
+            //await SaveChanges();
         }
     }
 }

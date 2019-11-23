@@ -26,6 +26,7 @@ using Threax.Extensions.Configuration.SchemaBinder;
 using Threax.Sqlite.Ext.EfCore3;
 using Microsoft.Extensions.Hosting;
 using KeePassWeb.Services;
+using KeePassLib.Interfaces;
 
 namespace KeePassWeb
 {
@@ -192,6 +193,7 @@ namespace KeePassWeb
             });
 
             services.AddSingleton(keePassConfig);
+            services.AddScoped<IStatusLogger, NullStatusLogger>();
             services.AddScoped<IKeePassService, KeePassService>();
         }
 

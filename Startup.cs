@@ -24,6 +24,8 @@ using Threax.AspNetCore.UserBuilder;
 using Threax.AspNetCore.UserLookup.Mvc.Controllers;
 using Threax.Extensions.Configuration.SchemaBinder;
 using Threax.Sqlite.Ext.EfCore3;
+using Microsoft.Extensions.Hosting;
+using KeePassWeb.Services;
 
 namespace KeePassWeb
 {
@@ -43,6 +45,7 @@ namespace KeePassWeb
         private AppConfig appConfig = new AppConfig();
         private ClientConfig clientConfig = new ClientConfig();
         private CorsManagerOptions corsOptions = new CorsManagerOptions();
+        private KeePassConfig keePassConfig = new KeePassConfig();
 
         public Startup(IConfiguration configuration)
         {
@@ -51,6 +54,7 @@ namespace KeePassWeb
             Configuration.Bind("AppConfig", appConfig);
             Configuration.Bind("ClientConfig", clientConfig);
             Configuration.Bind("Cors", corsOptions);
+            Configuration.Bind("KeePass", keePassConfig);
         }
 
         public SchemaConfigurationBinder Configuration { get; }
@@ -186,11 +190,19 @@ namespace KeePassWeb
                     .AddConsole()
                     .AddDebug();
             });
+
+            services.AddSingleton(keePassConfig);
+            services.AddScoped<IKeePassService, KeePassService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedProto

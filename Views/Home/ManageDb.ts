@@ -11,6 +11,8 @@ class ManageDbController {
     private input: controller.IForm<client.OpenDbInput>;
     private injector: client.EntryPointInjector;
     private lifecycle: MainLoadErrorLifecycle;
+    private mainErrorToggle: controller.OnOffToggle;
+    private mainErrorView: controller.IView<Error>;
 
     public static get InjectorArgs(): controller.DiFunction<any>[] {
         return [controller.BindingCollection, client.EntryPointInjector];
@@ -19,6 +21,8 @@ class ManageDbController {
     constructor(bindings: controller.BindingCollection, injector: client.EntryPointInjector) {
         bindings.setListener(this);
         this.lifecycle = new MainLoadErrorLifecycle(bindings.getToggle("main"), bindings.getToggle("load"), bindings.getToggle("error"), true);
+        this.mainErrorToggle = bindings.getToggle("mainError");
+        this.mainErrorView = bindings.getView<Error>("mainError");
         this.input = bindings.getForm("input");
         this.injector = injector;
         this.setup();
@@ -36,19 +40,23 @@ class ManageDbController {
         }
     }
 
-    public async submit(evt: Event): Promise<void> {
+    public async unlock(evt: Event): Promise<void> {
         evt.preventDefault();
 
+        this.lifecycle.showLoad();
+        this.mainErrorToggle.off();
         try {
-            this.lifecycle.showLoad();
             var data = this.input.getData();
             var entry = await this.injector.load();
             var result = await entry.openDb(data);
         }
         catch (err) {
             console.error(err);
-            this.lifecycle.showError(err);
+            this.input.setError(err);
+            this.mainErrorView.setData(err);
+            this.mainErrorToggle.on();
         }
+        this.lifecycle.showMain();
     }
 }
 

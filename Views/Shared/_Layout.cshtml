@@ -18,10 +18,6 @@
             <div class="navbar-collapse collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    @* if (User.IsInRole(Roles.EditValues))
-                        {*@
-                    <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Items">Items</a></li>
-                    @*}*@
                     @if (User.IsInRole(Threax.AspNetCore.UserBuilder.Entities.AuthorizationAdminRoles.EditRoles))
                     {
                         <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Users">Edit Users</a></li>

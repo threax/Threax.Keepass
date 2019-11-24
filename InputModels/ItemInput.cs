@@ -15,6 +15,7 @@ namespace KeePassWeb.InputModels
     {
         public String Name { get; set; }
 
+        [HiddenUiType]
         public bool IsGroup { get; set; }
 
     }

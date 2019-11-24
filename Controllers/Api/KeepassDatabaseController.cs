@@ -1,4 +1,5 @@
-﻿using KeePassWeb.Services;
+﻿using KeePassWeb.InputModels;
+using KeePassWeb.Services;
 using KeePassWeb.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -32,10 +33,11 @@ namespace KeePassWeb.Controllers.Api
             };
         }
 
-        [HttpPut]
+        [Route("Open")]
+        [HttpPost]
         [HalRel("OpenDb")]
         [AutoValidate("Cannot open database")]
-        public async Task<DbStatus> Open()
+        public async Task<DbStatus> Open([FromBody]OpenDbInput input)
         {
             await keepass.Open();
             return new DbStatus()
@@ -44,7 +46,8 @@ namespace KeePassWeb.Controllers.Api
             };
         }
 
-        [HttpPut]
+        [Route("Close")]
+        [HttpPost]
         [HalRel("CloseDb")]
         [AutoValidate("Cannot close database")]
         public async Task<DbStatus> Close()

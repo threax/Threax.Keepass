@@ -17,6 +17,8 @@ namespace KeePassWeb.ViewModels
     [HalActionLink(typeof(UserSearchController), nameof(UserSearchController.List), "ListAppUsers")]
     //The additional entry point links are in the other entry point partial classes, expand this node to see them
     [HalActionLink(typeof(KeepassDatabaseController), nameof(KeepassDatabaseController.Status), "GetDbStatus")]
+    [HalActionLink(typeof(KeepassDatabaseController), nameof(KeepassDatabaseController.Open), "OpenDb")]
+    [HalActionLink(typeof(KeepassDatabaseController), nameof(KeepassDatabaseController.Close), "CloseDb")]
     public partial class EntryPoint
     {
     }

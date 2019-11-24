@@ -20,16 +20,18 @@ export class DbPopup {
         return [controller.BindingCollection, DbPopupOptions, Fetcher];
     }
 
-    private input: controller.IForm<any>;
     private dialog: controller.OnOffToggle;
     private currentPromise: ep.ExternalPromise<boolean>;
+    private iframe: HTMLIFrameElement;
+    private resizeEvent;
 
     constructor(bindings: controller.BindingCollection, private options: DbPopupOptions, fetcher: Fetcher) {
-        this.input = bindings.getForm("input");
         this.dialog = bindings.getToggle("dialog");
         this.dialog.offEvent.add(t => {
             this.closed();
         });
+
+        this.iframe = <HTMLIFrameElement>bindings.getHandle("iframe");
 
         var currentFetcher = fetcher;
         while (currentFetcher) {
@@ -42,11 +44,18 @@ export class DbPopup {
         window.addEventListener("message", e => {
             this.handleMessage(e);
         });
+
+        this.resizeEvent = e => {
+            this.setIframeHeight();
+        };
     }
 
     public showLogin(): Promise<boolean> {
         this.dialog.on();
         this.currentPromise = new ep.ExternalPromise<boolean>();
+        this.setIframeHeight();
+        this.iframe.src = this.options.relogPage;
+        window.addEventListener("resize", this.resizeEvent);
         return this.currentPromise.Promise;
     }
 
@@ -57,15 +66,21 @@ export class DbPopup {
         }
     }
 
+    private setIframeHeight(): void {
+        this.iframe.style.height = (window.innerHeight - 240) + "px";
+    }
+
     private async closed(): Promise<void> {
         if (this.currentPromise) {
             var promise = this.currentPromise;
 
             this.currentPromise = null;
 
-            //Reset contents
-            this.input.clear();
-            this.input.clearError();
+            //Reset iframe contents
+            this.iframe.contentWindow.document.open();
+            this.iframe.contentWindow.document.close();
+
+            window.removeEventListener("resize", this.resizeEvent);
 
             promise.resolve(true); //Try to determine true or false, true to try again, false to error
         }
@@ -80,6 +95,6 @@ export interface ILoginMessage {
 }
 
 export function addServices(services: controller.ServiceCollection): void {
-    services.tryAddShared(DbPopupOptions, (s) => new DbPopupOptions("/Account/Relogin"));
+    services.tryAddShared(DbPopupOptions, (s) => new DbPopupOptions("/ManageDb"));
     services.tryAddShared(DbPopup, DbPopup);
 }

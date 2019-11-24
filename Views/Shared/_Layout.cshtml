@@ -56,15 +56,12 @@
                     <h5 class="modal-title">Unlock Database</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
-                <form class="form-horizontal" data-hr-form-component="hr.forms.horizontal" data-hr-on-submit="submit" data-hr-form="input">
-                    <fieldset class="modal-body" data-hr-toggle="viewOnly" data-hr-disabled-on="true">
-                        <div class="alert alert-danger hiddenToggler" role="alert" data-hr-toggle="mainError" data-hr-view="mainError" data-hr-style-on="display:block;">{{message}}</div>
-                        <span data-hr-form-end></span>
-                    </fieldset>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Unlock</button>
-                    </div>
-                </form>
+                <div class="modal-body">
+                    <iframe data-hr-handle="iframe" width="100%" class="border-0"></iframe>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>

@@ -26,9 +26,19 @@ export interface Config {
     };
 }
 
+export interface Options {
+    EnableDbPopup?: boolean;
+}
+
 var builder: controller.InjectedControllerBuilder = null;
 
-export function createBuilder() {
+export function createBuilder(options?: Options) {
+    if (options === undefined) {
+        options = {
+            EnableDbPopup: true
+        };
+    }
+
     if (builder === null) {
         builder = new controller.InjectedControllerBuilder();
 
@@ -37,7 +47,7 @@ export function createBuilder() {
 
         //Set up the access token fetcher
         var config = pageConfig.read<Config>();
-        builder.Services.tryAddShared(fetcher.Fetcher, s => createFetcher(config));
+        builder.Services.tryAddShared(fetcher.Fetcher, s => createFetcher(config, options));
         builder.Services.tryAddShared(client.EntryPointInjector, s => new client.EntryPointInjector(config.client.ServiceUrl, s.getRequiredService(fetcher.Fetcher)));
         
         userSearch.addServices(builder);
@@ -50,13 +60,15 @@ export function createBuilder() {
         builder.create("hr-relogin", loginPopup.LoginPopup);
 
         //Set Db Popup
-        dbpopup.addServices(builder.Services);
-        builder.create("hr-opendb", dbpopup.DbPopup);
+        if (options.EnableDbPopup) {
+            dbpopup.addServices(builder.Services);
+            builder.create("hr-opendb", dbpopup.DbPopup);
+        }
     }
     return builder;
 }
 
-function createFetcher(config: Config): fetcher.Fetcher {
+function createFetcher(config: Config, options: Options): fetcher.Fetcher {
     var fetcher = new WindowFetch.WindowFetch();
 
     if (config.tokens !== undefined) {
@@ -73,15 +85,11 @@ function createFetcher(config: Config): fetcher.Fetcher {
             fetcher);
     }
 
-    if (config.client.DbStatusUrl !== undefined) {
+    if (options.EnableDbPopup && config.client.DbStatusUrl !== undefined) {
         fetcher = new dbfetcher.DbFetcher(
             config.client.DbStatusUrl,
             new whitelist.Whitelist([config.client.ServiceUrl]),
             fetcher);
-
-        //(<dbfetcher.DbFetcher>fetcher).onNeedDbPassword.add((t) => {
-        //    return Promise.resolve(true);
-        //});
     }
 
     return fetcher;

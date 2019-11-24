@@ -284,8 +284,8 @@ export class DbStatusResult {
         return this.client.HasLinkDoc("ListAppUsers");
     }
 
-    public openDb(): Promise<DbStatusResult> {
-        return this.client.LoadLink("OpenDb")
+    public openDb(data: OpenDbInput): Promise<DbStatusResult> {
+        return this.client.LoadLinkWithData("OpenDb", data)
                .then(r => {
                     return new DbStatusResult(r);
                 });
@@ -311,8 +311,8 @@ export class DbStatusResult {
         return this.client.HasLinkDoc("OpenDb");
     }
 
-    public closeDb(): Promise<DbStatusResult> {
-        return this.client.LoadLink("CloseDb")
+    public closeDb(data: OpenDbInput): Promise<DbStatusResult> {
+        return this.client.LoadLinkWithData("CloseDb", data)
                .then(r => {
                     return new DbStatusResult(r);
                 });
@@ -541,6 +541,60 @@ export class EntryPointResult {
 
     public hasGetDbStatusDocs(): boolean {
         return this.client.HasLinkDoc("GetDbStatus");
+    }
+
+    public openDb(data: OpenDbInput): Promise<DbStatusResult> {
+        return this.client.LoadLinkWithData("OpenDb", data)
+               .then(r => {
+                    return new DbStatusResult(r);
+                });
+
+    }
+
+    public canOpenDb(): boolean {
+        return this.client.HasLink("OpenDb");
+    }
+
+    public linkForOpenDb(): hal.HalLink {
+        return this.client.GetLink("OpenDb");
+    }
+
+    public getOpenDbDocs(query?: HalEndpointDocQuery): Promise<hal.HalEndpointDoc> {
+        return this.client.LoadLinkDoc("OpenDb", query)
+            .then(r => {
+                return r.GetData<hal.HalEndpointDoc>();
+            });
+    }
+
+    public hasOpenDbDocs(): boolean {
+        return this.client.HasLinkDoc("OpenDb");
+    }
+
+    public closeDb(data: OpenDbInput): Promise<DbStatusResult> {
+        return this.client.LoadLinkWithData("CloseDb", data)
+               .then(r => {
+                    return new DbStatusResult(r);
+                });
+
+    }
+
+    public canCloseDb(): boolean {
+        return this.client.HasLink("CloseDb");
+    }
+
+    public linkForCloseDb(): hal.HalLink {
+        return this.client.GetLink("CloseDb");
+    }
+
+    public getCloseDbDocs(query?: HalEndpointDocQuery): Promise<hal.HalEndpointDoc> {
+        return this.client.LoadLinkDoc("CloseDb", query)
+            .then(r => {
+                return r.GetData<hal.HalEndpointDoc>();
+            });
+    }
+
+    public hasCloseDbDocs(): boolean {
+        return this.client.HasLinkDoc("CloseDb");
     }
 
     public listItems(data: ItemQuery): Promise<ItemCollectionResult> {
@@ -899,8 +953,8 @@ export class ItemCollectionResult {
         return this.client.HasLinkDoc("last");
     }
 
-    public openDb(): Promise<DbStatusResult> {
-        return this.client.LoadLink("OpenDb")
+    public openDb(data: OpenDbInput): Promise<DbStatusResult> {
+        return this.client.LoadLinkWithData("OpenDb", data)
                .then(r => {
                     return new DbStatusResult(r);
                 });
@@ -926,8 +980,8 @@ export class ItemCollectionResult {
         return this.client.HasLinkDoc("OpenDb");
     }
 
-    public closeDb(): Promise<DbStatusResult> {
-        return this.client.LoadLink("CloseDb")
+    public closeDb(data: OpenDbInput): Promise<DbStatusResult> {
+        return this.client.LoadLinkWithData("CloseDb", data)
                .then(r => {
                     return new DbStatusResult(r);
                 });
@@ -1457,6 +1511,10 @@ export interface UserSearchCollection {
     total?: number;
     offset?: number;
     limit?: number;
+}
+
+export interface OpenDbInput {
+    databasePassword?: string;
 }
 
 export interface ItemQuery {

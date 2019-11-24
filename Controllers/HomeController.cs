@@ -15,6 +15,11 @@ namespace KeePassWeb.Controllers
             return View();
         }
 
+        public IActionResult ManageDb()
+        {
+            return View();
+        }
+
         //The other view action methods are in the additional partial classes for HomeController, expand the node for
         //this class to see them.
 

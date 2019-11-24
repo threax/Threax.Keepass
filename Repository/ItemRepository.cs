@@ -27,6 +27,14 @@ namespace KeePassWeb.Repository
 
         public async Task<ItemCollection> List(ItemQuery query)
         {
+            if(! await this.keepass.IsOpen())
+            {
+                return new ItemCollection(query, 0, Enumerable.Empty<Item>())
+                {
+                    DbClosed = true
+                };
+            }
+
             var dbQuery = await keepass.List(query);
 
             var total = dbQuery.Count();

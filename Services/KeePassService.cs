@@ -25,7 +25,6 @@ namespace KeePassWeb.Services
             this.db = new PwDatabase();
             this.config = config;
             this.statusLogger = statusLogger;
-            Open();
         }
 
         public void Dispose()
@@ -40,6 +39,11 @@ namespace KeePassWeb.Services
         {
             using (await mutex.LockAsync())
             {
+                if (db.IsOpen)
+                {
+                    return;
+                }
+
                 var keys = new CompositeKey();
                 keys.AddUserKey(new KcpPassword(config.Password));
 
@@ -61,10 +65,19 @@ namespace KeePassWeb.Services
             }
         }
 
+        public async Task<bool> IsOpen()
+        {
+            using (await mutex.LockAsync())
+            {
+                return db.IsOpen;
+            }
+        }
+
         public async Task<IEnumerable<ItemEntity>> List(ItemQuery query)
         {
             using (await mutex.LockAsync())
             {
+                CheckDb();
                 if (query.ItemId != null)
                 {
                     var item = await Get(query.ItemId.Value);
@@ -99,6 +112,7 @@ namespace KeePassWeb.Services
         {
             using (await mutex.LockAsync())
             {
+                CheckDb();
                 if (itemId != null)
                 {
                     var bytes = itemId.ToByteArray();
@@ -162,6 +176,14 @@ namespace KeePassWeb.Services
         {
             return group.Groups.Select(i => GroupToItemEntity(i))
                 .Concat(group.Entries.Select(i => EntryToItemEntity(i)));
+        }
+
+        private void CheckDb()
+        {
+            if (!db.IsOpen)
+            {
+                throw new KeePassDbClosedException("Keepass Database is closed.");
+            }
         }
     }
 }

@@ -10,6 +10,7 @@ import * as loginPopup from 'hr.relogin.LoginPopup';
 import * as deepLink from 'hr.deeplink';
 import * as xsrf from 'hr.xsrftoken';
 import * as pageConfig from 'hr.pageconfig';
+//import * as dbfetcher from 'clientlibs.DbFetcher';
 
 export interface Config {
     client: {
@@ -51,6 +52,8 @@ export function createBuilder() {
 
 function createFetcher(config: Config): fetcher.Fetcher {
     var fetcher = new WindowFetch.WindowFetch();
+
+    //fetcher = new DbFetcher(fetcher);
 
     if (config.tokens !== undefined) {
         fetcher = new xsrf.XsrfTokenFetcher(

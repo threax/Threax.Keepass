@@ -19,11 +19,32 @@ namespace KeePassWeb.ViewModels
     [DeclareHalLink(typeof(ItemsController), nameof(ItemsController.List), PagedCollectionView<Object>.Rels.Previous, ResponseOnly = true)]
     [DeclareHalLink(typeof(ItemsController), nameof(ItemsController.List), PagedCollectionView<Object>.Rels.First, ResponseOnly = true)]
     [DeclareHalLink(typeof(ItemsController), nameof(ItemsController.List), PagedCollectionView<Object>.Rels.Last, ResponseOnly = true)]
+    [DeclareHalLink(typeof(KeepassDatabaseController), nameof(KeepassDatabaseController.Open))]
+    [DeclareHalLink(typeof(KeepassDatabaseController), nameof(KeepassDatabaseController.Close))]
     public partial class ItemCollection : PagedCollectionViewWithQuery<Item, ItemQuery>
     {
+        public bool DbClosed { get; set; }
+
         public ItemCollection(ItemQuery query, int total, IEnumerable<Item> items) : base(query, total, items)
         {
             
+        }
+
+        public override IEnumerable<HalLinkAttribute> CreateHalLinks(ILinkProviderContext context)
+        {
+            return base.CreateHalLinks(context).Concat(CreateLinks());
+        }
+
+        private IEnumerable<HalLinkAttribute> CreateLinks()
+        {
+            if (DbClosed)
+            {
+                yield return new HalActionLinkAttribute(typeof(KeepassDatabaseController), nameof(KeepassDatabaseController.Open));
+            }
+            else
+            {
+                yield return new HalActionLinkAttribute(typeof(KeepassDatabaseController), nameof(KeepassDatabaseController.Close));
+            }
         }
     }
 }

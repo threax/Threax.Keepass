@@ -10,5 +10,7 @@ namespace KeePassWeb
         public String DbFile { get; set; }
 
         public String KeyFile { get; set; }
+
+        public int TimeoutMs { get; set; } = 3 * 60 * 1000; //3 Minutes
     }
 }

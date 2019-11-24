@@ -9,6 +9,7 @@ using Nito.AsyncEx;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace KeePassWeb.Services
@@ -19,12 +20,25 @@ namespace KeePassWeb.Services
         private KeePassConfig config;
         private IStatusLogger statusLogger;
         private readonly AsyncLock mutex = new AsyncLock();
+        private Timer timer;
+        private int timeoutMs = 10000;
 
         public KeePassService(KeePassConfig config, IStatusLogger statusLogger)
         {
             this.db = new PwDatabase();
             this.config = config;
             this.statusLogger = statusLogger;
+            this.timeoutMs = config.TimeoutMs;
+            this.timer = new Timer(s =>
+            {
+                using (mutex.Lock())
+                {
+                    if (db.IsOpen)
+                    {
+                        db.Close();
+                    }
+                }
+            }, null, Timeout.Infinite, Timeout.Infinite);
         }
 
         public void Dispose()
@@ -37,6 +51,8 @@ namespace KeePassWeb.Services
 
         public async Task Open(String password)
         {
+            ResetTimer();
+
             using (await mutex.LockAsync())
             {
                 if (db.IsOpen)
@@ -67,6 +83,7 @@ namespace KeePassWeb.Services
 
         public async Task<bool> IsOpen()
         {
+            ResetTimer();
             using (await mutex.LockAsync())
             {
                 return db.IsOpen;
@@ -75,9 +92,11 @@ namespace KeePassWeb.Services
 
         public async Task<IEnumerable<ItemEntity>> List(ItemQuery query)
         {
+            ResetTimer();
             using (await mutex.LockAsync())
             {
                 CheckDb();
+
                 if (query.ItemId != null)
                 {
                     var item = await Get(query.ItemId.Value);
@@ -110,6 +129,7 @@ namespace KeePassWeb.Services
 
         public async Task<ItemEntity> Get(Guid itemId)
         {
+            ResetTimer();
             using (await mutex.LockAsync())
             {
                 CheckDb();
@@ -184,6 +204,11 @@ namespace KeePassWeb.Services
             {
                 throw new KeePassDbClosedException("Keepass Database is closed.");
             }
+        }
+
+        private void ResetTimer()
+        {
+            timer.Change(timeoutMs, Timeout.Infinite);
         }
     }
 }

@@ -36,79 +36,87 @@ namespace KeePassWeb.Services
             }
         }
 
-        public Task Open()
+        public async Task Open()
         {
-            var keys = new CompositeKey();
-            keys.AddUserKey(new KcpPassword(config.Password));
-
-            db.Open(new KeePassLib.Serialization.IOConnectionInfo()
+            using (await mutex.LockAsync())
             {
-                Path = config.DbFile
-            }, keys, statusLogger);
+                var keys = new CompositeKey();
+                keys.AddUserKey(new KcpPassword(config.Password));
 
-            return Task.CompletedTask;
+                db.Open(new KeePassLib.Serialization.IOConnectionInfo()
+                {
+                    Path = config.DbFile
+                }, keys, statusLogger);
+            }
         }
 
-        public Task Close()
+        public async Task Close()
         {
-            if (db.IsOpen)
+            using (await mutex.LockAsync())
             {
-                db.Close();
+                if (db.IsOpen)
+                {
+                    db.Close();
+                }
             }
-
-            return Task.CompletedTask;
         }
 
         public async Task<IEnumerable<ItemEntity>> List(ItemQuery query)
         {
-            if (query.ItemId != null)
+            using (await mutex.LockAsync())
             {
-                var item = await Get(query.ItemId.Value);
-                return new ItemEntity[] { item };
-            }
-
-            if (query.Search != null)
-            {
-                var resultList = new PwObjectList<PwEntry>();
-                db.RootGroup.SearchEntries(new SearchParameters()
+                if (query.ItemId != null)
                 {
-                    SearchInTitles = true,
-                    SearchString = query.Search
-                }, resultList);
+                    var item = await Get(query.ItemId.Value);
+                    return new ItemEntity[] { item };
+                }
 
-                return resultList.Select(i => EntryToItemEntity(i));
+                if (query.Search != null)
+                {
+                    var resultList = new PwObjectList<PwEntry>();
+                    db.RootGroup.SearchEntries(new SearchParameters()
+                    {
+                        SearchInTitles = true,
+                        SearchString = query.Search
+                    }, resultList);
+
+                    return resultList.Select(i => EntryToItemEntity(i));
+                }
+
+                var group = db.RootGroup;
+                if (query.ParentItemId != null)
+                {
+                    var bytes = query.ItemId.Value.ToByteArray();
+                    var id = new PwUuid(bytes);
+                    group = db.RootGroup.FindGroup(id, true);
+                }
+
+                return GetItems(group);
             }
-
-            var group = db.RootGroup;
-            if (query.ParentItemId != null)
-            {
-                var bytes = query.ItemId.Value.ToByteArray();
-                var id = new PwUuid(bytes);
-                group = db.RootGroup.FindGroup(id, true);
-            }
-
-            return GetItems(group);
         }
 
-        public Task<ItemEntity> Get(Guid itemId)
+        public async Task<ItemEntity> Get(Guid itemId)
         {
-            if (itemId != null)
+            using (await mutex.LockAsync())
             {
-                var bytes = itemId.ToByteArray();
-                var id = new PwUuid(bytes);
-                var group = db.RootGroup.FindGroup(id, true);
-                if (group != null)
+                if (itemId != null)
                 {
-                    return Task.FromResult(GroupToItemEntity(group));
-                }
+                    var bytes = itemId.ToByteArray();
+                    var id = new PwUuid(bytes);
+                    var group = db.RootGroup.FindGroup(id, true);
+                    if (group != null)
+                    {
+                        return GroupToItemEntity(group);
+                    }
 
-                var entry = db.RootGroup.FindEntry(id, true);
-                if (entry != null)
-                {
-                    return Task.FromResult(EntryToItemEntity(entry));
+                    var entry = db.RootGroup.FindEntry(id, true);
+                    if (entry != null)
+                    {
+                        return EntryToItemEntity(entry);
+                    }
                 }
+                return default(ItemEntity);
             }
-            return Task.FromResult(default(ItemEntity));
         }
 
         public async Task<Item> Add(ItemInput item)

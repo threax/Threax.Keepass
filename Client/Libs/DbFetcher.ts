@@ -42,7 +42,12 @@ class TokenManager {
                 if (await this.fireNeedDbPassword()) {
                     //After login read the server token again and resolve the queue
                     await this.readServerToken();
-                    this.resolveQueue();
+                    if (this.currentToken.dbClosed) {
+                        this.rejectQueue("Db still closed.");
+                    }
+                    else {
+                        this.resolveQueue();
+                    }
                 }
                 else {
                     this.rejectQueue("Db Password Entry Error.");

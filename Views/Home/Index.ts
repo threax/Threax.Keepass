@@ -5,6 +5,7 @@ import { ItemCrudInjector } from 'clientlibs.ItemCrudInjector';
 import { CrudItemEditorControllerExtensions, CrudItemEditorController } from 'hr.widgets.CrudItemEditor';
 import * as controller from 'hr.controller';
 import * as client from 'clientlibs.ServiceClient';
+import { CrudTableRowControllerExtensions, CrudTableRowController } from 'hr.widgets.CrudTableRow';
 
 class EditExtensions extends CrudItemEditorControllerExtensions {
     public static get InjectorArgs(): controller.DiFunction<any>[] {
@@ -64,10 +65,21 @@ class EditExtensions extends CrudItemEditorControllerExtensions {
     }
 }
 
+class CrudRow extends CrudTableRowControllerExtensions {
+    public static get InjectorArgs(): controller.DiFunction<any>[] {
+        return [];
+    }
+
+    public onEdit(row: CrudTableRowController, data: client.ItemResult): boolean {
+        return !data.data.isGroup;
+    }
+}
+
 var injector = ItemCrudInjector;
 
 var builder = startup.createBuilder();
 builder.Services.tryAddShared(CrudItemEditorControllerExtensions, EditExtensions);
+builder.Services.tryAddTransient(CrudTableRowControllerExtensions, CrudRow);
 deepLink.addServices(builder.Services);
 standardCrudPage.addServices(builder, injector);
 standardCrudPage.createControllers(builder, new standardCrudPage.Settings());

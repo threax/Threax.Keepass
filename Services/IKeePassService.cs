@@ -15,6 +15,7 @@ namespace KeePassWeb.Services
         Task<Item> Add(ItemInput item);
         Task Delete(Guid id);
         Task<ItemEntity> Get(Guid itemId);
+        Task<String> GetPassword(Guid itemId);
         Task<IEnumerable<ItemEntity>> List(ItemQuery query);
         Task<Item> Update(Guid itemId, ItemInput item);
     }

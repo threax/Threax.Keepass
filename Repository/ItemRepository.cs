@@ -27,7 +27,7 @@ namespace KeePassWeb.Repository
 
         public async Task<ItemCollection> List(ItemQuery query)
         {
-            if(! await this.keepass.IsOpen())
+            if (!await this.keepass.IsOpen())
             {
                 return new ItemCollection(query, 0, Enumerable.Empty<Item>())
                 {
@@ -48,6 +48,14 @@ namespace KeePassWeb.Repository
         {
             var entity = await keepass.Get(itemId);
             return mapper.MapItem(entity, new Item());
+        }
+        public async Task<PasswordInfo> GetPassword(Guid itemId)
+        {
+            return new PasswordInfo()
+            {
+                Password = await keepass.GetPassword(itemId),
+                ItemId = itemId
+            };
         }
 
         public async Task<Item> Add(ItemInput item)

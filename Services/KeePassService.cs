@@ -99,7 +99,7 @@ namespace KeePassWeb.Services
 
                 if (query.ItemId != null)
                 {
-                    var item = await Get(query.ItemId.Value);
+                    var item = DoGet(query.ItemId.Value);
                     return new ItemEntity[] { item };
                 }
 
@@ -133,23 +133,49 @@ namespace KeePassWeb.Services
             using (await mutex.LockAsync())
             {
                 CheckDb();
+                return DoGet(itemId);
+            }
+        }
+
+        private ItemEntity DoGet(Guid itemId)
+        {
+            if (itemId != null)
+            {
+                var bytes = itemId.ToByteArray();
+                var id = new PwUuid(bytes);
+                var group = db.RootGroup.FindGroup(id, true);
+                if (group != null)
+                {
+                    return GroupToItemEntity(group);
+                }
+
+                var entry = db.RootGroup.FindEntry(id, true);
+                if (entry != null)
+                {
+                    return EntryToItemEntity(entry);
+                }
+            }
+            return default(ItemEntity);
+        }
+
+        public async Task<String> GetPassword(Guid itemId)
+        {
+            ResetTimer();
+            using (await mutex.LockAsync())
+            {
+                CheckDb();
                 if (itemId != null)
                 {
                     var bytes = itemId.ToByteArray();
                     var id = new PwUuid(bytes);
-                    var group = db.RootGroup.FindGroup(id, true);
-                    if (group != null)
-                    {
-                        return GroupToItemEntity(group);
-                    }
 
                     var entry = db.RootGroup.FindEntry(id, true);
                     if (entry != null)
                     {
-                        return EntryToItemEntity(entry);
+                        return entry.Strings.Get("Password").ReadString();
                     }
                 }
-                return default(ItemEntity);
+                return null;
             }
         }
 

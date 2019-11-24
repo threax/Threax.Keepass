@@ -69,8 +69,12 @@
 
             <div class="password-wrapper">
                 <input type="text" data-hr-handle="copyElement" />
+                <input type="password" class="hidden" data-hr-handle="passwordCopyElement" />
             </div>
-            <button class="btn" data-hr-on-click="copyPassword">
+            <button class="btn" data-hr-on-click="loadPassword">
+                Load
+            </button>
+            <button class="btn" data-hr-on-click="copyPassword" data-hr-toggle="copy" data-hr-class-off="disabled">
                 Copy
             </button>
         </item-edit-form>

@@ -16,7 +16,8 @@ namespace KeePassWeb.ViewModels
     [HalSelfActionLink(typeof(ItemsController), nameof(ItemsController.Get))]
     [HalActionLink(typeof(ItemsController), nameof(ItemsController.Update))]
     [HalActionLink(typeof(ItemsController), nameof(ItemsController.Delete))]
-    public partial class Item : ICreatedModified
+    [DeclareHalLink(typeof(ItemsController), nameof(ItemsController.GetPassword))]
+    public partial class Item : ICreatedModified, IHalLinkProvider
     {
         public Guid ItemId { get; set; }
 
@@ -30,5 +31,12 @@ namespace KeePassWeb.ViewModels
         [UiOrder(0, 2147483647)]
         public DateTime Modified { get; set; }
 
+        public IEnumerable<HalLinkAttribute> CreateHalLinks(ILinkProviderContext context)
+        {
+            if (!IsGroup)
+            {
+                yield return new HalActionLinkAttribute(typeof(ItemsController), nameof(ItemsController.GetPassword));
+            }
+        }
     }
 }

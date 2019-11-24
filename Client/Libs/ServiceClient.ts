@@ -730,6 +730,33 @@ export class ItemResult {
     public linkForDelete(): hal.HalLink {
         return this.client.GetLink("Delete");
     }
+
+    public getPassword(): Promise<PasswordInfoResult> {
+        return this.client.LoadLink("GetPassword")
+               .then(r => {
+                    return new PasswordInfoResult(r);
+                });
+
+    }
+
+    public canGetPassword(): boolean {
+        return this.client.HasLink("GetPassword");
+    }
+
+    public linkForGetPassword(): hal.HalLink {
+        return this.client.GetLink("GetPassword");
+    }
+
+    public getGetPasswordDocs(query?: HalEndpointDocQuery): Promise<hal.HalEndpointDoc> {
+        return this.client.LoadLinkDoc("GetPassword", query)
+            .then(r => {
+                return r.GetData<hal.HalEndpointDoc>();
+            });
+    }
+
+    public hasGetPasswordDocs(): boolean {
+        return this.client.HasLinkDoc("GetPassword");
+    }
 }
 
 export class ItemCollectionResult {
@@ -1005,6 +1032,74 @@ export class ItemCollectionResult {
 
     public hasCloseDbDocs(): boolean {
         return this.client.HasLinkDoc("CloseDb");
+    }
+}
+
+export class PasswordInfoResult {
+    private client: hal.HalEndpointClient;
+
+    constructor(client: hal.HalEndpointClient) {
+        this.client = client;
+    }
+
+    private strongData: PasswordInfo = undefined;
+    public get data(): PasswordInfo {
+        this.strongData = this.strongData || this.client.GetData<PasswordInfo>();
+        return this.strongData;
+    }
+
+    public refresh(): Promise<PasswordInfoResult> {
+        return this.client.LoadLink("self")
+               .then(r => {
+                    return new PasswordInfoResult(r);
+                });
+
+    }
+
+    public canRefresh(): boolean {
+        return this.client.HasLink("self");
+    }
+
+    public linkForRefresh(): hal.HalLink {
+        return this.client.GetLink("self");
+    }
+
+    public getRefreshDocs(query?: HalEndpointDocQuery): Promise<hal.HalEndpointDoc> {
+        return this.client.LoadLinkDoc("self", query)
+            .then(r => {
+                return r.GetData<hal.HalEndpointDoc>();
+            });
+    }
+
+    public hasRefreshDocs(): boolean {
+        return this.client.HasLinkDoc("self");
+    }
+
+    public getItem(): Promise<ItemResult> {
+        return this.client.LoadLink("GetItem")
+               .then(r => {
+                    return new ItemResult(r);
+                });
+
+    }
+
+    public canGetItem(): boolean {
+        return this.client.HasLink("GetItem");
+    }
+
+    public linkForGetItem(): hal.HalLink {
+        return this.client.GetLink("GetItem");
+    }
+
+    public getGetItemDocs(query?: HalEndpointDocQuery): Promise<hal.HalEndpointDoc> {
+        return this.client.LoadLinkDoc("GetItem", query)
+            .then(r => {
+                return r.GetData<hal.HalEndpointDoc>();
+            });
+    }
+
+    public hasGetItemDocs(): boolean {
+        return this.client.HasLinkDoc("GetItem");
     }
 }
 
@@ -1549,6 +1644,11 @@ export interface Item {
     isGroup?: boolean;
     created?: string;
     modified?: string;
+}
+
+export interface PasswordInfo {
+    itemId?: string;
+    password?: string;
 }
 
 export interface UserSearch {

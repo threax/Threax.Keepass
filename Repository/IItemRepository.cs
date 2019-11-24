@@ -13,6 +13,7 @@ namespace KeePassWeb.Repository
         Task AddRange(IEnumerable<ItemInput> values);
         Task Delete(Guid id);
         Task<Item> Get(Guid itemId);
+        Task<PasswordInfo> GetPassword(Guid itemId);
         Task<bool> HasItems();
         Task<ItemCollection> List(ItemQuery query);
         Task<Item> Update(Guid itemId, ItemInput value);

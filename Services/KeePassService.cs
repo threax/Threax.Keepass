@@ -5,6 +5,7 @@ using KeePassLib.Keys;
 using KeePassWeb.Database;
 using KeePassWeb.InputModels;
 using KeePassWeb.ViewModels;
+using Nito.AsyncEx;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,23 +15,48 @@ namespace KeePassWeb.Services
 {
     public class KeePassService : IKeePassService
     {
-        PwDatabase db;
+        private PwDatabase db;
+        private KeePassConfig config;
+        private IStatusLogger statusLogger;
+        private readonly AsyncLock mutex = new AsyncLock();
 
         public KeePassService(KeePassConfig config, IStatusLogger statusLogger)
         {
-            db = new PwDatabase();
+            this.db = new PwDatabase();
+            this.config = config;
+            this.statusLogger = statusLogger;
+            Open();
+        }
+
+        public void Dispose()
+        {
+            if (db.IsOpen)
+            {
+                db.Close();
+            }
+        }
+
+        public Task Open()
+        {
             var keys = new CompositeKey();
             keys.AddUserKey(new KcpPassword(config.Password));
 
             db.Open(new KeePassLib.Serialization.IOConnectionInfo()
             {
-                Path = config.DbFile,
-                Password = config.Password
+                Path = config.DbFile
             }, keys, statusLogger);
+
+            return Task.CompletedTask;
         }
-        public void Dispose()
+
+        public Task Close()
         {
-            db.Close();
+            if (db.IsOpen)
+            {
+                db.Close();
+            }
+
+            return Task.CompletedTask;
         }
 
         public async Task<IEnumerable<ItemEntity>> List(ItemQuery query)

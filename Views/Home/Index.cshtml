@@ -10,11 +10,10 @@
         </load>
         <main>
             <div class="table-responsive">
-                <table class="table table-bordered">
+                <table class="table table-bordered table-hover">
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>IsGroup</th>
                             <th>Edit</th>
                         </tr>
                     </thead>
@@ -23,10 +22,8 @@
                 <template data-hr-component="mainTableBody">
                     <table>
                         <tr>
-                            <td>{{if isGroup}}&#128193;{{/if}} {{name}}</td>
-                            <td>{{isGroup}}</td>
+                            <td data-hr-on-click="edit">{{if isGroup}}&#128193;{{/if}} {{name}}</td>
                             <td>
-                                <button data-hr-on-click="edit" class="btn btn-default" data-hr-toggle="edit" data-hr-style-off="display:none;">Edit</button>
                                 <button data-hr-on-click="view" class="btn btn-default" data-hr-toggle="view" data-hr-style-off="display:none;">View</button>
                                 <button data-hr-on-click="del" class="btn btn-default" data-hr-toggle="del" data-hr-style-off="display:none;">Delete</button>
                             </td>

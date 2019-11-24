@@ -9,6 +9,8 @@ namespace KeePassWeb.Services
 {
     public interface IKeePassService : IDisposable
     {
+        Task Open();
+        Task Close();
         Task<Item> Add(ItemInput item);
         Task Delete(Guid id);
         Task<ItemEntity> Get(Guid itemId);

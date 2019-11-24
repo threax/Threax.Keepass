@@ -193,8 +193,8 @@ namespace KeePassWeb
             });
 
             services.AddSingleton(keePassConfig);
-            services.AddScoped<IStatusLogger, NullStatusLogger>();
-            services.AddScoped<IKeePassService, KeePassService>();
+            services.AddSingleton<IStatusLogger, NullStatusLogger>();
+            services.AddSingleton<IKeePassService, KeePassService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

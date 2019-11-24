@@ -9,8 +9,6 @@ namespace KeePassWeb
     {
         public String DbFile { get; set; }
 
-        public String Password { get; set; }
-
         public String KeyFile { get; set; }
     }
 }

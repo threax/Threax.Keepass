@@ -39,7 +39,7 @@ namespace KeePassWeb.Controllers.Api
         [AutoValidate("Cannot open database")]
         public async Task<DbStatus> Open([FromBody]OpenDbInput input)
         {
-            await keepass.Open();
+            await keepass.Open(input.DatabasePassword);
             return new DbStatus()
             {
                 DbClosed = !await keepass.IsOpen()

@@ -9,7 +9,7 @@ namespace KeePassWeb.Services
 {
     public interface IKeePassService : IDisposable
     {
-        Task Open();
+        Task Open(String password);
         Task Close();
         Task<bool> IsOpen();
         Task<Item> Add(ItemInput item);

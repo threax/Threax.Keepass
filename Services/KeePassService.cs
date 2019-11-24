@@ -35,7 +35,7 @@ namespace KeePassWeb.Services
             }
         }
 
-        public async Task Open()
+        public async Task Open(String password)
         {
             using (await mutex.LockAsync())
             {
@@ -45,7 +45,7 @@ namespace KeePassWeb.Services
                 }
 
                 var keys = new CompositeKey();
-                keys.AddUserKey(new KcpPassword(config.Password));
+                keys.AddUserKey(new KcpPassword(password));
 
                 db.Open(new KeePassLib.Serialization.IOConnectionInfo()
                 {

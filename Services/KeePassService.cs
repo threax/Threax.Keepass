@@ -118,7 +118,7 @@ namespace KeePassWeb.Services
                 var group = db.RootGroup;
                 if (query.ParentItemId != null)
                 {
-                    var bytes = query.ItemId.Value.ToByteArray();
+                    var bytes = query.ParentItemId.Value.ToByteArray();
                     var id = new PwUuid(bytes);
                     group = db.RootGroup.FindGroup(id, true);
                 }

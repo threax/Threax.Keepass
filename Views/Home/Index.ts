@@ -6,6 +6,7 @@ import { CrudItemEditorControllerExtensions, CrudItemEditorController } from 'hr
 import * as controller from 'hr.controller';
 import * as client from 'clientlibs.ServiceClient';
 import { CrudTableRowControllerExtensions, CrudTableRowController } from 'hr.widgets.CrudTableRow';
+import * as crudpage from 'hr.widgets.CrudPage';
 
 class EditExtensions extends CrudItemEditorControllerExtensions {
     public static get InjectorArgs(): controller.DiFunction<any>[] {
@@ -67,11 +68,24 @@ class EditExtensions extends CrudItemEditorControllerExtensions {
 
 class CrudRow extends CrudTableRowControllerExtensions {
     public static get InjectorArgs(): controller.DiFunction<any>[] {
-        return [];
+        return [crudpage.ICrudService, crudpage.CrudQueryManager];
+    }
+
+    constructor(private crud: crudpage.ICrudService, private queryManager: crudpage.CrudQueryManager) {
+        super();
     }
 
     public onEdit(row: CrudTableRowController, data: client.ItemResult): boolean {
-        return !data.data.isGroup;
+        var loadEditor = !data.data.isGroup;
+
+        if (data.data.isGroup) {
+            var query = this.queryManager.setupQuery();
+            query.offset = 0;
+            query.parentItemId = data.data.itemId;
+            this.crud.getPage(query);
+        }
+
+        return loadEditor;
     }
 }
 

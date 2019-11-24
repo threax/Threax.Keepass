@@ -1,6 +1,7 @@
 using Halcyon.HAL.Attributes;
 using KeePassWeb.Controllers.Api;
 using KeePassWeb.InputModels;
+using KeePassWeb.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,19 +33,7 @@ namespace KeePassWeb.ViewModels
 
         public override IEnumerable<HalLinkAttribute> CreateHalLinks(ILinkProviderContext context)
         {
-            return base.CreateHalLinks(context).Concat(CreateLinks());
-        }
-
-        private IEnumerable<HalLinkAttribute> CreateLinks()
-        {
-            if (DbClosed)
-            {
-                yield return new HalActionLinkAttribute(typeof(KeepassDatabaseController), nameof(KeepassDatabaseController.Open));
-            }
-            else
-            {
-                yield return new HalActionLinkAttribute(typeof(KeepassDatabaseController), nameof(KeepassDatabaseController.Close));
-            }
+            return base.CreateHalLinks(context).Concat(DbLinkProvider.CreateHalLinks(DbClosed));
         }
     }
 }

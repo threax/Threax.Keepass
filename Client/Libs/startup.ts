@@ -10,12 +10,13 @@ import * as loginPopup from 'hr.relogin.LoginPopup';
 import * as deepLink from 'hr.deeplink';
 import * as xsrf from 'hr.xsrftoken';
 import * as pageConfig from 'hr.pageconfig';
-//import * as dbfetcher from 'clientlibs.DbFetcher';
+import * as dbfetcher from 'clientlibs.DbFetcher';
 
 export interface Config {
     client: {
         ServiceUrl: string,
-        PageBasePath: string
+        PageBasePath: string,
+        DbStatusUrl: string
     };
     tokens: {
         AccessTokenPath?: string;
@@ -53,8 +54,6 @@ export function createBuilder() {
 function createFetcher(config: Config): fetcher.Fetcher {
     var fetcher = new WindowFetch.WindowFetch();
 
-    //fetcher = new DbFetcher(fetcher);
-
     if (config.tokens !== undefined) {
         fetcher = new xsrf.XsrfTokenFetcher(
             new xsrf.CookieTokenAccessor(config.tokens.XsrfCookie),
@@ -67,6 +66,17 @@ function createFetcher(config: Config): fetcher.Fetcher {
             config.tokens.AccessTokenPath,
             new whitelist.Whitelist([config.client.ServiceUrl]),
             fetcher);
+    }
+
+    if (config.client.DbStatusUrl !== undefined) {
+        fetcher = new dbfetcher.DbFetcher(
+            config.client.DbStatusUrl,
+            new whitelist.Whitelist([config.client.ServiceUrl]),
+            fetcher);
+
+        (<dbfetcher.DbFetcher>fetcher).onNeedDbPassword.add((t) => {
+            return Promise.resolve(true);
+        });
     }
 
     return fetcher;

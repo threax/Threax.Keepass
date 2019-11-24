@@ -1,4 +1,5 @@
 ﻿using KeePassWeb.Services;
+using KeePassWeb.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -12,7 +13,7 @@ namespace KeePassWeb.Controllers.Api
     [Route("api/[controller]")]
     [ResponseCache(NoStore = true)]
     [Authorize(AuthenticationSchemes = AuthCoreSchemes.Bearer)]
-    public class KeepassDatabaseController
+    public class KeepassDatabaseController : Controller
     {
         private IKeePassService keepass;
 
@@ -23,25 +24,36 @@ namespace KeePassWeb.Controllers.Api
 
         [HttpGet]
         [HalRel("Status")]
-        public async Task Get()
+        public async Task<DbStatus> Status()
         {
-            await keepass.IsOpen();
+            return new DbStatus()
+            {
+                DbClosed = !await keepass.IsOpen()
+            };
         }
 
         [HttpPut]
         [HalRel("OpenDb")]
         [AutoValidate("Cannot open database")]
-        public async Task Open()
+        public async Task<DbStatus> Open()
         {
             await keepass.Open();
+            return new DbStatus()
+            {
+                DbClosed = !await keepass.IsOpen()
+            };
         }
 
         [HttpPut]
         [HalRel("CloseDb")]
         [AutoValidate("Cannot close database")]
-        public async Task Close()
+        public async Task<DbStatus> Close()
         {
             await keepass.Close();
+            return new DbStatus()
+            {
+                DbClosed = !await keepass.IsOpen()
+            };
         }
     }
 }

@@ -15,5 +15,8 @@ namespace KeePassWeb
         /// </summary>
         [ExpandHostPath]
         public string ServiceUrl { get; set; } = "~/api";
+
+        [ExpandHostPath]
+        public string DbStatusUrl { get; set; } = "~/api/KeepassDatabase";
     }
 }

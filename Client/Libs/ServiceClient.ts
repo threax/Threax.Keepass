@@ -1473,7 +1473,6 @@ export interface RoleAssignments {
 
 export interface DbStatus {
     dbClosed?: boolean;
-    expiresUtc?: string;
 }
 
 export interface EntryPoint {

@@ -4,7 +4,9 @@ import * as crudService from 'hr.roleclient.UserCrudService';
 import * as deepLink from 'hr.deeplink';
 import * as userSearch from 'hr.roleclient.UserSearchController';
 
-var builder = startup.createBuilder();
+var builder = startup.createBuilder({
+    EnableDbPopup: false
+});
 deepLink.addServices(builder.Services);
 crudService.addServices(builder);
 

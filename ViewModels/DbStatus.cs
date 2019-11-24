@@ -27,8 +27,6 @@ namespace KeePassWeb.ViewModels
     {
         public bool DbClosed { get; set; }
 
-        public DateTime ExpiresUtc { get; set; }
-
         public IEnumerable<HalLinkAttribute> CreateHalLinks(ILinkProviderContext context)
         {
             return DbLinkProvider.CreateHalLinks(DbClosed);

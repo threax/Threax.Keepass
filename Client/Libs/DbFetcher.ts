@@ -7,7 +7,6 @@ import * as client from 'clientlibs.ServiceClient';
 
 class TokenManager {
     private currentToken: client.DbStatus;
-    private expirationTick: Date;
     private needLoginEvent: events.PromiseEventDispatcher<boolean, TokenManager> = new events.PromiseEventDispatcher<boolean, TokenManager>();
     private queuePromise: ep.ExternalPromise<client.DbStatus> = null;
 
@@ -21,17 +20,9 @@ class TokenManager {
             return this.queuePromise.Promise;
         }
 
-        //Do we need to refresh?
-        var now = new Date();
-        if (!this.expirationTick || now > this.expirationTick) {
-            //If we need to refresh, create the queue and fire the refresh
-            this.queuePromise = new ep.ExternalPromise<client.DbStatus>();
-            this.doRefreshToken(); //Do NOT await this, we want execution to continue.
-            return this.queuePromise.Promise; //Here we return the queued promise that will resolve when doRefreshToken is done.
-        }
-
-        //Didn't need refresh, return current token.
-        return Promise.resolve(this.currentToken);
+        this.queuePromise = new ep.ExternalPromise<client.DbStatus>();
+        this.doRefreshToken(); //Do NOT await this, we want execution to continue.
+        return this.queuePromise.Promise; //Here we return the queued promise that will resolve when doRefreshToken is done.
     }
 
     private async doRefreshToken(): Promise<void> {
@@ -75,8 +66,6 @@ class TokenManager {
         this.currentToken = data;
 
         var tokenObj = data;
-
-        this.expirationTick = new Date(tokenObj.expiresUtc);
     }
 
     private clearToken(): void {

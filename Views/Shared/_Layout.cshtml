@@ -47,6 +47,28 @@
     <div class="container">
         <hr />
     </div>
+
+
+    <div class="modal fade " tabindex="-1" role="dialog" data-hr-controller="hr-opendb" data-hr-toggle="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Unlock Database</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <form class="form-horizontal" data-hr-form-component="hr.forms.horizontal" data-hr-on-submit="submit" data-hr-form="input">
+                    <fieldset class="modal-body" data-hr-toggle="viewOnly" data-hr-disabled-on="true">
+                        <div class="alert alert-danger hiddenToggler" role="alert" data-hr-toggle="mainError" data-hr-view="mainError" data-hr-style-on="display:block;">{{message}}</div>
+                        <span data-hr-form-end></span>
+                    </fieldset>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Unlock</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <relogin></relogin>
     @* this line fills in the client config using the tag helper and what has been defined in the di *@
     <client-config csp-nonce></client-config>

@@ -11,6 +11,7 @@ import * as deepLink from 'hr.deeplink';
 import * as xsrf from 'hr.xsrftoken';
 import * as pageConfig from 'hr.pageconfig';
 import * as dbfetcher from 'clientlibs.DbFetcher';
+import * as dbpopup from 'clientlibs.DbPopup';
 
 export interface Config {
     client: {
@@ -47,6 +48,10 @@ export function createBuilder() {
         //Setup relogin
         loginPopup.addServices(builder.Services);
         builder.create("hr-relogin", loginPopup.LoginPopup);
+
+        //Set Db Popup
+        dbpopup.addServices(builder.Services);
+        builder.create("hr-opendb", dbpopup.DbPopup);
     }
     return builder;
 }
@@ -74,9 +79,9 @@ function createFetcher(config: Config): fetcher.Fetcher {
             new whitelist.Whitelist([config.client.ServiceUrl]),
             fetcher);
 
-        (<dbfetcher.DbFetcher>fetcher).onNeedDbPassword.add((t) => {
-            return Promise.resolve(true);
-        });
+        //(<dbfetcher.DbFetcher>fetcher).onNeedDbPassword.add((t) => {
+        //    return Promise.resolve(true);
+        //});
     }
 
     return fetcher;

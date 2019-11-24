@@ -311,8 +311,8 @@ export class DbStatusResult {
         return this.client.HasLinkDoc("OpenDb");
     }
 
-    public closeDb(data: OpenDbInput): Promise<DbStatusResult> {
-        return this.client.LoadLinkWithData("CloseDb", data)
+    public closeDb(): Promise<DbStatusResult> {
+        return this.client.LoadLink("CloseDb")
                .then(r => {
                     return new DbStatusResult(r);
                 });
@@ -570,8 +570,8 @@ export class EntryPointResult {
         return this.client.HasLinkDoc("OpenDb");
     }
 
-    public closeDb(data: OpenDbInput): Promise<DbStatusResult> {
-        return this.client.LoadLinkWithData("CloseDb", data)
+    public closeDb(): Promise<DbStatusResult> {
+        return this.client.LoadLink("CloseDb")
                .then(r => {
                     return new DbStatusResult(r);
                 });
@@ -980,8 +980,8 @@ export class ItemCollectionResult {
         return this.client.HasLinkDoc("OpenDb");
     }
 
-    public closeDb(data: OpenDbInput): Promise<DbStatusResult> {
-        return this.client.LoadLinkWithData("CloseDb", data)
+    public closeDb(): Promise<DbStatusResult> {
+        return this.client.LoadLink("CloseDb")
                .then(r => {
                     return new DbStatusResult(r);
                 });

@@ -13,6 +13,7 @@ class ManageDbController {
     private lifecycle: MainLoadErrorLifecycle;
     private mainErrorToggle: controller.OnOffToggle;
     private mainErrorView: controller.IView<Error>;
+    private lockUnlockToggle: controller.OnOffToggle;
 
     public static get InjectorArgs(): controller.DiFunction<any>[] {
         return [controller.BindingCollection, client.EntryPointInjector];
@@ -24,6 +25,7 @@ class ManageDbController {
         this.mainErrorToggle = bindings.getToggle("mainError");
         this.mainErrorView = bindings.getView<Error>("mainError");
         this.input = bindings.getForm("input");
+        this.lockUnlockToggle = bindings.getToggle("lockUnlock");
         this.injector = injector;
         this.setup();
     }
@@ -33,6 +35,8 @@ class ManageDbController {
             var entry = await this.injector.load();
             var openDbDocs = await entry.getOpenDbDocs();
             this.input.setSchema(openDbDocs.requestSchema);
+            var status = await entry.getDbStatus();
+            this.lockUnlockToggle.mode = status.data.dbClosed;
             this.lifecycle.showMain();
         }
         catch (err) {
@@ -49,6 +53,26 @@ class ManageDbController {
             var data = this.input.getData();
             var entry = await this.injector.load();
             var result = await entry.openDb(data);
+            this.lockUnlockToggle.mode = result.data.dbClosed;
+        }
+        catch (err) {
+            console.error(err);
+            this.input.setError(err);
+            this.mainErrorView.setData(err);
+            this.mainErrorToggle.on();
+        }
+        this.lifecycle.showMain();
+    }
+
+    public async lock(evt: Event): Promise<void> {
+        evt.preventDefault();
+
+        this.lifecycle.showLoad();
+        this.mainErrorToggle.off();
+        try {
+            var entry = await this.injector.load();
+            var result = await entry.closeDb();
+            this.lockUnlockToggle.mode = result.data.dbClosed;
         }
         catch (err) {
             console.error(err);

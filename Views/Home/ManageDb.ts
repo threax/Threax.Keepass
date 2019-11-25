@@ -6,6 +6,7 @@ import { CrudItemEditorControllerExtensions, CrudItemEditorController } from 'hr
 import * as controller from 'hr.controller';
 import * as client from 'clientlibs.ServiceClient';
 import { MainLoadErrorLifecycle } from 'hr.widgets.MainLoadErrorLifecycle';
+import * as dbpopup from 'clientlibs.DbPopup';
 
 class ManageDbController {
     private input: controller.IForm<client.OpenDbInput>;
@@ -54,6 +55,13 @@ class ManageDbController {
             var entry = await this.injector.load();
             var result = await entry.openDb(data);
             this.lockUnlockToggle.mode = result.data.dbClosed;
+
+            var message: dbpopup.ILoginMessage = {
+                type: dbpopup.MessageType,
+                unlocked: true
+            };
+
+            parent.postMessage(JSON.stringify(message), "*");
         }
         catch (err) {
             console.error(err);
@@ -61,6 +69,7 @@ class ManageDbController {
             this.mainErrorView.setData(err);
             this.mainErrorToggle.on();
         }
+        this.input.clear();
         this.lifecycle.showMain();
     }
 
@@ -73,6 +82,13 @@ class ManageDbController {
             var entry = await this.injector.load();
             var result = await entry.closeDb();
             this.lockUnlockToggle.mode = result.data.dbClosed;
+
+            var message: dbpopup.ILoginMessage = {
+                type: dbpopup.MessageType,
+                unlocked: false
+            };
+
+            parent.postMessage(JSON.stringify(message), "*");
         }
         catch (err) {
             console.error(err);

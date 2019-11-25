@@ -1,24 +1,27 @@
 @{
     ViewData["Title"] = "Manage Db";
+    Layout = "_LayoutNoNav";
 }
 
 <div data-hr-controller="manageDb">
     <load></load>
     <main>
-        <div class="alert alert-danger hiddenToggler" role="alert" data-hr-toggle="mainError" data-hr-view="mainError" data-hr-style-on="display:block;">{{message}}</div>
-
         <form data-hr-on-submit="unlock" data-hr-form="input" data-hr-toggle="lockUnlock" class="startHidden" data-hr-style-on="display:block;">
+            <p>Unlock your database.</p>
+            <div class="alert alert-danger hiddenToggler" role="alert" data-hr-toggle="mainError" data-hr-view="mainError" data-hr-style-on="display:block;">{{message}}</div>
+
             <fieldset>
                 <span data-hr-form-end></span>
             </fieldset>
             <div>
-                <button type="submit" class="btn btn-primary">Unlock</button>
+                <button type="submit" class="btn btn-lg btn-primary">Unlock</button>
             </div>
         </form>
 
         <form data-hr-on-submit="lock" data-hr-form="input" data-hr-toggle="lockUnlock" data-hr-style-on="display:none;">
+            <p>Your database is unlocked. You can close this page to continue or lock your database again.</p>
             <div>
-                <button type="submit" class="btn btn-primary">Lock</button>
+                <button type="submit" class="btn btn-lg btn-primary">Lock</button>
             </div>
         </form>
     </main>

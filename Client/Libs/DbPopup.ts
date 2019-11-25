@@ -1,5 +1,5 @@
 import * as controller from 'hr.controller';
-import { Fetcher, RequestInfo, Response } from 'hr.fetcher';
+import { Fetcher } from 'hr.fetcher';
 import * as ep from 'hr.externalpromise';
 import { DbFetcher } from 'clientlibs.DbFetcher';
 
@@ -24,6 +24,7 @@ export class DbPopup {
     private currentPromise: ep.ExternalPromise<boolean>;
     private iframe: HTMLIFrameElement;
     private resizeEvent;
+    private autoClose: boolean = false;
 
     constructor(bindings: controller.BindingCollection, private options: DbPopupOptions, fetcher: Fetcher) {
         this.dialog = bindings.getToggle("dialog");
@@ -36,7 +37,10 @@ export class DbPopup {
         var currentFetcher = fetcher;
         while (currentFetcher) {
             if (DbFetcher.isInstance(currentFetcher)) {
-                currentFetcher.onNeedDbPassword.add(f => this.showLogin());
+                currentFetcher.onNeedDbPassword.add(f => {
+                    this.autoClose = true;
+                    return this.showLogin();
+                });
             }
             currentFetcher = (<any>currentFetcher).next;
         }
@@ -61,7 +65,8 @@ export class DbPopup {
 
     private handleMessage(e: MessageEvent): void {
         var message: ILoginMessage = JSON.parse(e.data);
-        if (message.type === MessageType && message.success) {
+        if (message.type === MessageType && message.unlocked && this.autoClose) {
+            this.autoClose = false;
             this.dialog.off();
         }
     }
@@ -87,14 +92,31 @@ export class DbPopup {
     }
 }
 
-export const MessageType: string = "LoginPageMessage";
+export class DbPopupButton {
+    public static get InjectorArgs(): controller.DiFunction<any>[] {
+        return [controller.BindingCollection, DbPopup];
+    }
+
+    constructor(bindings: controller.BindingCollection, private dbPopup: DbPopup) {
+        bindings.setListener(this);
+    }
+
+    public async show(evt: Event): Promise<void> {
+        evt.preventDefault();
+
+        this.dbPopup.showLogin();
+    }
+}
+
+export const MessageType: string = "DbPopupPageMessage";
 
 export interface ILoginMessage {
     type: string;
-    success: boolean;
+    unlocked: boolean;
 }
 
 export function addServices(services: controller.ServiceCollection): void {
     services.tryAddShared(DbPopupOptions, (s) => new DbPopupOptions("/ManageDb"));
     services.tryAddShared(DbPopup, DbPopup);
+    services.tryAddShared(DbPopupButton, DbPopupButton);
 }

@@ -67,6 +67,8 @@ class EditExtensions extends CrudItemEditorControllerExtensions {
 }
 
 class CrudRow extends CrudTableRowControllerExtensions {
+    private data;
+
     public static get InjectorArgs(): controller.DiFunction<any>[] {
         return [crudpage.ICrudService, crudpage.CrudQueryManager];
     }
@@ -75,17 +77,25 @@ class CrudRow extends CrudTableRowControllerExtensions {
         super();
     }
 
-    public onEdit(row: CrudTableRowController, data: client.ItemResult): boolean {
-        var loadEditor = !data.data.isGroup;
+    public rowConstructed(row: CrudTableRowController, bindings: controller.BindingCollection, data: any): void {
+        bindings.setListener(this);
+        this.data = data;
+    }
 
-        if (data.data.isGroup) {
+    public async visit(evt: Event): Promise<void> {
+        evt.preventDefault();
+
+        var loadEditor = !this.data.data.isGroup;
+
+        if (this.data.data.isGroup) {
             var query = this.queryManager.setupQuery();
             query.offset = 0;
-            query.parentItemId = data.data.itemId;
+            query.parentItemId = this.data.data.itemId;
             this.crud.getPage(query);
         }
-
-        return loadEditor;
+        else {
+            this.crud.edit(this.data);
+        }
     }
 }
 

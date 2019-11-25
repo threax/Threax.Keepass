@@ -17,7 +17,7 @@
             </button>
             <div class="navbar-collapse collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
-                    <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li data-hr-controller="hr-opendbbutton" class="nav-item"><a class="nav-link" href="#" data-hr-on-click="show">Manage Db</a></li>
                     @if (User.IsInRole(Threax.AspNetCore.UserBuilder.Entities.AuthorizationAdminRoles.EditRoles))
                     {
                         <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Users">Edit Users</a></li>
@@ -49,7 +49,7 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Unlock Database</h5>
+                    <h5 class="modal-title">Database</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
                 <div class="modal-body">

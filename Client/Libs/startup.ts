@@ -63,6 +63,7 @@ export function createBuilder(options?: Options) {
         if (options.EnableDbPopup) {
             dbpopup.addServices(builder.Services);
             builder.create("hr-opendb", dbpopup.DbPopup);
+            builder.create("hr-opendbbutton", dbpopup.DbPopupButton)
         }
     }
     return builder;

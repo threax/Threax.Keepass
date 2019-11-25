@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
-#if !KeePassUAP
+#if !KeePassUAP || NETSTANDARD2_0
 using System.Drawing;
 #endif
 

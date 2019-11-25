@@ -23,7 +23,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 
-#if !KeePassUAP
+#if !KeePassUAP || NETSTANDARD2_0
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;

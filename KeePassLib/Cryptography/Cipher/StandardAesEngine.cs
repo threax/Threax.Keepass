@@ -24,7 +24,7 @@ using System.IO;
 using System.Security;
 using System.Text;
 
-#if !KeePassUAP
+#if !KeePassUAP || NETSTANDARD2_0
 using System.Security.Cryptography;
 #endif
 
@@ -34,8 +34,8 @@ namespace KeePassLib.Cryptography.Cipher
 {
 	public sealed class StandardAesEngine : ICipherEngine
 	{
-#if !KeePassUAP
-		private const CipherMode SaeCipherMode = CipherMode.CBC;
+#if !KeePassUAP || NETSTANDARD2_0
+        private const CipherMode SaeCipherMode = CipherMode.CBC;
 		private const PaddingMode SaePaddingMode = PaddingMode.PKCS7;
 #endif
 
@@ -97,7 +97,7 @@ namespace KeePassLib.Cryptography.Cipher
 		{
 			StandardAesEngine.ValidateArguments(s, bEncrypt, pbKey, pbIV);
 
-#if KeePassUAP
+#if KeePassUAP && !NETSTANDARD2_0
 			return StandardAesEngineExt.CreateStream(s, bEncrypt, pbKey, pbIV);
 #else
 			SymmetricAlgorithm a = CryptoUtil.CreateAes();

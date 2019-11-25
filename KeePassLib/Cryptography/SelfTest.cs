@@ -26,7 +26,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
 
-#if KeePassUAP
+#if (KeePassUAP && !NETSTANDARD2_0)
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Parameters;
@@ -102,7 +102,7 @@ namespace KeePassLib.Cryptography
 			TestStrUtil();
 			TestUrlUtil();
 
-#if KeePassUAP
+#if KeePassUAP && !NETSTANDARD2_0
 			SelfTestEx.Perform();
 #endif
 		}
@@ -135,7 +135,7 @@ namespace KeePassLib.Cryptography
 				0x75, 0xD1, 0x1B, 0x0E, 0x3A, 0x68, 0xC4, 0x22,
 				0x3D, 0x88, 0xDB, 0xF0, 0x17, 0x97, 0x7D, 0xD7 };
 
-#if KeePassUAP
+#if KeePassUAP && !NETSTANDARD2_0
 			AesEngine aes = new AesEngine();
 			aes.Init(true, new KeyParameter(pbKey));
 			if(aes.GetBlockSize() != pbData.Length)

@@ -158,13 +158,13 @@ namespace KeePassLib.Serialization
 					string strTime = TimeUtil.SerializeUtc(DateTime.UtcNow);
 
 					lfi = new LockFileInfo(Convert.ToBase64String(pbID), strTime,
-#if KeePassUAP
+#if KeePassUAP && !NETSTANDARD2_0
 						EnvironmentExt.UserName, EnvironmentExt.MachineName,
 						EnvironmentExt.UserDomainName);
 #elif KeePassLibSD
 						string.Empty, string.Empty, string.Empty);
 #else
-						Environment.UserName, Environment.MachineName,
+                        Environment.UserName, Environment.MachineName,
 						Environment.UserDomainName);
 #endif
 

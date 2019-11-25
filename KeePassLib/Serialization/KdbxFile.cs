@@ -26,7 +26,7 @@ using System.Security;
 using System.Text;
 using System.Xml;
 
-#if !KeePassUAP
+#if !KeePassUAP || NETSTANDARD2_0
 using System.Security.Cryptography;
 #endif
 

@@ -154,24 +154,33 @@ namespace KeePassLib.Native
 
 		private static bool XSelInit()
 		{
-			if(g_obXSel.HasValue) return g_obXSel.Value;
+#if !NETSTANDARD2_0
+            if(g_obXSel.HasValue) return g_obXSel.Value;
 
 			string strTest = NativeLib.RunConsoleApp(XSel, XSelV);
 
 			bool b = (strTest != null);
 			g_obXSel = b;
 			return b;
-		}
+#else
+            return false;
+#endif
+        }
 
 		private static string XSelGetText()
 		{
+#if !NETSTANDARD2_0
 			if(!XSelInit()) return null;
 
 			return NativeLib.RunConsoleApp(XSel, XSelR);
-		}
+#else
+            return String.Empty;
+#endif
+        }
 
 		private static bool XSelSetText(string str, bool bMayBlock)
 		{
+#if !NETSTANDARD2_0
 			if(!XSelInit()) return false;
 
 			string strOpt = (bMayBlock ? XSelND : string.Empty);
@@ -185,6 +194,9 @@ namespace KeePassLib.Native
 			// https://sourceforge.net/p/keepass/bugs/1603/
 			return (NativeLib.RunConsoleApp(XSel, XSelW + strOpt,
 				str, XSelWF) != null);
-		}
+#else
+            return false;
+#endif
+        }
 	}
 }

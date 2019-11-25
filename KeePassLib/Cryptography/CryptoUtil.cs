@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 
 #if !KeePassUAP
@@ -181,7 +182,7 @@ namespace KeePassLib.Cryptography
 			return pbRet;
 		}
 
-#if !KeePassUAP
+#if (!KeePassUAP || NETSTANDARD2_0)
 		private static bool? g_obAesCsp = null;
 		internal static SymmetricAlgorithm CreateAes()
 		{
@@ -218,7 +219,7 @@ namespace KeePassLib.Cryptography
 		}
 #endif
 
-		public static byte[] ProtectData(byte[] pb, byte[] pbOptEntropy,
+        public static byte[] ProtectData(byte[] pb, byte[] pbOptEntropy,
 			DataProtectionScope s)
 		{
 			return ProtectDataPriv(pb, true, pbOptEntropy, s);

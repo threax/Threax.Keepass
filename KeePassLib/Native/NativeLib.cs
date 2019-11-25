@@ -134,10 +134,10 @@ namespace KeePassLib.Native
 		{
 			if(m_platID.HasValue) return m_platID.Value;
 
-#if KeePassUAP
+#if KeePassUAP && !NETSTANDARD2_0
 			m_platID = EnvironmentExt.OSVersion.Platform;
 #else
-			m_platID = Environment.OSVersion.Platform;
+            m_platID = Environment.OSVersion.Platform;
 #endif
 
 #if (!KeePassLibSD && !KeePassUAP)

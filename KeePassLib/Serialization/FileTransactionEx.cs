@@ -246,7 +246,11 @@ namespace KeePassLib.Serialization
 				if(bBaseExists) IOConnection.DeleteFile(m_iocBase);
 				IOConnection.RenameFile(m_iocTemp, m_iocBase);
 			}
-			else { Debug.Assert(pbSec != null); } // TxF success => NTFS => has ACL
+			else {
+#if !KeePassUAP
+                Debug.Assert(pbSec != null); 
+#endif
+            } // TxF success => NTFS => has ACL
 
 			try
 			{
@@ -448,7 +452,10 @@ namespace KeePassLib.Serialization
 		// https://sourceforge.net/p/keepass/discussion/329221/thread/514786c23a/
 		private bool IsOneDriveWorkaroundRequired()
 		{
-			if(NativeLib.IsUnix()) return false;
+#if NETSTANDARD2_0
+            return false;
+#else
+            if(NativeLib.IsUnix()) return false;
 
 			try
 			{
@@ -525,6 +532,7 @@ namespace KeePassLib.Serialization
 			catch(Exception) { Debug.Assert(false); }
 
 			return false;
-		}
-	}
+#endif
+        }
+    }
 }

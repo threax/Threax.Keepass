@@ -24,7 +24,7 @@ using System.IO;
 using System.Text;
 using System.Xml;
 
-#if !KeePassUAP
+#if !KeePassUAP || NETSTANDARD2_0
 using System.Drawing;
 #endif
 

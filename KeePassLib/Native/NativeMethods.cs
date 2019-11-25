@@ -244,7 +244,7 @@ namespace KeePassLib.Native
 #if KeePassLibSD
 			return Path.GetTempPath();
 #else
-#if KeePassUAP
+#if KeePassUAP && !NETSTANDARD2_0
 			string strRtDir = EnvironmentExt.AppDataLocalFolderPath;
 #else
 			string strRtDir = Environment.GetEnvironmentVariable("XDG_RUNTIME_DIR");

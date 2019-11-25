@@ -22,7 +22,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Security;
 
-#if !KeePassUAP
+#if !KeePassUAP || NETSTANDARD2_0
 using System.Security.Cryptography;
 #endif
 
@@ -85,10 +85,10 @@ namespace KeePassLib.Keys
 
 		private static string GetUserKeyFilePath(bool bCreate)
 		{
-#if KeePassUAP
+#if KeePassUAP && !NETSTANDARD2_0
 			string strUserDir = EnvironmentExt.AppDataRoamingFolderPath;
 #else
-			string strUserDir = Environment.GetFolderPath(
+            string strUserDir = Environment.GetFolderPath(
 				Environment.SpecialFolder.ApplicationData);
 #endif
 

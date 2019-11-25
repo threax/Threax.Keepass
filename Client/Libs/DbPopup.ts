@@ -24,7 +24,6 @@ export class DbPopup {
     private currentPromise: ep.ExternalPromise<boolean>;
     private iframe: HTMLIFrameElement;
     private resizeEvent;
-    private autoClose: boolean = false;
 
     constructor(bindings: controller.BindingCollection, private options: DbPopupOptions, fetcher: Fetcher) {
         this.dialog = bindings.getToggle("dialog");
@@ -38,7 +37,6 @@ export class DbPopup {
         while (currentFetcher) {
             if (DbFetcher.isInstance(currentFetcher)) {
                 currentFetcher.onNeedDbPassword.add(f => {
-                    this.autoClose = true;
                     return this.showLogin();
                 });
             }
@@ -65,8 +63,7 @@ export class DbPopup {
 
     private handleMessage(e: MessageEvent): void {
         var message: ILoginMessage = JSON.parse(e.data);
-        if (message.type === MessageType && message.unlocked && this.autoClose) {
-            this.autoClose = false;
+        if (message.type === MessageType && message.unlocked) {
             this.dialog.off();
         }
     }

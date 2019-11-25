@@ -18,4 +18,4 @@ FROM base AS final
 ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
 WORKDIR /app
 COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "KeePassWeb.dll"]
+ENTRYPOINT ["dotnet", "Threax.Keepass.dll"]

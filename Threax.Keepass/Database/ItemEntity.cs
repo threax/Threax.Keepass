@@ -8,7 +8,7 @@ using Threax.AspNetCore.Halcyon.Ext;
 using Threax.AspNetCore.Models;
 using Threax.AspNetCore.Tracking;
 
-namespace KeePassWeb.Database 
+namespace Threax.Keepass.Database 
 {
     public partial class ItemEntity : ICreatedModified
     {

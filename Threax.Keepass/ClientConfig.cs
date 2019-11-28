@@ -2,7 +2,7 @@
 using HtmlRapier.TagHelpers;
 using Newtonsoft.Json;
 
-namespace KeePassWeb
+namespace Threax.Keepass
 {
     /// <summary>
     /// Client side configuration, copied onto pages returned to client, so don't include secrets.

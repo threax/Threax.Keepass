@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace KeePassWeb.Services
+namespace Threax.Keepass.Services
 {
     public class KeePassDbClosedException : Exception
     {

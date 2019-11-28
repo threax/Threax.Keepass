@@ -5,7 +5,7 @@ using System;
 using System.IO;
 using Threax.AspNetCore.BuiltInTools;
 
-namespace KeePassWeb
+namespace Threax.Keepass
 {
     public class Program
     {

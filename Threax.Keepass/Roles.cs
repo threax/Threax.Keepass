@@ -1,12 +1,12 @@
 ﻿using Halcyon.HAL.Attributes;
-using KeePassWeb.Controllers.Api;
+using Threax.Keepass.Controllers.Api;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Threax.AspNetCore.Halcyon.Ext;
 using Threax.AspNetCore.UserBuilder.Entities.Mvc;
 
-namespace KeePassWeb
+namespace Threax.Keepass
 {
     /// <summary>
     /// This class makes it easy to keep track of role constants throught the system.

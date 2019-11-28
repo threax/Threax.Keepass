@@ -1,6 +1,6 @@
-﻿using KeePassWeb.InputModels;
-using KeePassWeb.Services;
-using KeePassWeb.ViewModels;
+﻿using Threax.Keepass.InputModels;
+using Threax.Keepass.Services;
+using Threax.Keepass.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Threax.AspNetCore.Halcyon.Ext;
 
-namespace KeePassWeb.Controllers.Api
+namespace Threax.Keepass.Controllers.Api
 {
     [Route("api/[controller]")]
     [ResponseCache(NoStore = true)]

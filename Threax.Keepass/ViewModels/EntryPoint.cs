@@ -1,10 +1,10 @@
 ﻿using Halcyon.HAL.Attributes;
-using KeePassWeb.Controllers.Api;
+using Threax.Keepass.Controllers.Api;
 using Threax.AspNetCore.Halcyon.Ext;
 using Threax.AspNetCore.UserBuilder.Entities.Mvc;
 using Threax.AspNetCore.UserLookup.Mvc.Controllers;
 
-namespace KeePassWeb.ViewModels
+namespace Threax.Keepass.ViewModels
 {
     [HalModel]
     [HalEntryPoint]

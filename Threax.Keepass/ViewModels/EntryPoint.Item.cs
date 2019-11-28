@@ -1,8 +1,8 @@
 using Halcyon.HAL.Attributes;
 using Threax.AspNetCore.Halcyon.Ext;
-using KeePassWeb.Controllers.Api;
+using Threax.Keepass.Controllers.Api;
 
-namespace KeePassWeb.ViewModels
+namespace Threax.Keepass.ViewModels
 {
     [HalActionLink(typeof(ItemsController), nameof(ItemsController.List), "ListItems")]
     [HalActionLink(typeof(ItemsController), nameof(ItemsController.Add), "AddItem")]

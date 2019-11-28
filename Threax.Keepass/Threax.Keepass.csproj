@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
-    <UserSecretsId>aspnet-KeePassWeb</UserSecretsId>
+    <UserSecretsId>aspnet-Threax.Keepass</UserSecretsId>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>1701;1702;1705;1591</NoWarn>

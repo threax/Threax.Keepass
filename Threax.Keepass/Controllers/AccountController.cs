@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Threax.AspNetCore.IdServerAuth;
 
-namespace KeePassWeb.Controllers
+namespace Threax.Keepass.Controllers
 {
     [Authorize(AuthenticationSchemes = AuthCoreSchemes.Cookies)]
     public class AccountController : Controller

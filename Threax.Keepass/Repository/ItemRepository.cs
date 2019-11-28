@@ -1,18 +1,18 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using KeePassWeb.Database;
-using KeePassWeb.InputModels;
-using KeePassWeb.ViewModels;
-using KeePassWeb.Mappers;
+using Threax.Keepass.Database;
+using Threax.Keepass.InputModels;
+using Threax.Keepass.ViewModels;
+using Threax.Keepass.Mappers;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Threax.AspNetCore.Halcyon.Ext;
-using KeePassWeb.Services;
+using Threax.Keepass.Services;
 
-namespace KeePassWeb.Repository
+namespace Threax.Keepass.Repository
 {
     public partial class ItemRepository : IItemRepository
     {

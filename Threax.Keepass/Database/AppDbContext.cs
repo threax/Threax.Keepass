@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Threax.AspNetCore.UserBuilder.Entities;
 
-namespace KeePassWeb.Database
+namespace Threax.Keepass.Database
 {
     /// <summary>
     /// By default the app db context extends the UsersDbContext from Authorization. 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Threax.AspNetCore.ExceptionFilter;
 using Threax.AspNetCore.Halcyon.Ext;
 
-namespace KeePassWeb.Controllers.Api
+namespace Threax.Keepass.Controllers.Api
 {
     [Route("api/[controller]")]
     [ResponseCache(NoStore = true)]

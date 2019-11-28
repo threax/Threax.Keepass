@@ -1,6 +1,6 @@
 using Halcyon.HAL.Attributes;
-using KeePassWeb.Controllers;
-using KeePassWeb.Database;
+using Threax.Keepass.Controllers;
+using Threax.Keepass.Database;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +10,7 @@ using Threax.AspNetCore.Halcyon.Ext.ValueProviders;
 using Threax.AspNetCore.Models;
 using System.ComponentModel.DataAnnotations;
 
-namespace KeePassWeb.InputModels
+namespace Threax.Keepass.InputModels
 {
     [HalModel]
     public partial class ItemQuery : PagedCollectionQuery

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Threax.AspNetCore.UserBuilder.Entities;
 
-namespace KeePassWeb.Controllers
+namespace Threax.Keepass.Controllers
 {
     [Authorize(AuthenticationSchemes = AuthCoreSchemes.Cookies)]
     public class AdminController : Controller

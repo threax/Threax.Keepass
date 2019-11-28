@@ -6,7 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace KeePassWeb.Controllers
+namespace Threax.Keepass.Controllers
 {
     [Authorize(AuthenticationSchemes = AuthCoreSchemes.Cookies)]
     public class ApiExplorerController : Controller

@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using KeePassWeb.InputModels;
-using KeePassWeb.ViewModels;
+using Threax.Keepass.InputModels;
+using Threax.Keepass.ViewModels;
 using Threax.AspNetCore.Halcyon.Ext;
 
-namespace KeePassWeb.Repository
+namespace Threax.Keepass.Repository
 {
     public partial interface IItemRepository
     {

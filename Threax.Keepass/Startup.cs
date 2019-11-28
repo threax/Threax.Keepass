@@ -1,6 +1,6 @@
-﻿using KeePassWeb.Controllers;
-using KeePassWeb.Controllers.Api;
-using KeePassWeb.Database;
+﻿using Threax.Keepass.Controllers;
+using Threax.Keepass.Controllers.Api;
+using Threax.Keepass.Database;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -25,19 +25,19 @@ using Threax.AspNetCore.UserLookup.Mvc.Controllers;
 using Threax.Extensions.Configuration.SchemaBinder;
 using Threax.Sqlite.Ext.EfCore3;
 using Microsoft.Extensions.Hosting;
-using KeePassWeb.Services;
+using Threax.Keepass.Services;
 using KeePassLib.Interfaces;
 
-namespace KeePassWeb
+namespace Threax.Keepass
 {
     public class Startup
     {
         //Replace the following values with your own values
         private IdServerAuthAppOptions authConfig = new IdServerAuthAppOptions()
         {
-            Scope = "KeePassWeb", //The name of the scope for api access
-            DisplayName = "KeePassWeb", //Change this to a pretty name for the client/resource
-            ClientId = "KeePassWeb", //Change this to a unique client id
+            Scope = "Threax.Keepass", //The name of the scope for api access
+            DisplayName = "Threax.Keepass", //Change this to a pretty name for the client/resource
+            ClientId = "Threax.Keepass", //Change this to a unique client id
             AdditionalScopes = new List<String> { /*Additional scopes here "ScopeName", "Scope2Name", "etc"*/ },
             ClientCredentialsScopes = new List<string> { "Threax.IdServer" }
         };
@@ -85,7 +85,7 @@ namespace KeePassWeb
                 SourceAssemblies = new Assembly[] { this.GetType().GetTypeInfo().Assembly, typeof(UserSearchController).Assembly },
                 CSharp = new CSharpOptions()
                 {
-                    Namespace = "KeePassWeb.Client"
+                    Namespace = "Threax.Keepass.Client"
                 }
             });
 

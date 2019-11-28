@@ -6,17 +6,23 @@ using System.Threading.Tasks;
 using Halcyon.HAL.Attributes;
 using Threax.AspNetCore.Halcyon.Ext;
 using Threax.AspNetCore.Models;
+using Threax.AspNetCore.Tracking;
+using Threax.Keepass.Controllers.Api;
 using Threax.AspNetCore.Halcyon.Ext.ValueProviders;
 
-namespace Threax.Keepass.InputModels 
+namespace Threax.Keepass.ModelSchemas
 {
-    [HalModel]
-    public partial class ItemInput
+    [KeyName("ItemId")]
+    [PluralName("Entries")]
+    public class Entry
     {
         public String Name { get; set; }
 
-        [HiddenUiType]
-        public bool IsGroup { get; set; }
+        public String UserName { get; set; }
 
+        public String Url { get; set; }
+
+        [TextAreaUiType]
+        public String Notes { get; set; }
     }
 }

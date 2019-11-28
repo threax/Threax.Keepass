@@ -5,9 +5,9 @@ using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using Threax.ReflectedServices;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using KeePassWeb.Repository;
+using Threax.Keepass.Repository;
 
-namespace KeePassWeb.Repository.Config
+namespace Threax.Keepass.Repository.Config
 {
     public partial class ItemRepositoryConfig : IServiceSetup
     {

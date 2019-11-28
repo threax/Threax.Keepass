@@ -4,12 +4,12 @@ using System.Text;
 using AutoMapper;
 using Threax.AspNetCore.Models;
 using Threax.AspNetCore.Tracking;
-using KeePassWeb.InputModels;
-using KeePassWeb.Database;
-using KeePassWeb.ViewModels;
+using Threax.Keepass.InputModels;
+using Threax.Keepass.Database;
+using Threax.Keepass.ViewModels;
 using System.Linq;
 
-namespace KeePassWeb.Mappers
+namespace Threax.Keepass.Mappers
 {
     public partial class AppMapper
     {

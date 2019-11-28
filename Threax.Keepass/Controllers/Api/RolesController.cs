@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Threax.AspNetCore.UserBuilder.Entities.Mvc;
 using Halcyon.HAL.Attributes;
 
-namespace KeePassWeb.Controllers.Api
+namespace Threax.Keepass.Controllers.Api
 {
     [Route("api/[controller]")]
     [ResponseCache(NoStore = true)]

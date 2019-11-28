@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace KeePassWeb
+namespace Threax.Keepass
 {
     /// <summary>
     /// The primary configuration for the app.

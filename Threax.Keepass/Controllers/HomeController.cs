@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
-namespace KeePassWeb.Controllers
+namespace Threax.Keepass.Controllers
 {
     [Authorize(AuthenticationSchemes = AuthCoreSchemes.Cookies)]
     public partial class HomeController : Controller

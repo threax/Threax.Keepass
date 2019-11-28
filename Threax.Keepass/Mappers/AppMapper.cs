@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace KeePassWeb.Mappers
+namespace Threax.Keepass.Mappers
 {
     /// <summary>
     /// The app mapper defines all the object mappings that this application can perform.

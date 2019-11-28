@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Threax.AspNetCore.Models;
 
-namespace KeePassWeb.InputModels
+namespace Threax.Keepass.InputModels
 {
     [HalModel]
     public class OpenDbInput

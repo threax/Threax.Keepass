@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using KeePassWeb.Database;
-using KeePassWeb.InputModels;
-using KeePassWeb.ViewModels;
+using Threax.Keepass.Database;
+using Threax.Keepass.InputModels;
+using Threax.Keepass.ViewModels;
 
-namespace KeePassWeb.Services
+namespace Threax.Keepass.Services
 {
     public interface IKeePassService : IDisposable
     {

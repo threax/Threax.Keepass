@@ -1,14 +1,14 @@
 using Halcyon.HAL.Attributes;
-using KeePassWeb.Controllers.Api;
-using KeePassWeb.InputModels;
-using KeePassWeb.Services;
+using Threax.Keepass.Controllers.Api;
+using Threax.Keepass.InputModels;
+using Threax.Keepass.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Threax.AspNetCore.Halcyon.Ext;
 
-namespace KeePassWeb.ViewModels
+namespace Threax.Keepass.ViewModels
 {
     [HalModel]
     [HalSelfActionLink(typeof(ItemsController), nameof(ItemsController.List))]

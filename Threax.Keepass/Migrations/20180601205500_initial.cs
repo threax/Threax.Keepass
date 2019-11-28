@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace KeePassWeb.Migrations
+namespace Threax.Keepass.Migrations
 {
     public partial class initial : Migration
     {

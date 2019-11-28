@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Threax.AspNetCore.Models;
 
-namespace KeePassWeb.ModelSchemas
+namespace Threax.Keepass.ModelSchemas
 {
     public class Item
     {

@@ -16,7 +16,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "KeePassWeb": {
+    "Threax.Keepass": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {

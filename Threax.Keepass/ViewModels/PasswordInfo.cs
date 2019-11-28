@@ -1,5 +1,5 @@
 ﻿using Halcyon.HAL.Attributes;
-using KeePassWeb.Controllers.Api;
+using Threax.Keepass.Controllers.Api;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Threax.AspNetCore.Halcyon.Ext;
 using Threax.AspNetCore.Models;
 
-namespace KeePassWeb.ViewModels
+namespace Threax.Keepass.ViewModels
 {
     [HalModel]
     [HalSelfActionLink(typeof(ItemsController), nameof(ItemsController.GetPassword))]

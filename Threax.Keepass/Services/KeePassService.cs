@@ -2,9 +2,9 @@
 using KeePassLib.Collections;
 using KeePassLib.Interfaces;
 using KeePassLib.Keys;
-using KeePassWeb.Database;
-using KeePassWeb.InputModels;
-using KeePassWeb.ViewModels;
+using Threax.Keepass.Database;
+using Threax.Keepass.InputModels;
+using Threax.Keepass.ViewModels;
 using Nito.AsyncEx;
 using System;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace KeePassWeb.Services
+namespace Threax.Keepass.Services
 {
     public class KeePassService : IKeePassService
     {

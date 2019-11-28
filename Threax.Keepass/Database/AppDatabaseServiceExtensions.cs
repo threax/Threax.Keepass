@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using KeePassWeb.InputModels;
-using KeePassWeb.Repository;
+using Threax.Keepass.InputModels;
+using Threax.Keepass.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +12,9 @@ using Threax.AspNetCore.BuiltInTools;
 using Threax.AspNetCore.Models;
 using Threax.AspNetCore.UserBuilder.Entities;
 using Threax.Sqlite.Ext;
-using KeePassWeb.Mappers;
+using Threax.Keepass.Mappers;
 
-namespace KeePassWeb.Database
+namespace Threax.Keepass.Database
 {
     public static class AppDatabaseServiceExtensions
     {

@@ -159,7 +159,7 @@ namespace Threax.Keepass.Services
             return default(ItemEntity);
         }
 
-        public async Task<EntryEntity> GetEntry(Guid itemId)
+        public async Task<Entry> GetEntry(Guid itemId)
         {
             ResetTimer();
             using (await mutex.LockAsync())
@@ -169,7 +169,7 @@ namespace Threax.Keepass.Services
             }
         }
 
-        private EntryEntity DoGetEntry(Guid itemId)
+        private Entry DoGetEntry(Guid itemId)
         {
             if (itemId != null)
             {
@@ -179,10 +179,10 @@ namespace Threax.Keepass.Services
                 var entry = db.RootGroup.FindEntry(id, true);
                 if (entry != null)
                 {
-                    return EntryToEntity(entry);
+                    return EntryToView(entry);
                 }
             }
-            return default(EntryEntity);
+            return default(Entry);
         }
 
         public async Task<String> GetPassword(Guid itemId)
@@ -206,13 +206,13 @@ namespace Threax.Keepass.Services
             }
         }
 
-        public async Task<EntryEntity> Add(Guid? parent, EntryInput item)
+        public async Task<ItemEntity> Add(Guid? parent, ItemInput item)
         {
             ResetTimer();
             using (await mutex.LockAsync())
             {
                 var entry = new PwEntry(true, true);
-                entry = EntryInputToEntry(item, entry);
+                entry = ItemInputToEntry(item, entry);
                 var group = db.RootGroup;
                 if(parent != null)
                 {
@@ -226,19 +226,19 @@ namespace Threax.Keepass.Services
                 }
                 group.AddEntry(entry, true);
                 db.Save(statusLogger);
-                return EntryToEntity(entry);
+                return EntryToItemEntity(entry);
             }
         }
 
-        public async Task<EntryEntity> Update(Guid itemId, EntryInput item)
+        public async Task<ItemEntity> Update(Guid itemId, ItemInput item)
         {
             ResetTimer();
             using (await mutex.LockAsync())
             {
                 PwEntry entry = GetEntryFromGuid(itemId);
-                entry = EntryInputToEntry(item, entry);
+                entry = ItemInputToEntry(item, entry);
                 db.Save(statusLogger);
-                return EntryToEntity(entry);
+                return EntryToItemEntity(entry);
             }
         }
 
@@ -277,9 +277,9 @@ namespace Threax.Keepass.Services
             };
         }
 
-        private static EntryEntity EntryToEntity(PwEntry i)
+        private static Entry EntryToView(PwEntry i)
         {
-            return new EntryEntity()
+            return new Entry()
             {
                 Created = i.CreationTime,
                 Modified = i.LastAccessTime,
@@ -291,7 +291,7 @@ namespace Threax.Keepass.Services
             };
         }
 
-        private static PwEntry EntryInputToEntry(EntryInput i, PwEntry entry)
+        private static PwEntry ItemInputToEntry(ItemInput i, PwEntry entry)
         {
             entry.LastModificationTime = DateTime.UtcNow;
             UpdateString(entry, "Title", false, i.Name);

@@ -36,5 +36,50 @@ namespace Threax.Keepass.Controllers.Api
         {
             return await repo.Get(itemId);
         }
+
+        [HttpGet("Entry/{ItemId}")]
+        [HalRel("GetEntry")]
+        public async Task<Entry> GetEntry(Guid itemId)
+        {
+            return await repo.GetEntry(itemId);
+        }
+
+        [HttpGet("Password/{ItemId}")]
+        [HalRel("GetPassword")]
+        public async Task<PasswordInfo> GetPassword(Guid itemId)
+        {
+            return await repo.GetPassword(itemId);
+        }
+
+        [HttpPost]
+        [HalRel(CrudRels.Add)]
+        [AutoValidate("Cannot add new item")]
+        public async Task<Item> Add([FromBody]ItemInput item)
+        {
+            return await repo.Add(item);
+        }
+
+        [HttpPost("{ParentItemId}")]
+        [HalRel("AddChild")]
+        [AutoValidate("Cannot add new entry")]
+        public async Task<Item> AddChild(Guid parentItemId, [FromBody]ItemInput entry)
+        {
+            return await repo.Add(parentItemId, entry);
+        }
+
+        [HttpPut("{ItemId}")]
+        [HalRel(CrudRels.Update)]
+        [AutoValidate("Cannot update item")]
+        public async Task<Item> Update(Guid itemId, [FromBody]ItemInput item)
+        {
+            return await repo.Update(itemId, item);
+        }
+
+        [HttpDelete("{ItemId}")]
+        [HalRel(CrudRels.Delete)]
+        public async Task Delete(Guid itemId)
+        {
+            await repo.Delete(itemId);
+        }
     }
 }

@@ -45,6 +45,10 @@ namespace Threax.Keepass.Mappers
             mapExpr.ForMember(d => d.ItemId, opt => opt.Ignore())
                 .ForMember(d => d.Created, opt => opt.MapFrom<ICreatedResolver>())
                 .ForMember(d => d.Modified, opt => opt.MapFrom<IModifiedResolver>());
+
+            mapExpr.ForMember(d => d.ItemId, opt => opt.Ignore())
+               .ForMember(d => d.Created, opt => opt.MapFrom<ICreatedResolver>())
+               .ForMember(d => d.Modified, opt => opt.MapFrom<IModifiedResolver>());
         }
 
         void MapEntityToView(IMappingExpression<ItemEntity, Item> mapExpr)

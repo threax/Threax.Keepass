@@ -352,10 +352,10 @@ export class EntryResult {
         return this.strongData;
     }
 
-    public refresh(): Promise<EntryResult> {
+    public refresh(): Promise<ItemResult> {
         return this.client.LoadLink("self")
                .then(r => {
-                    return new EntryResult(r);
+                    return new ItemResult(r);
                 });
 
     }
@@ -379,10 +379,10 @@ export class EntryResult {
         return this.client.HasLinkDoc("self");
     }
 
-    public update(data: EntryInput): Promise<EntryResult> {
+    public update(data: ItemInput): Promise<ItemResult> {
         return this.client.LoadLinkWithData("Update", data)
                .then(r => {
-                    return new EntryResult(r);
+                    return new ItemResult(r);
                 });
 
     }
@@ -417,227 +417,32 @@ export class EntryResult {
     public linkForDelete(): hal.HalLink {
         return this.client.GetLink("Delete");
     }
-}
 
-export class EntryCollectionResult {
-    private client: hal.HalEndpointClient;
-
-    constructor(client: hal.HalEndpointClient) {
-        this.client = client;
-    }
-
-    private strongData: EntryCollection = undefined;
-    public get data(): EntryCollection {
-        this.strongData = this.strongData || this.client.GetData<EntryCollection>();
-        return this.strongData;
-    }
-
-    private itemsStrong: EntryResult[];
-    public get items(): EntryResult[] {
-        if (this.itemsStrong === undefined) {
-            var embeds = this.client.GetEmbed("values");
-            var clients = embeds.GetAllClients();
-            this.itemsStrong = [];
-            for (var i = 0; i < clients.length; ++i) {
-                this.itemsStrong.push(new EntryResult(clients[i]));
-            }
-        }
-        return this.itemsStrong;
-    }
-
-    public refresh(): Promise<EntryCollectionResult> {
-        return this.client.LoadLink("self")
+    public getPassword(): Promise<PasswordInfoResult> {
+        return this.client.LoadLink("GetPassword")
                .then(r => {
-                    return new EntryCollectionResult(r);
+                    return new PasswordInfoResult(r);
                 });
 
     }
 
-    public canRefresh(): boolean {
-        return this.client.HasLink("self");
+    public canGetPassword(): boolean {
+        return this.client.HasLink("GetPassword");
     }
 
-    public linkForRefresh(): hal.HalLink {
-        return this.client.GetLink("self");
+    public linkForGetPassword(): hal.HalLink {
+        return this.client.GetLink("GetPassword");
     }
 
-    public getRefreshDocs(query?: HalEndpointDocQuery): Promise<hal.HalEndpointDoc> {
-        return this.client.LoadLinkDoc("self", query)
+    public getGetPasswordDocs(query?: HalEndpointDocQuery): Promise<hal.HalEndpointDoc> {
+        return this.client.LoadLinkDoc("GetPassword", query)
             .then(r => {
                 return r.GetData<hal.HalEndpointDoc>();
             });
     }
 
-    public hasRefreshDocs(): boolean {
-        return this.client.HasLinkDoc("self");
-    }
-
-    public getGetDocs(query?: HalEndpointDocQuery): Promise<hal.HalEndpointDoc> {
-        return this.client.LoadLinkDoc("Get", query)
-            .then(r => {
-                return r.GetData<hal.HalEndpointDoc>();
-            });
-    }
-
-    public hasGetDocs(): boolean {
-        return this.client.HasLinkDoc("Get");
-    }
-
-    public getListDocs(query?: HalEndpointDocQuery): Promise<hal.HalEndpointDoc> {
-        return this.client.LoadLinkDoc("List", query)
-            .then(r => {
-                return r.GetData<hal.HalEndpointDoc>();
-            });
-    }
-
-    public hasListDocs(): boolean {
-        return this.client.HasLinkDoc("List");
-    }
-
-    public getUpdateDocs(query?: HalEndpointDocQuery): Promise<hal.HalEndpointDoc> {
-        return this.client.LoadLinkDoc("Update", query)
-            .then(r => {
-                return r.GetData<hal.HalEndpointDoc>();
-            });
-    }
-
-    public hasUpdateDocs(): boolean {
-        return this.client.HasLinkDoc("Update");
-    }
-
-    public add(data: EntryInput): Promise<EntryResult> {
-        return this.client.LoadLinkWithData("Add", data)
-               .then(r => {
-                    return new EntryResult(r);
-                });
-
-    }
-
-    public canAdd(): boolean {
-        return this.client.HasLink("Add");
-    }
-
-    public linkForAdd(): hal.HalLink {
-        return this.client.GetLink("Add");
-    }
-
-    public getAddDocs(query?: HalEndpointDocQuery): Promise<hal.HalEndpointDoc> {
-        return this.client.LoadLinkDoc("Add", query)
-            .then(r => {
-                return r.GetData<hal.HalEndpointDoc>();
-            });
-    }
-
-    public hasAddDocs(): boolean {
-        return this.client.HasLinkDoc("Add");
-    }
-
-    public next(): Promise<EntryCollectionResult> {
-        return this.client.LoadLink("next")
-               .then(r => {
-                    return new EntryCollectionResult(r);
-                });
-
-    }
-
-    public canNext(): boolean {
-        return this.client.HasLink("next");
-    }
-
-    public linkForNext(): hal.HalLink {
-        return this.client.GetLink("next");
-    }
-
-    public getNextDocs(query?: HalEndpointDocQuery): Promise<hal.HalEndpointDoc> {
-        return this.client.LoadLinkDoc("next", query)
-            .then(r => {
-                return r.GetData<hal.HalEndpointDoc>();
-            });
-    }
-
-    public hasNextDocs(): boolean {
-        return this.client.HasLinkDoc("next");
-    }
-
-    public previous(): Promise<EntryCollectionResult> {
-        return this.client.LoadLink("previous")
-               .then(r => {
-                    return new EntryCollectionResult(r);
-                });
-
-    }
-
-    public canPrevious(): boolean {
-        return this.client.HasLink("previous");
-    }
-
-    public linkForPrevious(): hal.HalLink {
-        return this.client.GetLink("previous");
-    }
-
-    public getPreviousDocs(query?: HalEndpointDocQuery): Promise<hal.HalEndpointDoc> {
-        return this.client.LoadLinkDoc("previous", query)
-            .then(r => {
-                return r.GetData<hal.HalEndpointDoc>();
-            });
-    }
-
-    public hasPreviousDocs(): boolean {
-        return this.client.HasLinkDoc("previous");
-    }
-
-    public first(): Promise<EntryCollectionResult> {
-        return this.client.LoadLink("first")
-               .then(r => {
-                    return new EntryCollectionResult(r);
-                });
-
-    }
-
-    public canFirst(): boolean {
-        return this.client.HasLink("first");
-    }
-
-    public linkForFirst(): hal.HalLink {
-        return this.client.GetLink("first");
-    }
-
-    public getFirstDocs(query?: HalEndpointDocQuery): Promise<hal.HalEndpointDoc> {
-        return this.client.LoadLinkDoc("first", query)
-            .then(r => {
-                return r.GetData<hal.HalEndpointDoc>();
-            });
-    }
-
-    public hasFirstDocs(): boolean {
-        return this.client.HasLinkDoc("first");
-    }
-
-    public last(): Promise<EntryCollectionResult> {
-        return this.client.LoadLink("last")
-               .then(r => {
-                    return new EntryCollectionResult(r);
-                });
-
-    }
-
-    public canLast(): boolean {
-        return this.client.HasLink("last");
-    }
-
-    public linkForLast(): hal.HalLink {
-        return this.client.GetLink("last");
-    }
-
-    public getLastDocs(query?: HalEndpointDocQuery): Promise<hal.HalEndpointDoc> {
-        return this.client.LoadLinkDoc("last", query)
-            .then(r => {
-                return r.GetData<hal.HalEndpointDoc>();
-            });
-    }
-
-    public hasLastDocs(): boolean {
-        return this.client.HasLinkDoc("last");
+    public hasGetPasswordDocs(): boolean {
+        return this.client.HasLinkDoc("GetPassword");
     }
 }
 
@@ -899,60 +704,6 @@ export class EntryPointResult {
         return this.client.HasLinkDoc("CloseDb");
     }
 
-    public listEntries(data: EntryQuery): Promise<EntryCollectionResult> {
-        return this.client.LoadLinkWithData("ListEntries", data)
-               .then(r => {
-                    return new EntryCollectionResult(r);
-                });
-
-    }
-
-    public canListEntries(): boolean {
-        return this.client.HasLink("ListEntries");
-    }
-
-    public linkForListEntries(): hal.HalLink {
-        return this.client.GetLink("ListEntries");
-    }
-
-    public getListEntriesDocs(query?: HalEndpointDocQuery): Promise<hal.HalEndpointDoc> {
-        return this.client.LoadLinkDoc("ListEntries", query)
-            .then(r => {
-                return r.GetData<hal.HalEndpointDoc>();
-            });
-    }
-
-    public hasListEntriesDocs(): boolean {
-        return this.client.HasLinkDoc("ListEntries");
-    }
-
-    public addEntry(data: EntryInput): Promise<EntryResult> {
-        return this.client.LoadLinkWithData("AddEntry", data)
-               .then(r => {
-                    return new EntryResult(r);
-                });
-
-    }
-
-    public canAddEntry(): boolean {
-        return this.client.HasLink("AddEntry");
-    }
-
-    public linkForAddEntry(): hal.HalLink {
-        return this.client.GetLink("AddEntry");
-    }
-
-    public getAddEntryDocs(query?: HalEndpointDocQuery): Promise<hal.HalEndpointDoc> {
-        return this.client.LoadLinkDoc("AddEntry", query)
-            .then(r => {
-                return r.GetData<hal.HalEndpointDoc>();
-            });
-    }
-
-    public hasAddEntryDocs(): boolean {
-        return this.client.HasLinkDoc("AddEntry");
-    }
-
     public listItems(data: ItemQuery): Promise<ItemCollectionResult> {
         return this.client.LoadLinkWithData("ListItems", data)
                .then(r => {
@@ -1021,10 +772,10 @@ export class ItemResult {
         return this.client.HasLinkDoc("self");
     }
 
-    public getEntry(): Promise<EntryResult> {
+    public getEntry(): Promise<ItemResult> {
         return this.client.LoadLink("GetEntry")
                .then(r => {
-                    return new EntryResult(r);
+                    return new ItemResult(r);
                 });
 
     }
@@ -1048,10 +799,10 @@ export class ItemResult {
         return this.client.HasLinkDoc("GetEntry");
     }
 
-    public update(data: EntryInput): Promise<EntryResult> {
+    public update(data: ItemInput): Promise<ItemResult> {
         return this.client.LoadLinkWithData("Update", data)
                .then(r => {
-                    return new EntryResult(r);
+                    return new ItemResult(r);
                 });
 
     }
@@ -1201,10 +952,10 @@ export class ItemCollectionResult {
         return this.client.HasLinkDoc("Update");
     }
 
-    public add(data: EntryInput): Promise<EntryResult> {
+    public add(data: ItemInput): Promise<ItemResult> {
         return this.client.LoadLinkWithData("Add", data)
                .then(r => {
-                    return new EntryResult(r);
+                    return new ItemResult(r);
                 });
 
     }
@@ -1226,33 +977,6 @@ export class ItemCollectionResult {
 
     public hasAddDocs(): boolean {
         return this.client.HasLinkDoc("Add");
-    }
-
-    public addChild(data: EntryInput): Promise<EntryResult> {
-        return this.client.LoadLinkWithData("AddChild", data)
-               .then(r => {
-                    return new EntryResult(r);
-                });
-
-    }
-
-    public canAddChild(): boolean {
-        return this.client.HasLink("AddChild");
-    }
-
-    public linkForAddChild(): hal.HalLink {
-        return this.client.GetLink("AddChild");
-    }
-
-    public getAddChildDocs(query?: HalEndpointDocQuery): Promise<hal.HalEndpointDoc> {
-        return this.client.LoadLinkDoc("AddChild", query)
-            .then(r => {
-                return r.GetData<hal.HalEndpointDoc>();
-            });
-    }
-
-    public hasAddChildDocs(): boolean {
-        return this.client.HasLinkDoc("AddChild");
     }
 
     public next(): Promise<ItemCollectionResult> {
@@ -1485,10 +1209,10 @@ export class PasswordInfoResult {
         return this.client.HasLinkDoc("GetItem");
     }
 
-    public getEntry(): Promise<EntryResult> {
+    public getEntry(): Promise<ItemResult> {
         return this.client.LoadLink("GetEntry")
                .then(r => {
-                    return new EntryResult(r);
+                    return new ItemResult(r);
                 });
 
     }
@@ -2031,26 +1755,25 @@ export interface Entry {
     modified?: string;
 }
 
-export interface EntryInput {
+export interface Item {
+    itemId?: string;
     name?: string;
+    isGroup?: boolean;
+    created?: string;
+    modified?: string;
+}
+
+export interface ItemInput {
+    name?: string;
+    isGroup?: boolean;
     userName?: string;
     url?: string;
     notes?: string;
 }
 
-export interface EntryCollection {
-    offset?: number;
-    /** Lookup a entry by id. */
+export interface PasswordInfo {
     itemId?: string;
-    total?: number;
-    limit?: number;
-}
-
-export interface EntryQuery {
-    /** Lookup a entry by id. */
-    itemId?: string;
-    offset?: number;
-    limit?: number;
+    password?: string;
 }
 
 export interface ItemQuery {
@@ -2073,19 +1796,6 @@ export interface ItemCollection {
     search?: string;
     offset?: number;
     limit?: number;
-}
-
-export interface Item {
-    itemId?: string;
-    name?: string;
-    isGroup?: boolean;
-    created?: string;
-    modified?: string;
-}
-
-export interface PasswordInfo {
-    itemId?: string;
-    password?: string;
 }
 
 export interface UserSearch {

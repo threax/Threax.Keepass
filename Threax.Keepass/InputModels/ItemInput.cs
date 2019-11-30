@@ -18,5 +18,12 @@ namespace Threax.Keepass.InputModels
         [HiddenUiType]
         public bool IsGroup { get; set; }
 
+        public String UserName { get; set; }
+
+        public String Url { get; set; }
+
+        [TextAreaUiType()]
+        public String Notes { get; set; }
+
     }
 }

@@ -49,5 +49,42 @@ namespace Threax.Keepass.Repository
             var entity = await keepass.Get(itemId);
             return mapper.MapItem(entity, new Item());
         }
+
+        public Task<Entry> GetEntry(Guid itemId)
+        {
+            return keepass.GetEntry(itemId);
+        }
+        
+        public async Task<PasswordInfo> GetPassword(Guid itemId)
+        {
+            return new PasswordInfo()
+            {
+                Password = await keepass.GetPassword(itemId),
+                ItemId = itemId
+            };
+        }
+
+        public async Task<Item> Add(ItemInput entry)
+        {
+            var entity = await keepass.Add(null, entry);
+            return mapper.MapItem(entity, new Item());
+        }
+
+        public async Task<Item> Add(Guid? parent, ItemInput entry)
+        {
+            var entity = await keepass.Add(parent, entry);
+            return mapper.MapItem(entity, new Item());
+        }
+
+        public async Task<Item> Update(Guid itemId, ItemInput entry)
+        {
+            var entity = await keepass.Update(itemId, entry);
+            return mapper.MapItem(entity, new Item());
+        }
+
+        public async Task Delete(Guid id)
+        {
+            await keepass.Delete(id);
+        }
     }
 }

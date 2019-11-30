@@ -10,9 +10,9 @@ using Threax.AspNetCore.Models;
 namespace Threax.Keepass.ViewModels
 {
     [HalModel]
-    [HalSelfActionLink(typeof(EntriesController), nameof(EntriesController.GetPassword))]
+    [HalSelfActionLink(typeof(ItemsController), nameof(ItemsController.GetPassword))]
     [HalActionLink(typeof(ItemsController), nameof(ItemsController.Get), "GetItem")]
-    [HalActionLink(typeof(EntriesController), nameof(EntriesController.Get), "GetEntry")]
+    [HalActionLink(typeof(ItemsController), nameof(ItemsController.Get), "GetEntry")]
     public class PasswordInfo
     {
         public Guid ItemId { get; set; }

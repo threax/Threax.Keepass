@@ -13,9 +13,10 @@ using Threax.AspNetCore.Halcyon.Ext.ValueProviders;
 namespace Threax.Keepass.ViewModels 
 {
     [HalModel]
-    [HalSelfActionLink(typeof(EntriesController), nameof(EntriesController.Get))]
-    [HalActionLink(typeof(EntriesController), nameof(EntriesController.Update))]
-    [HalActionLink(typeof(EntriesController), nameof(EntriesController.Delete))]
+    [HalSelfActionLink(typeof(ItemsController), nameof(ItemsController.GetEntry))]
+    [HalActionLink(typeof(ItemsController), nameof(ItemsController.Update))]
+    [HalActionLink(typeof(ItemsController), nameof(ItemsController.Delete))]
+    [DeclareHalLink(typeof(ItemsController), nameof(ItemsController.GetPassword))]
     public partial class Entry : ICreatedModified
     {
         public Guid ItemId { get; set; }

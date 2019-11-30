@@ -14,8 +14,8 @@ namespace Threax.Keepass.ViewModels
     [HalSelfActionLink(typeof(ItemsController), nameof(ItemsController.List))]
     [HalActionLink(typeof(ItemsController), nameof(ItemsController.Get), DocsOnly = true)] //This provides access to docs for showing items
     [HalActionLink(typeof(ItemsController), nameof(ItemsController.List), DocsOnly = true)] //This provides docs for searching the list
-    [HalActionLink(typeof(EntriesController), nameof(EntriesController.Update), DocsOnly = true)] //This provides access to docs for updating items if the ui has different modes
-    [DeclareHalLink(typeof(EntriesController), nameof(EntriesController.Add))]
+    [HalActionLink(typeof(ItemsController), nameof(ItemsController.Update), DocsOnly = true)] //This provides access to docs for updating items if the ui has different modes
+    [DeclareHalLink(typeof(ItemsController), nameof(ItemsController.Add))]
     [DeclareHalLink(typeof(ItemsController), nameof(ItemsController.List), PagedCollectionView<Object>.Rels.Next, ResponseOnly = true)]
     [DeclareHalLink(typeof(ItemsController), nameof(ItemsController.List), PagedCollectionView<Object>.Rels.Previous, ResponseOnly = true)]
     [DeclareHalLink(typeof(ItemsController), nameof(ItemsController.List), PagedCollectionView<Object>.Rels.First, ResponseOnly = true)]
@@ -43,11 +43,11 @@ namespace Threax.Keepass.ViewModels
         {
             if (query.ParentItemId != null)
             {
-                yield return new HalActionLinkAttribute(typeof(EntriesController), nameof(EntriesController.AddChild), "Add");
+                yield return new HalActionLinkAttribute(typeof(ItemsController), nameof(ItemsController.AddChild), "Add");
             }
             else
             {
-                yield return new HalActionLinkAttribute(typeof(EntriesController), nameof(EntriesController.Add));
+                yield return new HalActionLinkAttribute(typeof(ItemsController), nameof(ItemsController.Add));
             }
         }
     }

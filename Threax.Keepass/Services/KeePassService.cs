@@ -201,16 +201,24 @@ namespace Threax.Keepass.Services
             ResetTimer();
             using (await mutex.LockAsync())
             {
-                var entry = new PwEntry(true, true);
-                entry = ItemInputToEntry(item, entry);
-                var group = db.RootGroup;
-                if(parent != null)
+                if (item.IsGroup)
                 {
-                    group = GetGroupFromGuid(parent.Value);
+                    var newGroup = new PwGroup(true, true);
+                    newGroup = ItemInputToGroup(item, newGroup);
+                    var group = FindGroup(parent);
+                    group.AddGroup(newGroup, true);
+                    db.Save(statusLogger);
+                    return GroupToItemEntity(group);
                 }
-                group.AddEntry(entry, true);
-                db.Save(statusLogger);
-                return EntryToItemEntity(entry);
+                else
+                {
+                    var entry = new PwEntry(true, true);
+                    entry = ItemInputToEntry(item, entry);
+                    var group = FindGroup(parent);
+                    group.AddEntry(entry, true);
+                    db.Save(statusLogger);
+                    return EntryToItemEntity(entry);
+                }
             }
         }
 
@@ -219,10 +227,20 @@ namespace Threax.Keepass.Services
             ResetTimer();
             using (await mutex.LockAsync())
             {
-                PwEntry entry = GetEntryFromGuid(itemId);
-                entry = ItemInputToEntry(item, entry);
-                db.Save(statusLogger);
-                return EntryToItemEntity(entry);
+                if (item.IsGroup)
+                {
+                    var group = GetGroupFromGuid(itemId);
+                    group = ItemInputToGroup(item, group);
+                    db.Save(statusLogger);
+                    return GroupToItemEntity(group);
+                }
+                else
+                {
+                    var entry = GetEntryFromGuid(itemId);
+                    entry = ItemInputToEntry(item, entry);
+                    db.Save(statusLogger);
+                    return EntryToItemEntity(entry);
+                }
             }
         }
 
@@ -231,9 +249,23 @@ namespace Threax.Keepass.Services
             ResetTimer();
             using (await mutex.LockAsync())
             {
-                PwEntry entry = GetEntryFromGuid(id);
-                var group = entry.ParentGroup.Entries.Remove(entry);
-                db.Save(statusLogger);
+                var group = GetGroupFromGuid(id, false);
+                if(group != null)
+                {
+                    group.ParentGroup.Groups.Remove(group);
+                    db.Save(statusLogger);
+                    return;
+                }
+
+                var entry = GetEntryFromGuid(id, false);
+                if (entry != null)
+                {
+                    entry.ParentGroup.Entries.Remove(entry);
+                    db.Save(statusLogger);
+                    return;
+                }
+                
+                throw new InvalidOperationException($"Cannot find item to delete {id}");
             }
         }
 
@@ -289,6 +321,13 @@ namespace Threax.Keepass.Services
             return entry;
         }
 
+        private static PwGroup ItemInputToGroup(ItemInput i, PwGroup group)
+        {
+            group.LastModificationTime = DateTime.UtcNow;
+            group.Name = i.Name;
+            return group;
+        }
+
         private static void UpdateString(PwEntry entry, String name, bool protect, String value)
         {
             if (value != null)
@@ -342,6 +381,17 @@ namespace Threax.Keepass.Services
             if (throwOnMissing && group == null)
             {
                 throw new InvalidOperationException($"Cannot find group {parent}.");
+            }
+
+            return group;
+        }
+
+        private PwGroup FindGroup(Guid? parent)
+        {
+            var group = db.RootGroup;
+            if (parent != null)
+            {
+                group = GetGroupFromGuid(parent.Value);
             }
 
             return group;

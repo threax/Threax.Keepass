@@ -119,9 +119,7 @@ namespace Threax.Keepass.Services
                 var group = db.RootGroup;
                 if (query.ParentItemId != null)
                 {
-                    var bytes = query.ParentItemId.Value.ToByteArray();
-                    var id = new PwUuid(bytes);
-                    group = db.RootGroup.FindGroup(id, true);
+                    group = GetGroupFromGuid(query.ParentItemId.Value);
                 }
 
                 return GetItems(group);
@@ -142,15 +140,13 @@ namespace Threax.Keepass.Services
         {
             if (itemId != null)
             {
-                var bytes = itemId.ToByteArray();
-                var id = new PwUuid(bytes);
-                var group = db.RootGroup.FindGroup(id, true);
+                var group = GetGroupFromGuid(itemId, false);
                 if (group != null)
                 {
                     return GroupToItemEntity(group);
                 }
 
-                var entry = db.RootGroup.FindEntry(id, true);
+                var entry = GetEntryFromGuid(itemId, false);
                 if (entry != null)
                 {
                     return EntryToItemEntity(entry);
@@ -173,10 +169,7 @@ namespace Threax.Keepass.Services
         {
             if (itemId != null)
             {
-                var bytes = itemId.ToByteArray();
-                var id = new PwUuid(bytes);
-
-                var entry = db.RootGroup.FindEntry(id, true);
+                var entry = GetEntryFromGuid(itemId);
                 if (entry != null)
                 {
                     return EntryToView(entry);
@@ -193,10 +186,7 @@ namespace Threax.Keepass.Services
                 CheckDb();
                 if (itemId != null)
                 {
-                    var bytes = itemId.ToByteArray();
-                    var id = new PwUuid(bytes);
-
-                    var entry = db.RootGroup.FindEntry(id, true);
+                    var entry = GetEntryFromGuid(itemId);
                     if (entry != null)
                     {
                         return entry.Strings.Get("Password")?.ReadString();
@@ -216,13 +206,7 @@ namespace Threax.Keepass.Services
                 var group = db.RootGroup;
                 if(parent != null)
                 {
-                    var bytes = parent.Value.ToByteArray();
-                    var id = new PwUuid(bytes);
-                    group = db.RootGroup.FindGroup(id, true);
-                    if(group == null)
-                    {
-                        throw new InvalidOperationException($"Cannot find group {parent}.");
-                    }
+                    group = GetGroupFromGuid(parent.Value);
                 }
                 group.AddEntry(entry, true);
                 db.Save(statusLogger);
@@ -298,6 +282,10 @@ namespace Threax.Keepass.Services
             UpdateString(entry, "Notes", false, i.Notes);
             UpdateString(entry, "URL", false, i.Url);
             UpdateString(entry, "UserName", false, i.UserName);
+            if (!String.IsNullOrEmpty(i.Password))
+            {
+                UpdateString(entry, "Password", true, i.Password);
+            }
             return entry;
         }
 
@@ -332,17 +320,31 @@ namespace Threax.Keepass.Services
             timer.Change(timeoutMs, Timeout.Infinite);
         }
 
-        private PwEntry GetEntryFromGuid(Guid itemId)
+        private PwEntry GetEntryFromGuid(Guid itemId, bool throwOnMissing = true)
         {
             var bytes = itemId.ToByteArray();
             var id = new PwUuid(bytes);
             var entry = db.RootGroup.FindEntry(id, true);
-            if (entry == null)
+            if (throwOnMissing && entry == null)
             {
-                throw new KeyNotFoundException($"Cannto find entry {itemId.ToString()}");
+                throw new KeyNotFoundException($"Cannot find entry {itemId.ToString()}");
             }
 
             return entry;
+        }
+
+        private PwGroup GetGroupFromGuid(Guid parent, bool throwOnMissing = true)
+        {
+            PwGroup group;
+            var bytes = parent.ToByteArray();
+            var id = new PwUuid(bytes);
+            group = db.RootGroup.FindGroup(id, true);
+            if (throwOnMissing && group == null)
+            {
+                throw new InvalidOperationException($"Cannot find group {parent}.");
+            }
+
+            return group;
         }
     }
 }

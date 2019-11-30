@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace Threax.Keepass.Controllers
 {
     [Authorize(AuthenticationSchemes = AuthCoreSchemes.Cookies)]
-    public partial class HomeController : Controller
+    public partial class ManageDbController : Controller
     {
         public IActionResult Index()
         {

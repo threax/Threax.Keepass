@@ -15,15 +15,21 @@ namespace Threax.Keepass.InputModels
     {
         public String Name { get; set; }
 
-        [HiddenUiType]
-        public bool IsGroup { get; set; }
-
         public String UserName { get; set; }
+
+        /// <summary>
+        /// Will update the password if not null or empty.
+        /// </summary>
+        [PasswordUiType]
+        public String Password { get; set; }
 
         public String Url { get; set; }
 
         [TextAreaUiType()]
         public String Notes { get; set; }
+
+        [HiddenUiType]
+        public bool IsGroup { get; set; }
 
     }
 }

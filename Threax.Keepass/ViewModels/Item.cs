@@ -10,12 +10,12 @@ using Threax.AspNetCore.Tracking;
 using Threax.Keepass.Controllers.Api;
 using Threax.AspNetCore.Halcyon.Ext.ValueProviders;
 
-namespace Threax.Keepass.ViewModels 
+namespace Threax.Keepass.ViewModels
 {
     [HalModel]
     [HalSelfActionLink(typeof(ItemsController), nameof(ItemsController.Get))]
-    [HalActionLink(typeof(ItemsController), nameof(ItemsController.Update))]
-    [HalActionLink(typeof(ItemsController), nameof(ItemsController.Delete))]
+    [DeclareHalLink(typeof(EntriesController), nameof(EntriesController.Update))]
+    [DeclareHalLink(typeof(EntriesController), nameof(EntriesController.Delete))]
     [DeclareHalLink(typeof(ItemsController), nameof(ItemsController.GetPassword))]
     public partial class Item : ICreatedModified, IHalLinkProvider
     {
@@ -36,6 +36,8 @@ namespace Threax.Keepass.ViewModels
             if (!IsGroup)
             {
                 yield return new HalActionLinkAttribute(typeof(ItemsController), nameof(ItemsController.GetPassword));
+                yield return new HalActionLinkAttribute(typeof(EntriesController), nameof(EntriesController.Update));
+                yield return new HalActionLinkAttribute(typeof(EntriesController), nameof(EntriesController.Delete));
             }
         }
     }

@@ -43,28 +43,5 @@ namespace Threax.Keepass.Controllers.Api
         {
             return await repo.GetPassword(itemId);
         }
-
-        [HttpPost]
-        [HalRel(CrudRels.Add)]
-        [AutoValidate("Cannot add new item")]
-        public async Task<Item> Add([FromBody]ItemInput item)
-        {
-            return await repo.Add(item);
-        }
-
-        [HttpPut("{ItemId}")]
-        [HalRel(CrudRels.Update)]
-        [AutoValidate("Cannot update item")]
-        public async Task<Item> Update(Guid itemId, [FromBody]ItemInput item)
-        {
-            return await repo.Update(itemId, item);
-        }
-
-        [HttpDelete("{ItemId}")]
-        [HalRel(CrudRels.Delete)]
-        public async Task Delete(Guid itemId)
-        {
-            await repo.Delete(itemId);
-        }
     }
 }

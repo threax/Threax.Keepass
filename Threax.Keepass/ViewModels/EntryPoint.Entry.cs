@@ -4,7 +4,8 @@ using Threax.Keepass.Controllers.Api;
 
 namespace Threax.Keepass.ViewModels
 {
-    [HalActionLink(typeof(ItemsController), nameof(ItemsController.List), "ListItems")]
+    [HalActionLink(typeof(EntriesController), nameof(EntriesController.List), "ListEntries")]
+    [HalActionLink(typeof(EntriesController), nameof(EntriesController.Add), "AddEntry")]
     public partial class EntryPoint
     {
         

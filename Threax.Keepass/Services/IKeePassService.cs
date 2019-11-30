@@ -3,20 +3,21 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Threax.Keepass.Database;
 using Threax.Keepass.InputModels;
-using Threax.Keepass.ViewModels;
 
 namespace Threax.Keepass.Services
 {
-    public interface IKeePassService : IDisposable
+    public interface IKeePassService
     {
-        Task Open(String password);
+        Task<EntryEntity> Add(EntryInput item);
         Task Close();
-        Task<bool> IsOpen();
-        Task<Item> Add(ItemInput item);
         Task Delete(Guid id);
+        void Dispose();
         Task<ItemEntity> Get(Guid itemId);
-        Task<String> GetPassword(Guid itemId);
+        Task<EntryEntity> GetEntry(Guid itemId);
+        Task<string> GetPassword(Guid itemId);
+        Task<bool> IsOpen();
         Task<IEnumerable<ItemEntity>> List(ItemQuery query);
-        Task<Item> Update(Guid itemId, ItemInput item);
+        Task Open(string password);
+        Task<EntryEntity> Update(Guid itemId, EntryInput item);
     }
 }

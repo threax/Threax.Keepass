@@ -57,52 +57,5 @@ namespace Threax.Keepass.Repository
                 ItemId = itemId
             };
         }
-
-        public async Task<Item> Add(ItemInput item)
-        {
-            throw new NotImplementedException();
-            //var entity = mapper.MapItem(item, new ItemEntity());
-            //this.dbContext.Add(entity);
-            //await SaveChanges();
-            //return mapper.MapItem(entity, new Item());
-        }
-
-        public async Task<Item> Update(Guid itemId, ItemInput item)
-        {
-            throw new NotImplementedException();
-            //var entity = await this.Entity(itemId);
-            //if (entity != null)
-            //{
-            //    mapper.MapItem(item, entity);
-            //    await SaveChanges();
-            //    return mapper.MapItem(entity, new Item());
-            //}
-            //throw new KeyNotFoundException($"Cannot find item {itemId.ToString()}");
-        }
-
-        public async Task Delete(Guid id)
-        {
-            throw new NotImplementedException();
-            //var entity = await this.Entity(id);
-            //if (entity != null)
-            //{
-            //    Entities.Remove(entity);
-            //    await SaveChanges();
-            //}
-        }
-
-        public virtual async Task<bool> HasItems()
-        {
-            return true;
-            //return await Entities.CountAsync() > 0;
-        }
-
-        public virtual async Task AddRange(IEnumerable<ItemInput> items)
-        {
-            throw new NotImplementedException();
-            //var entities = items.Select(i => mapper.MapItem(i, new ItemEntity()));
-            //this.dbContext.Items.AddRange(entities);
-            //await SaveChanges();
-        }
     }
 }

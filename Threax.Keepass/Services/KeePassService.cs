@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using KeePassLib.Security;
 
 namespace Threax.Keepass.Services
 {
@@ -158,6 +159,32 @@ namespace Threax.Keepass.Services
             return default(ItemEntity);
         }
 
+        public async Task<EntryEntity> GetEntry(Guid itemId)
+        {
+            ResetTimer();
+            using (await mutex.LockAsync())
+            {
+                CheckDb();
+                return DoGetEntry(itemId);
+            }
+        }
+
+        private EntryEntity DoGetEntry(Guid itemId)
+        {
+            if (itemId != null)
+            {
+                var bytes = itemId.ToByteArray();
+                var id = new PwUuid(bytes);
+
+                var entry = db.RootGroup.FindEntry(id, true);
+                if (entry != null)
+                {
+                    return EntryToEntity(entry);
+                }
+            }
+            return default(EntryEntity);
+        }
+
         public async Task<String> GetPassword(Guid itemId)
         {
             ResetTimer();
@@ -179,14 +206,35 @@ namespace Threax.Keepass.Services
             }
         }
 
-        public async Task<Item> Add(ItemInput item)
+        public async Task<EntryEntity> Add(EntryInput item)
         {
-            throw new NotImplementedException();
+            ResetTimer();
+            using (await mutex.LockAsync())
+            {
+                var entry = new PwEntry(true, true);
+                entry = EntryInputToEntry(item, entry);
+                db.RootGroup.AddEntry(entry, true);
+                db.Save(statusLogger);
+                return EntryToEntity(entry);
+            }
         }
 
-        public async Task<Item> Update(Guid itemId, ItemInput item)
+        public async Task<EntryEntity> Update(Guid itemId, EntryInput item)
         {
-            throw new NotImplementedException();
+            ResetTimer();
+            using (await mutex.LockAsync())
+            {
+                var bytes = itemId.ToByteArray();
+                var id = new PwUuid(bytes);
+                var entry = db.RootGroup.FindEntry(id, true);
+                if (entry == null)
+                {
+                    throw new KeyNotFoundException($"Cannto find entry {itemId.ToString()}");
+                }
+                entry = EntryInputToEntry(item, entry);
+                db.Save(statusLogger);
+                return EntryToEntity(entry);
+            }
         }
 
         public async Task Delete(Guid id)
@@ -216,6 +264,31 @@ namespace Threax.Keepass.Services
                 ItemId = new Guid(i.Uuid.UuidBytes),
                 Name = i.Strings.Get("Title").ReadString()
             };
+        }
+
+        private static EntryEntity EntryToEntity(PwEntry i)
+        {
+            return new EntryEntity()
+            {
+                Created = i.CreationTime,
+                Modified = i.LastAccessTime,
+                ItemId = new Guid(i.Uuid.UuidBytes),
+                Name = i.Strings.Get("Title").ReadString(),
+                Notes = i.Strings.Get("Notes").ReadString(),
+                Url = i.Strings.Get("URL").ReadString(),
+                UserName = i.Strings.Get("UserName").ReadString(),
+            };
+        }
+
+        private static PwEntry EntryInputToEntry(EntryInput i, PwEntry entry)
+        {
+            entry.LastModificationTime = DateTime.Now;
+            entry.Strings.Set("Title", new ProtectedString(false, i.Name));
+            entry.Strings.Set("Notes", new ProtectedString(false, i.Notes));
+            entry.Strings.Set("URL", new ProtectedString(false, i.Url));
+            entry.Strings.Set("UserName", new ProtectedString(false, i.UserName));
+
+            return entry;
         }
 
         private static IEnumerable<ItemEntity> GetItems(PwGroup group)

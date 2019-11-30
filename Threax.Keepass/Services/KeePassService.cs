@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using KeePassLib.Security;
+using System.IO;
 
 namespace Threax.Keepass.Services
 {
@@ -63,6 +64,11 @@ namespace Threax.Keepass.Services
 
                 var keys = new CompositeKey();
                 keys.AddUserKey(new KcpPassword(password));
+
+                if(config.KeyFile != null && File.Exists(config.KeyFile))
+                {
+                    keys.AddUserKey(new KcpKeyFile(config.KeyFile));
+                }
 
                 db.Open(new KeePassLib.Serialization.IOConnectionInfo()
                 {

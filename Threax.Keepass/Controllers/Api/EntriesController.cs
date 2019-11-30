@@ -42,7 +42,15 @@ namespace Threax.Keepass.Controllers.Api
         [AutoValidate("Cannot add new entry")]
         public async Task<Entry> Add([FromBody]EntryInput entry)
         {
-            return await repo.Add(entry);
+            return await repo.Add(null, entry);
+        }
+
+        [HttpPost("{ParentItemId}")]
+        [HalRel("AddChild")]
+        [AutoValidate("Cannot add new entry")]
+        public async Task<Entry> AddChild(Guid parentItemId, [FromBody]EntryInput entry)
+        {
+            return await repo.Add(parentItemId, entry);
         }
 
         [HttpPut("{ItemId}")]

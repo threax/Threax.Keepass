@@ -8,7 +8,7 @@ namespace Threax.Keepass.Services
 {
     public interface IKeePassService
     {
-        Task<EntryEntity> Add(EntryInput item);
+        Task<EntryEntity> Add(Guid? parent, EntryInput item);
         Task Close();
         Task Delete(Guid id);
         void Dispose();

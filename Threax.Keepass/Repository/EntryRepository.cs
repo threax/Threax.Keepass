@@ -36,9 +36,9 @@ namespace Threax.Keepass.Repository
             return mapper.MapEntry(entity, new Entry());
         }
 
-        public async Task<Entry> Add(EntryInput entry)
+        public async Task<Entry> Add(Guid? parent, EntryInput entry)
         {
-            var entity = await keepass.Add(entry);
+            var entity = await keepass.Add(parent, entry);
             return mapper.MapEntry(entity, new Entry());
         }
 

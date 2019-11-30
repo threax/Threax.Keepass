@@ -1228,6 +1228,33 @@ export class ItemCollectionResult {
         return this.client.HasLinkDoc("Add");
     }
 
+    public addChild(data: EntryInput): Promise<EntryResult> {
+        return this.client.LoadLinkWithData("AddChild", data)
+               .then(r => {
+                    return new EntryResult(r);
+                });
+
+    }
+
+    public canAddChild(): boolean {
+        return this.client.HasLink("AddChild");
+    }
+
+    public linkForAddChild(): hal.HalLink {
+        return this.client.GetLink("AddChild");
+    }
+
+    public getAddChildDocs(query?: HalEndpointDocQuery): Promise<hal.HalEndpointDoc> {
+        return this.client.LoadLinkDoc("AddChild", query)
+            .then(r => {
+                return r.GetData<hal.HalEndpointDoc>();
+            });
+    }
+
+    public hasAddChildDocs(): boolean {
+        return this.client.HasLinkDoc("AddChild");
+    }
+
     public next(): Promise<ItemCollectionResult> {
         return this.client.LoadLink("next")
                .then(r => {

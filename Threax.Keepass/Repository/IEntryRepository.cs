@@ -9,7 +9,7 @@ namespace Threax.Keepass.Repository
 {
     public partial interface IEntryRepository
     {
-        Task<Entry> Add(EntryInput value);
+        Task<Entry> Add(Guid? parent, EntryInput value);
         Task Delete(Guid id);
         Task<Entry> Get(Guid itemId);
         Task<EntryCollection> List(EntryQuery query);

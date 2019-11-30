@@ -206,14 +206,25 @@ namespace Threax.Keepass.Services
             }
         }
 
-        public async Task<EntryEntity> Add(EntryInput item)
+        public async Task<EntryEntity> Add(Guid? parent, EntryInput item)
         {
             ResetTimer();
             using (await mutex.LockAsync())
             {
                 var entry = new PwEntry(true, true);
                 entry = EntryInputToEntry(item, entry);
-                db.RootGroup.AddEntry(entry, true);
+                var group = db.RootGroup;
+                if(parent != null)
+                {
+                    var bytes = parent.Value.ToByteArray();
+                    var id = new PwUuid(bytes);
+                    group = db.RootGroup.FindGroup(id, true);
+                    if(group == null)
+                    {
+                        throw new InvalidOperationException($"Cannot find group {parent}.");
+                    }
+                }
+                group.AddEntry(entry, true);
                 db.Save(statusLogger);
                 return EntryToEntity(entry);
             }

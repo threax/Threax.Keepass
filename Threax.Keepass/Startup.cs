@@ -229,6 +229,10 @@ namespace Threax.Keepass
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllerRoute(
+                    name: "root",
+                    pattern: "{action=Index}/{*inPagePath}",
+                    defaults: new { controller = "Home" });
 
                 endpoints.MapControllerRoute(
                     name: "default",

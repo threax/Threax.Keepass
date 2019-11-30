@@ -10,9 +10,13 @@ namespace Threax.Keepass.Controllers
     [Authorize(AuthenticationSchemes = AuthCoreSchemes.Cookies)]
     public partial class HomeController : Controller
     {
-        public IActionResult Index()
+        public IActionResult Item()
         {
             return View();
+        }
+        public IActionResult Index()
+        {
+            return Redirect("~/Item");
         }
     }
 }

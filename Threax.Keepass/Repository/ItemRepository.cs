@@ -49,13 +49,5 @@ namespace Threax.Keepass.Repository
             var entity = await keepass.Get(itemId);
             return mapper.MapItem(entity, new Item());
         }
-        public async Task<PasswordInfo> GetPassword(Guid itemId)
-        {
-            return new PasswordInfo()
-            {
-                Password = await keepass.GetPassword(itemId),
-                ItemId = itemId
-            };
-        }
     }
 }

@@ -36,12 +36,5 @@ namespace Threax.Keepass.Controllers.Api
         {
             return await repo.Get(itemId);
         }
-
-        [HttpGet("Password/{ItemId}")]
-        [HalRel("GetPassword")]
-        public async Task<PasswordInfo> GetPassword(Guid itemId)
-        {
-            return await repo.GetPassword(itemId);
-        }
     }
 }

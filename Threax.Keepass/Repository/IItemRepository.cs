@@ -10,7 +10,6 @@ namespace Threax.Keepass.Repository
     public partial interface IItemRepository
     {
         Task<Item> Get(Guid itemId);
-        Task<PasswordInfo> GetPassword(Guid itemId);
         Task<ItemCollection> List(ItemQuery query);
     }
 }

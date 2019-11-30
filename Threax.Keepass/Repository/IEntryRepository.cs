@@ -10,11 +10,10 @@ namespace Threax.Keepass.Repository
     public partial interface IEntryRepository
     {
         Task<Entry> Add(EntryInput value);
-        Task AddRange(IEnumerable<EntryInput> values);
         Task Delete(Guid id);
         Task<Entry> Get(Guid itemId);
-        Task<bool> HasEntries();
         Task<EntryCollection> List(EntryQuery query);
         Task<Entry> Update(Guid itemId, EntryInput value);
+        Task<PasswordInfo> GetPassword(Guid itemId);
     }
 }

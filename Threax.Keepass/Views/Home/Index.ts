@@ -67,7 +67,7 @@ class EditExtensions extends CrudItemEditorControllerExtensions {
 }
 
 class CrudRow extends CrudTableRowControllerExtensions {
-    private data;
+    private data: client.ItemResult;
 
     public static get InjectorArgs(): controller.DiFunction<any>[] {
         return [crudpage.ICrudService, crudpage.CrudQueryManager];
@@ -94,7 +94,8 @@ class CrudRow extends CrudTableRowControllerExtensions {
             this.crud.getPage(query);
         }
         else {
-            this.crud.edit(this.data);
+            var entry = await this.data.getEntry();
+            this.crud.edit(entry);
         }
     }
 }

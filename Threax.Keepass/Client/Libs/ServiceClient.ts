@@ -1021,6 +1021,33 @@ export class ItemResult {
         return this.client.HasLinkDoc("self");
     }
 
+    public getEntry(): Promise<EntryResult> {
+        return this.client.LoadLink("GetEntry")
+               .then(r => {
+                    return new EntryResult(r);
+                });
+
+    }
+
+    public canGetEntry(): boolean {
+        return this.client.HasLink("GetEntry");
+    }
+
+    public linkForGetEntry(): hal.HalLink {
+        return this.client.GetLink("GetEntry");
+    }
+
+    public getGetEntryDocs(query?: HalEndpointDocQuery): Promise<hal.HalEndpointDoc> {
+        return this.client.LoadLinkDoc("GetEntry", query)
+            .then(r => {
+                return r.GetData<hal.HalEndpointDoc>();
+            });
+    }
+
+    public hasGetEntryDocs(): boolean {
+        return this.client.HasLinkDoc("GetEntry");
+    }
+
     public update(data: EntryInput): Promise<EntryResult> {
         return this.client.LoadLinkWithData("Update", data)
                .then(r => {

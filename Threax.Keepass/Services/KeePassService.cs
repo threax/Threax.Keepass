@@ -199,7 +199,7 @@ namespace Threax.Keepass.Services
                     var entry = db.RootGroup.FindEntry(id, true);
                     if (entry != null)
                     {
-                        return entry.Strings.Get("Password").ReadString();
+                        return entry.Strings.Get("Password")?.ReadString();
                     }
                 }
                 return null;
@@ -224,13 +224,7 @@ namespace Threax.Keepass.Services
             ResetTimer();
             using (await mutex.LockAsync())
             {
-                var bytes = itemId.ToByteArray();
-                var id = new PwUuid(bytes);
-                var entry = db.RootGroup.FindEntry(id, true);
-                if (entry == null)
-                {
-                    throw new KeyNotFoundException($"Cannto find entry {itemId.ToString()}");
-                }
+                PwEntry entry = GetEntryFromGuid(itemId);
                 entry = EntryInputToEntry(item, entry);
                 db.Save(statusLogger);
                 return EntryToEntity(entry);
@@ -239,7 +233,13 @@ namespace Threax.Keepass.Services
 
         public async Task Delete(Guid id)
         {
-            throw new NotImplementedException();
+            ResetTimer();
+            using (await mutex.LockAsync())
+            {
+                PwEntry entry = GetEntryFromGuid(id);
+                var group = entry.ParentGroup.Entries.Remove(entry);
+                db.Save(statusLogger);
+            }
         }
 
         private static ItemEntity GroupToItemEntity(PwGroup i)
@@ -262,7 +262,7 @@ namespace Threax.Keepass.Services
                 Modified = i.LastAccessTime,
                 IsGroup = false,
                 ItemId = new Guid(i.Uuid.UuidBytes),
-                Name = i.Strings.Get("Title").ReadString()
+                Name = i.Strings.Get("Title")?.ReadString()
             };
         }
 
@@ -273,22 +273,33 @@ namespace Threax.Keepass.Services
                 Created = i.CreationTime,
                 Modified = i.LastAccessTime,
                 ItemId = new Guid(i.Uuid.UuidBytes),
-                Name = i.Strings.Get("Title").ReadString(),
-                Notes = i.Strings.Get("Notes").ReadString(),
-                Url = i.Strings.Get("URL").ReadString(),
-                UserName = i.Strings.Get("UserName").ReadString(),
+                Name = i.Strings.Get("Title")?.ReadString(),
+                Notes = i.Strings.Get("Notes")?.ReadString(),
+                Url = i.Strings.Get("URL")?.ReadString(),
+                UserName = i.Strings.Get("UserName")?.ReadString(),
             };
         }
 
         private static PwEntry EntryInputToEntry(EntryInput i, PwEntry entry)
         {
-            entry.LastModificationTime = DateTime.Now;
-            entry.Strings.Set("Title", new ProtectedString(false, i.Name));
-            entry.Strings.Set("Notes", new ProtectedString(false, i.Notes));
-            entry.Strings.Set("URL", new ProtectedString(false, i.Url));
-            entry.Strings.Set("UserName", new ProtectedString(false, i.UserName));
-
+            entry.LastModificationTime = DateTime.UtcNow;
+            UpdateString(entry, "Title", false, i.Name);
+            UpdateString(entry, "Notes", false, i.Notes);
+            UpdateString(entry, "URL", false, i.Url);
+            UpdateString(entry, "UserName", false, i.UserName);
             return entry;
+        }
+
+        private static void UpdateString(PwEntry entry, String name, bool protect, String value)
+        {
+            if (value != null)
+            {
+                entry.Strings.Set(name, new ProtectedString(protect, value));
+            }
+            else
+            {
+                entry.Strings.Remove(name);
+            }
         }
 
         private static IEnumerable<ItemEntity> GetItems(PwGroup group)
@@ -308,6 +319,19 @@ namespace Threax.Keepass.Services
         private void ResetTimer()
         {
             timer.Change(timeoutMs, Timeout.Infinite);
+        }
+
+        private PwEntry GetEntryFromGuid(Guid itemId)
+        {
+            var bytes = itemId.ToByteArray();
+            var id = new PwUuid(bytes);
+            var entry = db.RootGroup.FindEntry(id, true);
+            if (entry == null)
+            {
+                throw new KeyNotFoundException($"Cannto find entry {itemId.ToString()}");
+            }
+
+            return entry;
         }
     }
 }

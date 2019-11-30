@@ -14,6 +14,7 @@ namespace Threax.Keepass.ViewModels
 {
     [HalModel]
     [HalSelfActionLink(typeof(ItemsController), nameof(ItemsController.Get))]
+    [DeclareHalLink(typeof(EntriesController), nameof(EntriesController.Get), "GetEntry")]
     [DeclareHalLink(typeof(EntriesController), nameof(EntriesController.Update))]
     [DeclareHalLink(typeof(EntriesController), nameof(EntriesController.Delete))]
     [DeclareHalLink(typeof(EntriesController), nameof(EntriesController.GetPassword))]
@@ -35,9 +36,10 @@ namespace Threax.Keepass.ViewModels
         {
             if (!IsGroup)
             {
-                yield return new HalActionLinkAttribute(typeof(EntriesController), nameof(EntriesController.GetPassword));
+                yield return new HalActionLinkAttribute(typeof(EntriesController), nameof(EntriesController.Get), "GetEntry");
                 yield return new HalActionLinkAttribute(typeof(EntriesController), nameof(EntriesController.Update));
                 yield return new HalActionLinkAttribute(typeof(EntriesController), nameof(EntriesController.Delete));
+                yield return new HalActionLinkAttribute(typeof(EntriesController), nameof(EntriesController.GetPassword));
             }
         }
     }

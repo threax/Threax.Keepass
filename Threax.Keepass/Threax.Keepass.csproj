@@ -58,16 +58,4 @@
     <ProjectReference Include="..\KeePassLib\KeePassLib.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="Database.kdbx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Database.key">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Test.kdbx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

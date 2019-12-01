@@ -45,7 +45,7 @@
     <PackageReference Include="Threax.AspNetCore.UserLookup" Version="1.0.0" />
     <PackageReference Include="Threax.AspNetCore.UserLookup.Mvc" Version="2.1.0" />
     <PackageReference Include="Threax.AspNetCore.UserLookup.IdServer" Version="1.0.0" />
-    <PackageReference Include="Threax.ProgressiveWebApp" Version="1.0.0-pre06" />
+    <PackageReference Include="Threax.ProgressiveWebApp" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="BundlerMinifier.Core" Version="3.1.430" />

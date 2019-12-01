@@ -32,20 +32,6 @@ namespace Threax.Keepass.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Values",
-                columns: table => new
-                {
-                    ValueId = table.Column<Guid>(nullable: false),
-                    Name = table.Column<string>(maxLength: 450, nullable: false),
-                    Created = table.Column<DateTime>(nullable: false),
-                    Modified = table.Column<DateTime>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Values", x => x.ValueId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "spc.auth.UsersToRoles",
                 columns: table => new
                 {
@@ -79,9 +65,6 @@ namespace Threax.Keepass.Migrations
         {
             migrationBuilder.DropTable(
                 name: "spc.auth.UsersToRoles");
-
-            migrationBuilder.DropTable(
-                name: "Values");
 
             migrationBuilder.DropTable(
                 name: "spc.auth.Roles");

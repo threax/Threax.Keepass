@@ -8,7 +8,8 @@
     "pathBase": "Client",
     "outDir": ".",
     "copy": [
-      "Client/Images/*"
+      "Client/Images/*",
+      "Client/Icons/*"
     ]
   }
 ]

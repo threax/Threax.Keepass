@@ -10,6 +10,7 @@
     <title>@ViewData["Title"] - @config.SiteName</title>
     <asset-bundle src="~/bundle.min.css"></asset-bundle>
     @RenderSection("css", required: false)
+    <link rel="manifest" href="@Url.Content("~/webmanifest.json")">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-brand-app">

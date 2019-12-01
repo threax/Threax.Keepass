@@ -30,7 +30,7 @@ namespace Threax.Keepass.Controllers
         [AllowAnonymous]
         public IActionResult Manifest([FromServices] IWebManifestProvider webManifestProvider)
         {
-            return Json(webManifestProvider.CreateManifest());
+            return Json(webManifestProvider.CreateManifest(Url));
         }
     }
 }

@@ -1,0 +1,23 @@
+version: '3.4'
+
+services:
+  app:
+    image: threax/keepass
+    build:
+      context: .
+      dockerfile: Threax.Keepass/Dockerfile
+    networks:
+      - appnet
+    volumes:
+      - type: bind
+        source: ../TrustedRoots
+        target: /usr/local/share/ca-certificates
+      - type: bind
+        source: ../DevData/keepass
+        target: /appdata
+    labels:
+      - "threax.nginx.host=keepass.dev.threax.com"
+
+networks:
+  appnet:
+    external: true

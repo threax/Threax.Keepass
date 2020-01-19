@@ -64,6 +64,18 @@ class EditExtensions extends CrudItemEditorControllerExtensions {
         this.passwordCopyElement.value = "";
         this.copyToggle.off();
     }
+
+    public async clearPassword(evt: Event): Promise<void> {
+        evt.preventDefault();
+
+        this.copyElement.value = "clear";
+        this.copyElement.select();
+        this.copyElement.setSelectionRange(0, 99999); /*For mobile devices*/
+        document.execCommand("copy");
+        this.copyElement.value = "";
+        this.passwordCopyElement.value = "";
+        this.copyToggle.off();
+    }
 }
 
 class CrudRow extends CrudTableRowControllerExtensions {

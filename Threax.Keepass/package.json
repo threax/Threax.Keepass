@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "bootstrap": "^4.2.1",
+    "bootstrap": "^4.4.1",
     "htmlrapier": "^20.0.2",
     "htmlrapier.bootstrap": "^7.1.0",
     "htmlrapier.bootstrap.datetime": "^3.5.0",
@@ -12,7 +12,7 @@
     "htmlrapier.halcyon-explorer": "^8.0.0",
     "htmlrapier.relogin": "^1.0.4",
     "htmlrapier.roleclient": "^4.0.0",
-    "htmlrapier.widgets": "^15.8.0",
+    "htmlrapier.widgets": "^15.11.0",
     "jsns": "^5.0.0",
     "threax.bootstrap4": "^0.0.1"
   },

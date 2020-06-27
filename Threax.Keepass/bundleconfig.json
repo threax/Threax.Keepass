@@ -14,7 +14,6 @@
       "wwwroot/lib/jquery/dist/jquery.min.js",
       "wwwroot/lib/bootstrap/dist/js/bootstrap.min.js",
       "wwwroot/lib/moment/min/moment.min.js",
-      "wwwroot/lib/polyfill.js",
       "wwwroot/lib/tslib.js",
       "wwwroot/lib/tsbin.js"
     ],

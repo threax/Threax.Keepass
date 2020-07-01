@@ -2,13 +2,17 @@
     Layout = null;
 }
 
-<html>
+<html lang="en-us">
 <head>
+    <meta charset="utf-8" />
     <title>Logged in</title>
 </head>
-<body data-hr-run="hr.relogin.logged-in-page">
+<body>
     <p>Logged in, you can now close this window if it does not close automatically.</p>
+    <client-config csp-nonce></client-config>
+    <token-config csp-nonce></token-config>
     <asset-bundle src="~/bundle.min.js"></asset-bundle>
     <script type="text/javascript" src="~/lib/hr-run.js" asp-append-version="true"></script>
+    <threax-csp></threax-csp>
 </body>
 </html>

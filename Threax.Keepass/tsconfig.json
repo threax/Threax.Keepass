@@ -5,7 +5,7 @@
     "removeComments": false,
     "sourceMap": true,
     "allowJs": true,
-    "target": "es5",
+    "target": "ES2015",
     "outDir": "obj/tscout/lib",
     "outFile": "wwwroot/lib/tsbin.js",
     "module": "amd",
@@ -14,10 +14,8 @@
     "moduleResolution": "node",
     "alwaysStrict": true,
     "lib": [
-      "dom",
-      "es5",
-      "es2015.promise",
-      "es2015.iterable"
+      "DOM",
+      "ES2015"
     ],
     "paths": {
       "clientlibs.*": [
@@ -28,6 +26,9 @@
       ],
       "hr.bootstrap.*": [
         "node_modules\\htmlrapier.bootstrap\\src\\*"
+      ],
+      "hr.form.bootstrap4.*": [
+        "node_modules\\htmlrapier.form.bootstrap4\\src\\*"
       ],
       "hr.halcyon-explorer.*": [
         "node_modules\\htmlrapier.halcyon-explorer\\src\\*"
@@ -55,7 +56,7 @@
     "Views\\**\\*.ts",
     "node_modules\\htmlrapier.bootstrap.datetime\\src\\**\\*.ts",
     "node_modules\\htmlrapier.bootstrap\\src\\**\\*.ts",
-    "node_modules\\htmlrapier.form.bootstrap4\\**\\*.ts",
+    "node_modules\\htmlrapier.form.bootstrap4\\src\\**\\*.ts",
     "node_modules\\htmlrapier.halcyon-explorer\\src\\**\\*.ts",
     "node_modules\\htmlrapier.halcyon\\src\\**\\*.ts",
     "node_modules\\htmlrapier.relogin\\src\\**\\*.ts",

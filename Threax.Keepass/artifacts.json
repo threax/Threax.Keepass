@@ -11,5 +11,34 @@
       "Client/Images/*",
       "Client/Icons/*"
     ]
+  },
+  {
+    "outDir": ".",
+    "bundle": [
+      {
+        "input": [
+          "wwwroot/lib/bootstrap/dist/css/threax.bootstrap.css",
+          "wwwroot/lib/htmlrapier.bootstrap.datetime/css/bootstrap-datetimepicker.css"
+        ],
+        "out": "bundle.min.css",
+        "minify": true
+      }
+    ]
+  },
+  {
+    "outDir": ".",
+    "bundle": [
+      {
+        "input": [
+          "wwwroot/lib/jquery/dist/jquery.min.js",
+          "wwwroot/lib/bootstrap/dist/js/bootstrap.min.js",
+          "wwwroot/lib/moment/min/moment.min.js",
+          "wwwroot/lib/tslib.js",
+          "wwwroot/lib/tsbin.js"
+        ],
+        "out": "bundle.min.js",
+        "minify": true
+      }
+    ]
   }
 ]

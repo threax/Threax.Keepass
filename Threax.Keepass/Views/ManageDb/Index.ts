@@ -58,7 +58,7 @@ class ManageDbController {
                 unlocked: true
             };
 
-            this.poster.postWindowMessage(parent, JSON.stringify(message));
+            this.poster.postWindowMessage(parent, message);
         }
         catch (err) {
             console.error(err);
@@ -85,7 +85,7 @@ class ManageDbController {
                 unlocked: false
             };
 
-            this.poster.postWindowMessage(parent, JSON.stringify(message));
+            this.poster.postWindowMessage(parent, message);
         }
         catch (err) {
             console.error(err);

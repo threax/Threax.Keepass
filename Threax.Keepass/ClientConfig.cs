@@ -17,9 +17,6 @@ namespace Threax.Keepass
         public string ServiceUrl { get; set; } = "~/api";
 
         [ExpandHostPath]
-        public string DbStatusUrl { get; set; } = "~/api/KeepassDatabase";
-
-        [ExpandHostPath]
         public string AccessTokenPath { get; set; } = "~/Account/AccessToken";
 
         /// <summary>

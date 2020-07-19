@@ -1,0 +1,5 @@
+﻿@inject Threax.AspNetCore.Mvc.CacheUi.ICacheUiRenderData renderData;
+@{
+    Layout = "_Layout";
+}
+<script type="text/javascript" src="@renderData.ContentLink"></script>

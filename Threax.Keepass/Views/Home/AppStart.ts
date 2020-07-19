@@ -16,33 +16,34 @@ class AppStart {
 
     private async setup(): Promise<void> {
         //Check for login
-        var entry = await this.entry.load();
+        const entry = await this.entry.load();
+        let loginResult: boolean = false;
         if (!entry.canListItems()) {
-            var loginResult = await this.login.showLogin();
+            loginResult = await this.login.showLogin();
         }
 
         //Redirect to main page, remove AppStart from url
-        var uri = new Uri(window.location.href);
-        var path = "";
-        var i = 0;
-        var part: string;
-        var pathEnd = uri.getPathPart(--i) || uri.getPathPart(--i);
-        if (pathEnd !== null) {
-            if (pathEnd.toUpperCase() === "APPSTART") {
-                while ((part = uri.getPathPart(--i)) !== null) {
-                    path = '/' + part + path;
+        if (loginResult) {
+            const uri = new Uri(window.location.href);
+            let path = "";
+            let i = 0;
+            let part: string;
+            const pathEnd = uri.getPathPart(--i) || uri.getPathPart(--i);
+            if (pathEnd !== null) {
+                if (pathEnd.toUpperCase() === "APPSTART") {
+                    while ((part = uri.getPathPart(--i)) !== null) {
+                        path = '/' + part + path;
+                    }
+                    if (!path) {
+                        path = '/';
+                    }
+                    window.location.href = path;
                 }
-                if (!path) {
-                    path = '/';
-                }
-                window.location.href = path;
             }
         }
     }
 }
 
-var builder = startup.createBuilder({
-    EnableDbPopup: false
-});
+const builder = startup.createBuilder();
 builder.Services.addTransient(AppStart, AppStart);
 builder.createUnbound(AppStart);

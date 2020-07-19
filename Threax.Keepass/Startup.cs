@@ -58,6 +58,11 @@ namespace Threax.Keepass
             Configuration.Bind("KeePass", keePassConfig);
 
             clientConfig.BearerCookieName = $"{authConfig.ClientId}.BearerToken";
+
+            if (string.IsNullOrWhiteSpace(appConfig.CacheToken))
+            {
+                appConfig.CacheToken = this.GetType().Assembly.ComputeMd5();
+            }
         }
 
         public SchemaConfigurationBinder Configuration { get; }
@@ -115,7 +120,7 @@ namespace Threax.Keepass
             var halOptions = new HalcyonConventionOptions()
             {
                 BaseUrl = appConfig.BaseUrl,
-                HalDocEndpointInfo = new HalDocEndpointInfo(typeof(EndpointDocController), this.GetType().Assembly.ComputeMd5()),
+                HalDocEndpointInfo = new HalDocEndpointInfo(typeof(EndpointDocController), appConfig.CacheToken),
                 EnableValueProviders = appConfig.EnableValueProviders
             };
 
@@ -153,6 +158,10 @@ namespace Threax.Keepass
             .AddThreaxUserLookup(o =>
             {
                 o.UseIdServer();
+            })
+            .AddThreaxCacheUi(appConfig.CacheToken, o =>
+            {
+                o.CacheControlHeader = appConfig.CacheControlHeaderString;
             });
 
             services.ConfigureHtmlRapierTagHelpers(o =>
@@ -209,6 +218,14 @@ namespace Threax.Keepass
             services.AddSingleton(keePassConfig);
             services.AddSingleton<IStatusLogger, NullStatusLogger>();
             services.AddSingleton<IKeePassService, KeePassService>();
+
+            services.AddEntryPointRenderer<EntryPointController>(e => e.Get());
+            services.AddSingleton<AppConfig>(appConfig);
+
+            if (appConfig.EnableResponseCompression)
+            {
+                services.AddResponseCompression();
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -232,7 +249,25 @@ namespace Threax.Keepass
                 o.CorrectPathBase = appConfig.PathBase;
             });
 
-            app.UseStaticFiles();
+            if (appConfig.EnableResponseCompression)
+            {
+                app.UseResponseCompression();
+            }
+
+            //Setup static files
+            var staticFileOptions = new StaticFileOptions();
+            if (appConfig.CacheStaticAssets)
+            {
+                staticFileOptions.OnPrepareResponse = ctx =>
+                {
+                    //If the request is coming in with a v query it can be cached
+                    if (!String.IsNullOrWhiteSpace(ctx.Context.Request.Query["v"]))
+                    {
+                        ctx.Context.Response.Headers["Cache-Control"] = appConfig.CacheControlHeaderString;
+                    }
+                };
+            }
+            app.UseStaticFiles(staticFileOptions);
 
             app.UseCorsManager(corsOptions, loggerFactory);
 
@@ -242,6 +277,10 @@ namespace Threax.Keepass
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllerRoute(
+                    name: "cacheUi",
+                    pattern: "{controller=Home}/{cacheToken}/{action=Index}/{*inPagePath}");
+
                 endpoints.MapControllerRoute(
                     name: "root",
                     pattern: "{action=Index}/{*inPagePath}",

@@ -2,6 +2,7 @@ import * as controller from 'hr.controller';
 import { Fetcher } from 'hr.fetcher';
 import * as ep from 'hr.externalpromise';
 import { DbFetcher } from 'clientlibs.DbFetcher';
+import * as safepost from 'hr.safepostmessage';
 
 export class DbPopupOptions {
     private _relogPage;
@@ -25,7 +26,7 @@ export class DbPopup {
     private iframe: HTMLIFrameElement;
     private resizeEvent;
 
-    constructor(bindings: controller.BindingCollection, private options: DbPopupOptions, fetcher: Fetcher) {
+    constructor(bindings: controller.BindingCollection, private options: DbPopupOptions, fetcher: Fetcher, private messageValidator: safepost.PostMessageValidator) {
         this.dialog = bindings.getToggle("dialog");
         this.dialog.offEvent.add(t => {
             this.closed();
@@ -62,9 +63,11 @@ export class DbPopup {
     }
 
     private handleMessage(e: MessageEvent): void {
-        var message: ILoginMessage = JSON.parse(e.data);
-        if (message.type === MessageType && message.unlocked) {
-            this.dialog.off();
+        if (this.messageValidator.isValid(e)) {
+            let message: ILoginMessage = e.data;
+            if (message && message.type === MessageType && message.unlocked) {
+                this.dialog.off();
+            }
         }
     }
 

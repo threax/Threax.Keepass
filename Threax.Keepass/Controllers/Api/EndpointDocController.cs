@@ -16,11 +16,13 @@ namespace Threax.Keepass.Controllers.Api
     {
         private readonly IEndpointDocBuilder descriptionProvider;
         private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly AppConfig appConfig;
 
-        public EndpointDocController(IEndpointDocBuilder descriptionProvider, IHttpContextAccessor httpContextAccessor)
+        public EndpointDocController(IEndpointDocBuilder descriptionProvider, IHttpContextAccessor httpContextAccessor, AppConfig appConfig)
         {
             this.descriptionProvider = descriptionProvider;
             this.httpContextAccessor = httpContextAccessor;
+            this.appConfig = appConfig;
         }
 
         [HttpGet("{version}/{groupName}/{method}/{*relativePath}")]
@@ -39,7 +41,7 @@ namespace Threax.Keepass.Controllers.Api
 
                 if (doc.Cacheable && version != "nocache")
                 {
-                    httpContextAccessor.HttpContext.Response.Headers["Cache-Control"] = "private, max-age=2592000, stale-while-revalidate=86400, immutable";
+                    httpContextAccessor.HttpContext.Response.Headers["Cache-Control"] = appConfig.CacheControlHeaderString;
                 }
 
                 return doc;

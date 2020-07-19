@@ -21,6 +21,12 @@
       "clientlibs.*": [
         "Client\\Libs\\*"
       ],
+      "hr.accesstoken.*": [
+        "node_modules\\htmlrapier.accesstoken\\src\\*"
+      ],
+      "hr.appmenu.*": [
+        "node_modules\\htmlrapier.appmenu\\src\\*"
+      ],
       "hr.bootstrap.datetime.*": [
         "node_modules\\htmlrapier.bootstrap.datetime\\src\\*"
       ],
@@ -54,6 +60,8 @@
   "include": [
     "Client\\Libs\\**\\*.ts",
     "Views\\**\\*.ts",
+    "node_modules\\htmlrapier.accesstoken\\src\\**\\*.ts",
+    "node_modules\\htmlrapier.appmenu\\src\\**\\*.ts",
     "node_modules\\htmlrapier.bootstrap.datetime\\src\\**\\*.ts",
     "node_modules\\htmlrapier.bootstrap\\src\\**\\*.ts",
     "node_modules\\htmlrapier.form.bootstrap4\\src\\**\\*.ts",

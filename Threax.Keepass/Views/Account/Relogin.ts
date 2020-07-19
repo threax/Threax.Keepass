@@ -4,4 +4,5 @@ import * as loggedInPage from 'hr.relogin.LoggedInPage';
 const builder = startup.createBuilder();
 loggedInPage.addServices(builder.Services);
 const loggedIn = builder.createUnbound(loggedInPage.LoggedInPage);
-loggedIn.alertLoggedIn();
+
+setTimeout(() => loggedIn.alertLoggedIn(), 250);

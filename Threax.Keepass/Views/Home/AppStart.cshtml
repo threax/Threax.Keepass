@@ -1,6 +1,8 @@
 ﻿@{
     ViewData["Title"] = "Welcome";
+    Layout = "_LayoutTop";
 }
 @inject Threax.ProgressiveWebApp.DisplayConfig config;
 
-<h1>Welcome to @config.SiteName</h1>
+<h1 class="text-center">Welcome to @config.SiteName</h1>
+<relogin></relogin>

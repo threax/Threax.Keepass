@@ -5,19 +5,37 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Threax.ProgressiveWebApp;
+using Threax.AspNetCore.Mvc.CacheUi;
 
 namespace Threax.Keepass.Controllers
 {
     [Authorize(AuthenticationSchemes = AuthCoreSchemes.Cookies)]
-    public partial class HomeController : Controller
+    public partial class HomeController : CacheUiController
     {
-        public IActionResult Item()
+        public HomeController(ICacheUiBuilder builder)
+            : base(builder)
         {
-            return View();
+
         }
+
+        public Task<IActionResult> Item()
+        {
+            return CacheUiView();
+        }
+
         public IActionResult Index()
         {
             return Redirect("~/Item");
+        }
+
+        public Task<IActionResult> Header()
+        {
+            return CacheUiView();
+        }
+
+        public Task<IActionResult> Footer()
+        {
+            return CacheUiView();
         }
 
         [AllowAnonymous]

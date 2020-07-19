@@ -1,0 +1,12 @@
+﻿@using Threax.AspNetCore.AuthCore;
+@inject Threax.AspNetCore.Halcyon.Ext.IEntryPointRenderer entryPointRenderer;
+<!DOCTYPE html><html><head><style csp-nonce>html{visibility:hidden;opacity:0;background-color: #222;}</style><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>@ViewData["Title"] - Butler</title>
+<asset-bundle src="~/bundle.min.css"></asset-bundle>@RenderSection("css", required: false)<link rel="manifest" href="@Url.Content("~/webmanifest.json")"></head><body>
+@RenderBody()
+<client-config csp-nonce></client-config>
+<script type="text/javascript" csp-nonce>window.hr_config=(function(next){return function(config){config.entry = @Html.Raw(entryPointRenderer.Render().ToString(Newtonsoft.Json.Formatting.None));return next?next(config):config;}})(window.hr_config);</script>
+<style csp-nonce>html{visibility:visible;opacity:1;}</style>
+<asset-bundle src="~/bundle.min.js"></asset-bundle>@RenderSection("scripts", required: false)<script type="text/javascript" src="~/lib/hr-run.js" asp-append-version="true"></script>
+<threax-csp></threax-csp>
+</body></html>

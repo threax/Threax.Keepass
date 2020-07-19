@@ -1,5 +1,4 @@
-import * as http from 'hr.http';
-import { Fetcher, RequestInfo, RequestInit, Response, Request } from 'hr.fetcher';
+import { Fetcher } from 'hr.fetcher';
 import * as events from 'hr.eventdispatcher';
 import * as ep from 'hr.externalpromise';
 import { IWhitelist } from 'hr.whitelist';
@@ -9,9 +8,10 @@ class TokenManager {
     private currentToken: client.DbStatus;
     private needLoginEvent: events.PromiseEventDispatcher<boolean, TokenManager> = new events.PromiseEventDispatcher<boolean, TokenManager>();
     private queuePromise: ep.ExternalPromise<client.DbStatus> = null;
+    private entryPointInjector: client.EntryPointInjector;
 
-    constructor(private tokenPath: string, private fetcher: Fetcher) {
-
+    constructor(url: string, private fetcher: Fetcher) {
+        this.entryPointInjector = new client.EntryPointInjector(url, fetcher);
     }
 
     public getToken(): Promise<client.DbStatus> {
@@ -62,10 +62,14 @@ class TokenManager {
     }
 
     private async readServerToken(): Promise<void> {
-        var data = await http.get<client.DbStatus>(this.tokenPath, this.fetcher);
-        this.currentToken = data;
+        const entry = await this.entryPointInjector.load();
+        if (!entry.canGetDbStatus()) {
+            throw new Error("Cannot get db status.");
+        }
 
-        var tokenObj = data;
+        const result = await entry.getDbStatus();
+
+        this.currentToken = result.data;
     }
 
     private clearToken(): void {

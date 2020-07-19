@@ -56,6 +56,8 @@ namespace Threax.Keepass
             Configuration.Bind("ClientConfig", clientConfig);
             Configuration.Bind("Cors", corsOptions);
             Configuration.Bind("KeePass", keePassConfig);
+
+            clientConfig.BearerCookieName = $"{authConfig.ClientId}.BearerToken";
         }
 
         public SchemaConfigurationBinder Configuration { get; }
@@ -100,6 +102,10 @@ namespace Threax.Keepass
                 {
                     jwtOpt.Audience = "Threax.IdServer";
                 };
+                o.CustomizeCookies = cookOpt =>
+                {
+                    cookOpt.BearerHttpOnly = false;
+                };
             });
 
             services.AddAppDatabase(appConfig.ConnectionString);
@@ -109,7 +115,7 @@ namespace Threax.Keepass
             var halOptions = new HalcyonConventionOptions()
             {
                 BaseUrl = appConfig.BaseUrl,
-                HalDocEndpointInfo = new HalDocEndpointInfo(typeof(EndpointDocController)),
+                HalDocEndpointInfo = new HalDocEndpointInfo(typeof(EndpointDocController), this.GetType().Assembly.ComputeMd5()),
                 EnableValueProviders = appConfig.EnableValueProviders
             };
 

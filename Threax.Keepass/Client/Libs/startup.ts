@@ -11,10 +11,10 @@ import * as client from 'clientlibs.ServiceClient';
 import * as userSearch from 'clientlibs.UserSearchClientEntryPointInjector';
 import * as loginPopup from 'hr.relogin.LoginPopup';
 import * as deepLink from 'hr.deeplink';
-import * as xsrf from 'hr.xsrftoken';
 import * as pageConfig from 'hr.pageconfig';
 import * as dbfetcher from 'clientlibs.DbFetcher';
 import * as dbpopup from 'clientlibs.DbPopup';
+import * as safepost from 'hr.safepostmessage';
 
 //Activate htmlrapier
 hr.setup();
@@ -24,14 +24,11 @@ bootstrap4form.setup();
 
 export interface Config {
     client: {
-        ServiceUrl: string,
-        PageBasePath: string,
-        DbStatusUrl: string
-    };
-    tokens: {
+        ServiceUrl: string;
+        PageBasePath: string;
+        DbStatusUrl: string;
+        BearerCookieName?: string;
         AccessTokenPath?: string;
-        XsrfCookie?: string;
-        XsrfPaths?: string[];
     };
 }
 
@@ -55,6 +52,8 @@ export function createBuilder(options?: Options) {
         const config = pageConfig.read<Config>();
         builder.Services.tryAddShared(fetcher.Fetcher, s => createFetcher(config, options));
         builder.Services.tryAddShared(client.EntryPointInjector, s => new client.EntryPointInjector(config.client.ServiceUrl, s.getRequiredService(fetcher.Fetcher)));
+        builder.Services.tryAddShared(safepost.MessagePoster, s => new safepost.MessagePoster(window.location.href));
+        builder.Services.tryAddShared(safepost.PostMessageValidator, s => new safepost.PostMessageValidator(window.location.href));
         
         userSearch.addServices(builder);
 
@@ -78,18 +77,14 @@ export function createBuilder(options?: Options) {
 function createFetcher(config: Config, options: Options): fetcher.Fetcher {
     let fetcher = new WindowFetch.WindowFetch();
 
-    if (config.tokens !== undefined) {
-        fetcher = new xsrf.XsrfTokenFetcher(
-            new xsrf.CookieTokenAccessor(config.tokens.XsrfCookie),
-            new whitelist.Whitelist(config.tokens.XsrfPaths),
-            fetcher);
-    }
-
-    if (config.tokens.AccessTokenPath !== undefined) {
-        fetcher = new AccessTokens.AccessTokenFetcher(
-            config.tokens.AccessTokenPath,
+    if (config.client.AccessTokenPath) {
+        const accessFetcher = new AccessTokens.AccessTokenFetcher(
+            config.client.AccessTokenPath,
             new whitelist.Whitelist([config.client.ServiceUrl]),
             fetcher);
+        accessFetcher.disableOnNoToken = false;
+        accessFetcher.bearerCookieName = config.client.BearerCookieName;
+        fetcher = accessFetcher;
     }
 
     if (options.EnableDbPopup && config.client.DbStatusUrl !== undefined) {

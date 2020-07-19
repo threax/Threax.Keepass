@@ -11,6 +11,7 @@ using Threax.AspNetCore.Halcyon.Ext.ValueProviders;
 namespace Threax.Keepass.InputModels 
 {
     [HalModel]
+    [CacheEndpointDoc]
     public partial class ItemInput
     {
         public String Name { get; set; }

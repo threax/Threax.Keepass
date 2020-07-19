@@ -13,6 +13,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Threax.Keepass.InputModels
 {
     [HalModel]
+    [CacheEndpointDoc]
     public partial class ItemQuery : PagedCollectionQuery
     {
         /// <summary>

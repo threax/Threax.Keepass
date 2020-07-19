@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net;
@@ -13,26 +14,35 @@ namespace Threax.Keepass.Controllers.Api
     [Authorize(AuthenticationSchemes = AuthCoreSchemes.Bearer)]
     public class EndpointDocController : Controller
     {
-        IEndpointDocBuilder descriptionProvider;
+        private readonly IEndpointDocBuilder descriptionProvider;
+        private readonly IHttpContextAccessor httpContextAccessor;
 
-        public EndpointDocController(IEndpointDocBuilder descriptionProvider)
+        public EndpointDocController(IEndpointDocBuilder descriptionProvider, IHttpContextAccessor httpContextAccessor)
         {
             this.descriptionProvider = descriptionProvider;
+            this.httpContextAccessor = httpContextAccessor;
         }
 
-        [HttpGet("{groupName}/{method}/{*relativePath}")]
+        [HttpGet("{version}/{groupName}/{method}/{*relativePath}")]
         [HalRel(HalDocEndpointInfo.DefaultRels.Get)]
         [AllowAnonymous]
-        public Task<EndpointDoc> Get(String groupName, String method, String relativePath, EndpointDocQuery docQuery)
+        public async Task<EndpointDoc> Get(String version, String groupName, String method, String relativePath, EndpointDocQuery docQuery)
         {
             try
             {
-                return descriptionProvider.GetDoc(groupName, method, relativePath, new EndpointDocBuilderOptions()
+                var doc = await descriptionProvider.GetDoc(groupName, method, relativePath, new EndpointDocBuilderOptions()
                 {
                     User = User,
                     IncludeRequest = docQuery.IncludeRequest,
                     IncludeResponse = docQuery.IncludeResponse
                 });
+
+                if (doc.Cacheable && version != "nocache")
+                {
+                    httpContextAccessor.HttpContext.Response.Headers["Cache-Control"] = "private, max-age=2592000, stale-while-revalidate=86400, immutable";
+                }
+
+                return doc;
             }
             catch (UnauthorizedAccessException)
             {

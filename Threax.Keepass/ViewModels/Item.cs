@@ -13,6 +13,7 @@ using Threax.AspNetCore.Halcyon.Ext.ValueProviders;
 namespace Threax.Keepass.ViewModels
 {
     [HalModel]
+    [CacheEndpointDoc]
     [HalSelfActionLink(typeof(ItemsController), nameof(ItemsController.Get))]
     [DeclareHalLink(typeof(ItemsController), nameof(ItemsController.GetEntry))]
     [HalActionLink(typeof(ItemsController), nameof(ItemsController.Update))]

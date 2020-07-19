@@ -10,6 +10,7 @@ using Threax.AspNetCore.Models;
 namespace Threax.Keepass.ViewModels
 {
     [HalModel]
+    [CacheEndpointDoc]
     [HalSelfActionLink(typeof(ItemsController), nameof(ItemsController.GetPassword))]
     [HalActionLink(typeof(ItemsController), nameof(ItemsController.Get), "GetItem")]
     [HalActionLink(typeof(ItemsController), nameof(ItemsController.Get), "GetEntry")]

@@ -1,12 +1,9 @@
-import * as standardCrudPage from 'hr.widgets.StandardCrudPage';
 import * as startup from 'clientlibs.startup';
-import * as deepLink from 'hr.deeplink';
-import { ItemCrudInjector } from 'clientlibs.ItemCrudInjector';
-import { CrudItemEditorControllerExtensions, CrudItemEditorController } from 'hr.widgets.CrudItemEditor';
 import * as controller from 'hr.controller';
 import * as client from 'clientlibs.ServiceClient';
 import { MainLoadErrorLifecycle } from 'hr.widgets.MainLoadErrorLifecycle';
 import * as dbpopup from 'clientlibs.DbPopup';
+import * as safepost from 'hr.safepostmessage';
 
 class ManageDbController {
     private input: controller.IForm<client.OpenDbInput>;
@@ -17,10 +14,10 @@ class ManageDbController {
     private lockUnlockToggle: controller.OnOffToggle;
 
     public static get InjectorArgs(): controller.DiFunction<any>[] {
-        return [controller.BindingCollection, client.EntryPointInjector];
+        return [controller.BindingCollection, client.EntryPointInjector, safepost.MessagePoster];
     }
 
-    constructor(bindings: controller.BindingCollection, injector: client.EntryPointInjector) {
+    constructor(bindings: controller.BindingCollection, injector: client.EntryPointInjector, private poster: safepost.MessagePoster) {
         bindings.setListener(this);
         this.lifecycle = new MainLoadErrorLifecycle(bindings.getToggle("main"), bindings.getToggle("load"), bindings.getToggle("error"), true);
         this.mainErrorToggle = bindings.getToggle("mainError");
@@ -61,7 +58,7 @@ class ManageDbController {
                 unlocked: true
             };
 
-            parent.postMessage(JSON.stringify(message), "*");
+            this.poster.postWindowMessage(parent, JSON.stringify(message));
         }
         catch (err) {
             console.error(err);
@@ -88,7 +85,7 @@ class ManageDbController {
                 unlocked: false
             };
 
-            parent.postMessage(JSON.stringify(message), "*");
+            this.poster.postWindowMessage(parent, JSON.stringify(message));
         }
         catch (err) {
             console.error(err);

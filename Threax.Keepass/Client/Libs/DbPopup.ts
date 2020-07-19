@@ -18,7 +18,7 @@ export class DbPopupOptions {
 
 export class DbPopup {
     public static get InjectorArgs(): controller.DiFunction<any>[] {
-        return [controller.BindingCollection, DbPopupOptions, Fetcher];
+        return [controller.BindingCollection, DbPopupOptions, Fetcher, safepost.PostMessageValidator];
     }
 
     private dialog: controller.OnOffToggle;

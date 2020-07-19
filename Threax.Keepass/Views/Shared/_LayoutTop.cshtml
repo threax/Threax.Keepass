@@ -1,7 +1,8 @@
 ﻿@using Threax.AspNetCore.AuthCore;
+@inject Threax.ProgressiveWebApp.DisplayConfig config;
 @inject Threax.AspNetCore.Halcyon.Ext.IEntryPointRenderer entryPointRenderer;
 <!DOCTYPE html><html><head><style csp-nonce>html{visibility:hidden;opacity:0;background-color: #222;}</style><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>@ViewData["Title"] - Butler</title>
+<link rel="shortcut icon" type="image/x-icon" href="@Url.Content(config.Favicon)" /><title>@ViewData["Title"] - @config.SiteName</title>
 <asset-bundle src="~/bundle.min.css"></asset-bundle>@RenderSection("css", required: false)<link rel="manifest" href="@Url.Content("~/webmanifest.json")"></head><body>
 @RenderBody()
 <client-config csp-nonce></client-config>

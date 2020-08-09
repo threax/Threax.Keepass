@@ -57,21 +57,16 @@ namespace Threax.Keepass
                         config.AddJsonFileWithInclude($"appsettings.{toolsConfigName}.json", optional: true);
                     }
 
-                    //./../appsettings.{environment}.json - Deployed settings file, loaded per environment, allows you to put the production configs 1 level above the site in produciton, which keeps that config separate from the code
-                    config.AddJsonFileWithInclude(Path.GetFullPath($"../appsettings.{env.EnvironmentName}.json"), optional: true, reloadOnChange: true);
-
-                    //./../appsettings.tools.json - Deployed tools settings file, loaded in tools mode, allows you to put the production tools configs 1 level above the site in produciton, which keeps that config separate from the code
-                    if (toolsConfigName != null)
+                    //Build the config so far and load the KeyPerFilePath.
+                    var built = config.Build();
+                    var keyPerFilePath = built.GetSection("AppConfig")?.GetValue<String>("KeyPerFilePath");
+                    if (!String.IsNullOrEmpty(keyPerFilePath))
                     {
-                        config.AddJsonFileWithInclude(Path.GetFullPath($"../appsettings.{toolsConfigName}.json"), optional: true);
+                        keyPerFilePath = Path.GetFullPath(keyPerFilePath);
+                        config.AddKeyPerFile(keyPerFilePath, false);
                     }
 
-                    //Secrets
-                    if (File.Exists("appsettings.secrets.json"))
-                    {
-                        config.AddJsonFileWithInclude(Path.GetFullPath("appsettings.secrets.json"), optional: false);
-                    }
-                    else
+                    if (built.GetSection("AppConfig")?.GetValue<bool>("AddUserSecrets") == true)
                     {
                         config.AddUserSecrets<Program>();
                     }

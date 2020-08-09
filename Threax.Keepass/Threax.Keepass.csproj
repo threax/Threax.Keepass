@@ -25,7 +25,7 @@
     <PackageReference Include="Threax.AspNetCore.Mvc.CacheUi" Version="3.0.1" />
     <PackageReference Include="Threax.AspNetCore.Tracking" Version="2.0.3" />
     <PackageReference Include="Threax.AspNetCore.Validators" Version="2.0.1" />
-    <PackageReference Include="Threax.AspNetCore.IdServerAuth" Version="4.0.1" />
+    <PackageReference Include="Threax.AspNetCore.IdServerAuth" Version="5.1.0" />
     <PackageReference Include="Threax.AspNetCore.UrlFix" Version="1.1.4" />
     <PackageReference Include="Threax.AspNetCore.UserBuilder" Version="3.3.0" />
     <PackageReference Include="Threax.AspNetCore.UserBuilder.Entities" Version="5.0.0" />
@@ -36,7 +36,7 @@
     <PackageReference Include="Threax.AspNetCore.Halcyon.Client" Version="10.0.0" />
     <PackageReference Include="Threax.AspNetCore.Halcyon.Client.OpenIdConnect" Version="1.0.1" />
     <PackageReference Include="Threax.AspNetCore.Halcyon.ClientGen.Tools" Version="6.0.0" />
-    <PackageReference Include="Threax.AspNetCore.Halcyon.Ext" Version="14.3.0" />
+    <PackageReference Include="Threax.AspNetCore.Halcyon.Ext" Version="14.4.0" />
     <PackageReference Include="Threax.AspNetCore.Halcyon.ClientGen" Version="12.3.1" />
     <PackageReference Include="Threax.Extensions.Configuration.SchemaBinder" Version="2.0.0" />
     <PackageReference Include="Threax.AspNetCore.Docker.Certs" Version="2.0.0" />

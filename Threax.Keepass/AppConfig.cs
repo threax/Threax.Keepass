@@ -81,5 +81,10 @@ namespace Threax.Keepass
         /// initial setup. Default: true
         /// </summary>
         public bool EnableIdServerMetadata { get; set; } = true;
+
+        /// <summary>
+        /// Set this to true to add user secrets. Good for development. Default: false
+        /// </summary>
+        public bool AddUserSecrets { get; set; }
     }
 }

@@ -56,6 +56,8 @@ namespace Threax.Keepass
             Configuration.Bind("ClientConfig", clientConfig);
             Configuration.Bind("Cors", corsOptions);
             Configuration.Bind("KeePass", keePassConfig);
+            Configuration.Define("Build", typeof(Threax.DockerBuildConfig.BuildConfig));
+            Configuration.Define("Deploy", typeof(Threax.DeployConfig.DeploymentConfig));
 
             clientConfig.BearerCookieName = $"{authConfig.ClientId}.BearerToken";
 

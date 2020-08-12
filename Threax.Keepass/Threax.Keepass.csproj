@@ -50,6 +50,8 @@
     <PackageReference Include="Threax.IdServer.Client" Version="3.0.2" />
     <PackageReference Include="Threax.ProgressiveWebApp" Version="1.0.0" />
     <PackageReference Include="IdentityModel" Version="4.3.1" />
+    <PackageReference Include="Threax.DeployConfig" Version="1.0.0" />
+    <PackageReference Include="Threax.DockerBuildConfig" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -17,7 +17,7 @@ class AppStart {
     private async setup(): Promise<void> {
         //Check for login
         const entry = await this.entry.load();
-        let loginResult: boolean = false;
+        let loginResult: boolean = true;
         if (!entry.canListItems()) {
             loginResult = await this.login.showLogin();
         }

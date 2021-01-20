@@ -6,7 +6,6 @@
     "bootstrap": "^4.5.0",
     "htmlrapier": "^24.0.1",
     "htmlrapier.accesstoken": "^1.0.0",
-    "htmlrapier.appmenu": "^2.0.1",
     "htmlrapier.bootstrap": "^8.0.0",
     "htmlrapier.bootstrap.datetime": "^4.0.0",
     "htmlrapier.form.bootstrap4": "^3.0.1",

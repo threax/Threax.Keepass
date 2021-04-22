@@ -20,12 +20,12 @@
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="5.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.5" />
     <PackageReference Include="AutoMapper" Version="10.1.1" />
-    <PackageReference Include="Threax.AspNetCore.CSP" Version="1.3.1" />
+    <PackageReference Include="Threax.AspNetCore.CSP" Version="1.4.0" />
     <PackageReference Include="Threax.AspNetCore.Models" Version="7.1.0" />
     <PackageReference Include="Threax.AspNetCore.Mvc.CacheUi" Version="3.0.2" />
     <PackageReference Include="Threax.AspNetCore.Tracking" Version="2.0.4" />
     <PackageReference Include="Threax.AspNetCore.Validators" Version="2.0.2" />
-    <PackageReference Include="Threax.AspNetCore.IdServerAuth" Version="8.0.0" />
+    <PackageReference Include="Threax.AspNetCore.IdServerAuth" Version="8.1.0" />
     <PackageReference Include="Threax.AspNetCore.UrlFix" Version="1.1.5" />
     <PackageReference Include="Threax.AspNetCore.UserBuilder" Version="5.0.0" />
     <PackageReference Include="Threax.AspNetCore.UserBuilder.Entities" Version="6.0.0" />
@@ -43,7 +43,7 @@
     <PackageReference Include="HtmlRapier.TagHelpers" Version="8.2.1" />
     <PackageReference Include="Threax.ReflectedServices" Version="1.0.1" />
     <PackageReference Include="Threax.Sqlite.Ext" Version="2.0.1" />
-    <PackageReference Include="Threax.AspNetCore.JwtCookieAuth" Version="6.0.0" />
+    <PackageReference Include="Threax.AspNetCore.JwtCookieAuth" Version="6.1.0" />
     <PackageReference Include="Threax.AspNetCore.UserLookup" Version="2.0.0" />
     <PackageReference Include="Threax.AspNetCore.UserLookup.Mvc" Version="4.0.0" />
     <PackageReference Include="Threax.AspNetCore.UserLookup.IdServer" Version="3.0.0" />

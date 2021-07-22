@@ -1,5 +1,5 @@
-﻿import * as startup from 'clientlibs.startup';
-import * as loggedInPage from 'hr.relogin.LoggedInPage';
+﻿import * as startup from 'Client/Libs/startup';
+import * as loggedInPage from 'htmlrapier.relogin/src/LoggedInPage';
 
 const builder = startup.createBuilder();
 loggedInPage.addServices(builder.Services);

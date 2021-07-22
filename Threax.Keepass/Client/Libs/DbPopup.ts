@@ -1,8 +1,8 @@
-import * as controller from 'hr.controller';
-import { Fetcher } from 'hr.fetcher';
-import * as ep from 'hr.externalpromise';
-import { DbFetcher } from 'clientlibs.DbFetcher';
-import * as safepost from 'hr.safepostmessage';
+import * as controller from 'htmlrapier/src/controller';
+import { Fetcher } from 'htmlrapier/src/fetcher';
+import * as ep from 'htmlrapier/src/externalpromise';
+import { DbFetcher } from 'Client/Libs/DbFetcher';
+import * as safepost from 'htmlrapier/src/safepostmessage';
 
 export class DbPopupOptions {
     private _relogPage;

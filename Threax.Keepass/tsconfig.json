@@ -17,41 +17,7 @@
       "DOM",
       "ES2015"
     ],
-    "paths": {
-      "clientlibs.*": [
-        "Client\\Libs\\*"
-      ],
-      "hr.accesstoken.*": [
-        "node_modules\\htmlrapier.accesstoken\\src\\*"
-      ],
-      "hr.bootstrap.datetime.*": [
-        "node_modules\\htmlrapier.bootstrap.datetime\\src\\*"
-      ],
-      "hr.bootstrap.*": [
-        "node_modules\\htmlrapier.bootstrap\\src\\*"
-      ],
-      "hr.form.bootstrap4.*": [
-        "node_modules\\htmlrapier.form.bootstrap4\\src\\*"
-      ],
-      "hr.halcyon-explorer.*": [
-        "node_modules\\htmlrapier.halcyon-explorer\\src\\*"
-      ],
-      "hr.halcyon.*": [
-        "node_modules\\htmlrapier.halcyon\\src\\*"
-      ],
-      "hr.relogin.*": [
-        "node_modules\\htmlrapier.relogin\\src\\*"
-      ],
-      "hr.roleclient.*": [
-        "node_modules\\htmlrapier.roleclient\\src\\*"
-      ],
-      "hr.widgets.*": [
-        "node_modules\\htmlrapier.widgets\\src\\*"
-      ],
-      "hr.*": [
-        "node_modules\\htmlrapier\\src\\*"
-      ]
-    }
+    "paths": {}
   },
   "compileOnSave": true,
   "include": [

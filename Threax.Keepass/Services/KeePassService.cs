@@ -65,7 +65,7 @@ namespace Threax.Keepass.Services
                 var keys = new CompositeKey();
                 keys.AddUserKey(new KcpPassword(password));
 
-                if(config.KeyFile != null && File.Exists(config.KeyFile))
+                if (config.KeyFile != null && File.Exists(config.KeyFile))
                 {
                     keys.AddUserKey(new KcpKeyFile(config.KeyFile));
                 }
@@ -144,20 +144,18 @@ namespace Threax.Keepass.Services
 
         private ItemEntity DoGet(Guid itemId)
         {
-            if (itemId != null)
+            var group = GetGroupFromGuid(itemId, false);
+            if (group != null)
             {
-                var group = GetGroupFromGuid(itemId, false);
-                if (group != null)
-                {
-                    return GroupToItemEntity(group);
-                }
-
-                var entry = GetEntryFromGuid(itemId, false);
-                if (entry != null)
-                {
-                    return EntryToItemEntity(entry);
-                }
+                return GroupToItemEntity(group);
             }
+
+            var entry = GetEntryFromGuid(itemId, false);
+            if (entry != null)
+            {
+                return EntryToItemEntity(entry);
+            }
+
             return default(ItemEntity);
         }
 
@@ -173,14 +171,12 @@ namespace Threax.Keepass.Services
 
         private Entry DoGetEntry(Guid itemId)
         {
-            if (itemId != null)
+            var entry = GetEntryFromGuid(itemId);
+            if (entry != null)
             {
-                var entry = GetEntryFromGuid(itemId);
-                if (entry != null)
-                {
-                    return EntryToView(entry);
-                }
+                return EntryToView(entry);
             }
+
             return default(Entry);
         }
 
@@ -190,13 +186,10 @@ namespace Threax.Keepass.Services
             using (await mutex.LockAsync())
             {
                 CheckDb();
-                if (itemId != null)
+                var entry = GetEntryFromGuid(itemId);
+                if (entry != null)
                 {
-                    var entry = GetEntryFromGuid(itemId);
-                    if (entry != null)
-                    {
-                        return entry.Strings.Get("Password")?.ReadString();
-                    }
+                    return entry.Strings.Get("Password")?.ReadString();
                 }
                 return null;
             }
@@ -256,7 +249,7 @@ namespace Threax.Keepass.Services
             using (await mutex.LockAsync())
             {
                 var group = GetGroupFromGuid(id, false);
-                if(group != null)
+                if (group != null)
                 {
                     group.ParentGroup.Groups.Remove(group);
                     db.Save(statusLogger);
@@ -270,7 +263,7 @@ namespace Threax.Keepass.Services
                     db.Save(statusLogger);
                     return;
                 }
-                
+
                 throw new InvalidOperationException($"Cannot find item to delete {id}");
             }
         }

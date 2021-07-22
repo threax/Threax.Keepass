@@ -1,8 +1,8 @@
-import * as client from 'clientlibs.ServiceClient';
-import * as controller from 'hr.controller';
-import * as startup from 'clientlibs.startup';
-import { Uri } from 'hr.uri';
-import * as loginPopup from 'hr.relogin.LoginPopup';
+import * as client from 'Client/Libs/ServiceClient';
+import * as controller from 'htmlrapier/src/controller';
+import * as startup from 'Client/Libs/startup';
+import { Uri } from 'htmlrapier/src/uri';
+import * as loginPopup from 'htmlrapier.relogin/src/LoginPopup';
 
 //Written this way for injection, but not really used.
 class AppStart {

@@ -8,6 +8,6 @@
 <client-config csp-nonce></client-config>
 <script type="text/javascript" csp-nonce>window.hr_config=(function(next){return function(config){config.entry = @Html.Raw(entryPointRenderer.Render().ToString(Newtonsoft.Json.Formatting.None));return next?next(config):config;}})(window.hr_config);</script>
 <style csp-nonce>html{visibility:visible;opacity:1;}</style>
-<asset-bundle src="~/bundle.min.js"></asset-bundle>@RenderSection("scripts", required: false)<script type="text/javascript" src="~/lib/hr-run.js" asp-append-version="true"></script>
+<asset-bundle src="~/bundle.min.js"></asset-bundle>@RenderSection("scripts", required: false)<script type="text/javascript" src="~/lib/jsns/runattributes.js" asp-append-version="true"></script>
 <threax-csp></threax-csp>
 </body></html>

@@ -1,9 +1,9 @@
-import * as startup from 'clientlibs.startup';
-import * as controller from 'hr.controller';
-import * as client from 'clientlibs.ServiceClient';
-import { MainLoadErrorLifecycle } from 'hr.widgets.MainLoadErrorLifecycle';
-import * as dbpopup from 'clientlibs.DbPopup';
-import * as safepost from 'hr.safepostmessage';
+import * as startup from 'Client/Libs/startup';
+import * as controller from 'htmlrapier/src/controller';
+import * as client from 'Client/Libs/ServiceClient';
+import { MainLoadErrorLifecycle } from 'htmlrapier.widgets/src/MainLoadErrorLifecycle';
+import * as dbpopup from 'Client/Libs/DbPopup';
+import * as safepost from 'htmlrapier/src/safepostmessage';
 
 class ManageDbController {
     private input: controller.IForm<client.OpenDbInput>;

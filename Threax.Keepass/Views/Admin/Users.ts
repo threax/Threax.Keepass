@@ -1,8 +1,6 @@
-﻿import * as startup from 'clientlibs.startup';
-import * as controller from 'hr.controller';
-import * as crudService from 'hr.roleclient.UserCrudService';
-import * as deepLink from 'hr.deeplink';
-import * as userSearch from 'hr.roleclient.UserSearchController';
+﻿import * as startup from 'Client/Libs/startup';
+import * as crudService from 'htmlrapier.roleclient/src/UserCrudService';
+import * as deepLink from 'htmlrapier/src/deeplink';
 
 var builder = startup.createBuilder({
     EnableDbPopup: false

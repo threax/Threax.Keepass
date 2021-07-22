@@ -1,11 +1,4 @@
 {
-  "compilerOptions": {
-    "paths": {
-      "clientlibs.*": [
-        "Client/Libs/*"
-      ]
-    }
-  },
   "include": [
     "Client/Libs/**/*.ts",
     "Views/**/*.ts"

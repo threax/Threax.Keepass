@@ -1,22 +1,22 @@
-﻿import * as hr from 'hr.main';
-import * as datetime from 'hr.bootstrap.datetime.main';
-import * as bootstrap from 'hr.bootstrap.main';
-import * as bootstrap4form from 'hr.form.bootstrap4.main';
-import * as controller from 'hr.controller';
-import * as WindowFetch from 'hr.windowfetch';
-import * as tokenmanager from 'hr.accesstoken.manager';
-import * as tokenfetcher from 'hr.accesstoken.fetcher';
-import * as whitelist from 'hr.whitelist';
-import * as fetcher from 'hr.fetcher';
-import * as client from 'clientlibs.ServiceClient';
-import * as userSearch from 'clientlibs.UserSearchClientEntryPointInjector';
-import * as loginPopup from 'hr.relogin.LoginPopup';
-import * as deepLink from 'hr.deeplink';
-import * as pageConfig from 'hr.pageconfig';
-import * as dbfetcher from 'clientlibs.DbFetcher';
-import * as dbpopup from 'clientlibs.DbPopup';
-import * as safepost from 'hr.safepostmessage';
-import * as di from 'hr.di';
+﻿import * as hr from 'htmlrapier/src/main';
+import * as datetime from 'htmlrapier.bootstrap.datetime/src/main';
+import * as bootstrap from 'htmlrapier.bootstrap/src/main';
+import * as bootstrap4form from 'htmlrapier.form.bootstrap4/src/main';
+import * as controller from 'htmlrapier/src/controller';
+import * as WindowFetch from 'htmlrapier/src/windowfetch';
+import * as tokenmanager from 'htmlrapier.accesstoken/src/manager';
+import * as tokenfetcher from 'htmlrapier.accesstoken/src/fetcher';
+import * as whitelist from 'htmlrapier/src/whitelist';
+import * as fetcher from 'htmlrapier/src/fetcher';
+import * as client from 'Client/Libs/ServiceClient';
+import * as userSearch from 'Client/Libs/UserSearchClientEntryPointInjector';
+import * as loginPopup from 'htmlrapier.relogin/src/LoginPopup';
+import * as deepLink from 'htmlrapier/src/deeplink';
+import * as pageConfig from 'htmlrapier/src/pageconfig';
+import * as dbfetcher from 'Client/Libs/DbFetcher';
+import * as dbpopup from 'Client/Libs/DbPopup';
+import * as safepost from 'htmlrapier/src/safepostmessage';
+import * as di from 'htmlrapier/src/di';
 
 export interface Config {
     client: {

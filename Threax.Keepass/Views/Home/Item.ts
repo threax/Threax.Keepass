@@ -1,12 +1,12 @@
-import * as standardCrudPage from 'hr.widgets.StandardCrudPage';
-import * as startup from 'clientlibs.startup';
-import * as deepLink from 'hr.deeplink';
-import { ItemCrudInjector } from 'clientlibs.ItemCrudInjector';
-import { CrudItemEditorControllerExtensions, CrudItemEditorController } from 'hr.widgets.CrudItemEditor';
-import * as controller from 'hr.controller';
-import * as client from 'clientlibs.ServiceClient';
-import { CrudTableRowControllerExtensions, CrudTableRowController } from 'hr.widgets.CrudTableRow';
-import * as crudpage from 'hr.widgets.CrudPage';
+import * as standardCrudPage from 'htmlrapier.widgets/src/StandardCrudPage';
+import * as startup from 'Client/Libs/startup';
+import * as deepLink from 'htmlrapier/src/deeplink';
+import { ItemCrudInjector } from 'Client/Libs/ItemCrudInjector';
+import { CrudItemEditorControllerExtensions, CrudItemEditorController } from 'htmlrapier.widgets/src/CrudItemEditor';
+import * as controller from 'htmlrapier/src/controller';
+import * as client from 'Client/Libs/ServiceClient';
+import { CrudTableRowControllerExtensions, CrudTableRowController } from 'htmlrapier.widgets/src/CrudTableRow';
+import * as crudpage from 'htmlrapier.widgets/src/CrudPage';
 
 class EditExtensions extends CrudItemEditorControllerExtensions {
     public static get InjectorArgs(): controller.DiFunction<any>[] {

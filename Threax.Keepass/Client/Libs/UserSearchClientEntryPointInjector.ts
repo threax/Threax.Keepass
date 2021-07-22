@@ -1,7 +1,7 @@
-﻿import * as controller from 'hr.controller';
-import * as client from 'clientlibs.ServiceClient';
-import * as userDirectoryClient from 'hr.roleclient.UserDirectoryClient';
-import * as roleClient from 'hr.roleclient.RoleClient';
+﻿import * as controller from 'htmlrapier/src/controller';
+import * as client from 'Client/Libs/ServiceClient';
+import * as userDirectoryClient from 'htmlrapier.roleclient/src/UserDirectoryClient';
+import * as roleClient from 'htmlrapier.roleclient/src/RoleClient';
 
 export class UserSearchClientEntryPointInjector extends userDirectoryClient.UserSearchEntryPointInjector {
     public static get InjectorArgs(): controller.DiFunction<any>[] {

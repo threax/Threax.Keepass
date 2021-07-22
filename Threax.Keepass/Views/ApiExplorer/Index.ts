@@ -1,7 +1,6 @@
-﻿import * as explorer from 'hr.halcyon-explorer.HalcyonBrowserController';
-import * as controller from 'hr.controller';
-import * as startup from 'clientlibs.startup';
-import * as deepLink from 'hr.deeplink';
+﻿import * as explorer from 'htmlrapier.halcyon-explorer/src/HalcyonBrowserController';
+import * as startup from 'Client/Libs/startup';
+import * as deepLink from 'htmlrapier/src/deeplink';
 
 var builder = startup.createBuilder();
 deepLink.addServices(builder.Services);

@@ -1,8 +1,8 @@
-import { Fetcher } from 'hr.fetcher';
-import * as events from 'hr.eventdispatcher';
-import * as ep from 'hr.externalpromise';
-import { IWhitelist } from 'hr.whitelist';
-import * as client from 'clientlibs.ServiceClient';
+import { Fetcher } from 'htmlrapier/src/fetcher';
+import * as events from 'htmlrapier/src/eventdispatcher';
+import * as ep from 'htmlrapier/src/externalpromise';
+import { IWhitelist } from 'htmlrapier/src/whitelist';
+import * as client from 'Client/Libs/ServiceClient';
 
 class TokenManager {
     private currentToken: client.DbStatus;

@@ -26,6 +26,8 @@ namespace Threax.Keepass.Database
         /// <returns></returns>
         public static IServiceCollection AddAppDatabase(this IServiceCollection services, string connectionString)
         {
+            SqliteFileExtensions.TryCreateFile(connectionString);
+
             //Add the database
             services.AddAuthorizationDatabase<AppDbContext>()
                     .AddDbContextPool<AppDbContext>(o =>

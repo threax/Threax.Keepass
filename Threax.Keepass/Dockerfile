@@ -1,8 +1,7 @@
-# syntax = docker/dockerfile:1.0-experimental
-FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
 
-FROM threax/build-dotnet:5.0 AS build
+FROM threax/build-dotnet:6.0 AS build
 WORKDIR /src
 COPY . .
 WORKDIR /src/Threax.Keepass

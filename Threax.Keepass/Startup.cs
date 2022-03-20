@@ -23,7 +23,6 @@ using Threax.AspNetCore.IdServerAuth;
 using Threax.AspNetCore.UserBuilder;
 using Threax.AspNetCore.UserLookup.Mvc.Controllers;
 using Threax.Extensions.Configuration.SchemaBinder;
-using Threax.Sqlite.Ext.EfCore3;
 using Microsoft.Extensions.Hosting;
 using Threax.Keepass.Services;
 using KeePassLib.Interfaces;
@@ -170,7 +169,6 @@ namespace Threax.Keepass
                 .AddTool("migrate", new ToolCommand("Migrate database to newest version. Run anytime new migrations have been added.", async a =>
                 {
                     await a.Migrate();
-                    a.Scope.ServiceProvider.GetRequiredService<AppDbContext>().ConvertToEfCore3();
                 }))
                 .AddTool("seed", new ToolCommand("Seed database data. Only needed for an empty database.", async a =>
                 {

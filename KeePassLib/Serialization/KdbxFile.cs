@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -75,16 +75,17 @@ namespace KeePassLib.Serialization
 		internal const uint FileSignature2 = 0xB54BFB67;
 
 		/// <summary>
-		/// File version of files saved by the current <c>KdbxFile</c> class.
+		/// Maximum supported version of database files.
 		/// KeePass 2.07 has version 1.01, 2.08 has 1.02, 2.09 has 2.00,
 		/// 2.10 has 2.02, 2.11 has 2.04, 2.15 has 3.00, 2.20 has 3.01.
 		/// The first 2 bytes are critical (i.e. loading will fail, if the
 		/// file version is too high), the last 2 bytes are informational.
 		/// </summary>
-		private const uint FileVersion32 = 0x00040000;
+		internal const uint FileVersion32 = 0x00040001;
 
-		internal const uint FileVersion32_4 = 0x00040000; // First of 4.x series
-		internal const uint FileVersion32_3 = 0x00030001; // Old format 3.1
+		private const uint FileVersion32_4_1 = 0x00040001; // 4.1
+		private const uint FileVersion32_4 = 0x00040000; // 4.0
+		internal const uint FileVersion32_3_1 = 0x00030001; // 3.1
 
 		private const uint FileVersionCriticalMask = 0xFFFF0000;
 
@@ -99,7 +100,7 @@ namespace KeePassLib.Serialization
 		private const string ElemMeta = "Meta";
 		private const string ElemRoot = "Root";
 		private const string ElemGroup = "Group";
-		private const string ElemEntry = "Entry";
+		internal const string ElemEntry = "Entry";
 
 		private const string ElemGenerator = "Generator";
 		private const string ElemHeaderHash = "HeaderHash";
@@ -144,12 +145,13 @@ namespace KeePassLib.Serialization
 
 		private const string ElemName = "Name";
 		private const string ElemNotes = "Notes";
-		private const string ElemUuid = "UUID";
+		internal const string ElemUuid = "UUID";
 		private const string ElemIcon = "IconID";
 		private const string ElemCustomIconID = "CustomIconUUID";
 		private const string ElemFgColor = "ForegroundColor";
 		private const string ElemBgColor = "BackgroundColor";
 		private const string ElemOverrideUrl = "OverrideURL";
+		private const string ElemQualityCheck = "QualityCheck";
 		private const string ElemTimes = "Times";
 		private const string ElemTags = "Tags";
 
@@ -160,6 +162,8 @@ namespace KeePassLib.Serialization
 		private const string ElemExpires = "Expires";
 		private const string ElemUsageCount = "UsageCount";
 		private const string ElemLocationChanged = "LocationChanged";
+
+		private const string ElemPreviousParentGroup = "PreviousParentGroup";
 
 		private const string ElemGroupDefaultAutoTypeSeq = "DefaultAutoTypeSequence";
 		private const string ElemEnableAutoType = "EnableAutoType";
@@ -217,7 +221,7 @@ namespace KeePassLib.Serialization
 		private CrsAlgorithm m_craInnerRandomStream = CrsAlgorithm.ArcFourVariant;
 		private byte[] m_pbInnerRandomStreamKey = null;
 
-		private ProtectedBinarySet m_pbsBinaries = new ProtectedBinarySet();
+		private ProtectedBinarySet m_pbsBinaries = null;
 
 		private byte[] m_pbHashOfHeader = null;
 		private byte[] m_pbHashOfFileOnDisk = null;
@@ -227,7 +231,7 @@ namespace KeePassLib.Serialization
 		private const uint NeutralLanguageOffset = 0x100000; // 2^20, see 32-bit Unicode specs
 		private const uint NeutralLanguageIDSec = 0x7DC5C; // See 32-bit Unicode specs
 		private const uint NeutralLanguageID = NeutralLanguageOffset + NeutralLanguageIDSec;
-		private static bool m_bLocalizedNames = false;
+		private static bool g_bLocalizedNames = false;
 
 		private enum KdbxHeaderFieldID : byte
 		{
@@ -260,6 +264,13 @@ namespace KeePassLib.Serialization
 		{
 			None = 0,
 			Protected = 1
+		}
+
+		private static GFunc<bool> g_fConfirmOpenUnkVer = null;
+		internal static GFunc<bool> ConfirmOpenUnknownVersion
+		{
+			get { return g_fConfirmOpenUnkVer; }
+			set { g_fConfirmOpenUnkVer = value; }
 		}
 
 		public byte[] HashOfFileOnDisk
@@ -312,8 +323,8 @@ namespace KeePassLib.Serialization
 		public static void DetermineLanguageId()
 		{
 			// Test if localized names should be used. If localized names are used,
-			// the m_bLocalizedNames value must be set to true. By default, localized
-			// names should be used! (Otherwise characters could be corrupted
+			// the g_bLocalizedNames value must be set to true. By default, localized
+			// names should be used (otherwise characters could be corrupted
 			// because of different code pages).
 			unchecked
 			{
@@ -321,7 +332,7 @@ namespace KeePassLib.Serialization
 				foreach(char ch in PwDatabase.LocalizedAppName)
 					uTest = uTest * 5 + ch;
 
-				m_bLocalizedNames = (uTest != NeutralLanguageID);
+				g_bLocalizedNames = (uTest != NeutralLanguageID);
 			}
 		}
 
@@ -331,31 +342,62 @@ namespace KeePassLib.Serialization
 
 			// See also KeePassKdb2x3.Export (KDBX 3.1 export module)
 
-			AesKdf kdfAes = new AesKdf();
-			if(!kdfAes.Uuid.Equals(m_pwDatabase.KdfParameters.KdfUuid))
-				return FileVersion32;
+			uint uMin = 0;
 
-			if(m_pwDatabase.PublicCustomData.Count > 0)
-				return FileVersion32;
-
-			bool bCustomData = false;
 			GroupHandler gh = delegate(PwGroup pg)
 			{
 				if(pg == null) { Debug.Assert(false); return true; }
-				if(pg.CustomData.Count > 0) { bCustomData = true; return false; }
+
+				if(pg.Tags.Count != 0)
+					uMin = Math.Max(uMin, FileVersion32_4_1);
+				if(pg.CustomData.Count != 0)
+					uMin = Math.Max(uMin, FileVersion32_4);
+
 				return true;
 			};
+
 			EntryHandler eh = delegate(PwEntry pe)
 			{
 				if(pe == null) { Debug.Assert(false); return true; }
-				if(pe.CustomData.Count > 0) { bCustomData = true; return false; }
+
+				if(!pe.QualityCheck)
+					uMin = Math.Max(uMin, FileVersion32_4_1);
+				if(pe.CustomData.Count != 0)
+					uMin = Math.Max(uMin, FileVersion32_4);
+
 				return true;
 			};
+
 			gh(m_pwDatabase.RootGroup);
 			m_pwDatabase.RootGroup.TraverseTree(TraversalMethod.PreOrder, gh, eh);
-			if(bCustomData) return FileVersion32;
 
-			return FileVersion32_3; // KDBX 3.1 is sufficient
+			if(uMin >= FileVersion32_4_1) return uMin; // All below is <= 4.1
+
+			foreach(PwCustomIcon ci in m_pwDatabase.CustomIcons)
+			{
+				if((ci.Name.Length != 0) || ci.LastModificationTime.HasValue)
+					return FileVersion32_4_1;
+			}
+
+			foreach(KeyValuePair<string, string> kvp in m_pwDatabase.CustomData)
+			{
+				DateTime? odt = m_pwDatabase.CustomData.GetLastModificationTime(kvp.Key);
+				if(odt.HasValue) return FileVersion32_4_1;
+			}
+
+			if(uMin >= FileVersion32_4) return uMin; // All below is <= 4
+
+			if(m_pwDatabase.DataCipherUuid.Equals(ChaCha20Engine.ChaCha20Uuid))
+				return FileVersion32_4;
+
+			AesKdf kdfAes = new AesKdf();
+			if(!m_pwDatabase.KdfParameters.KdfUuid.Equals(kdfAes.Uuid))
+				return FileVersion32_4;
+
+			if(m_pwDatabase.PublicCustomData.Count != 0)
+				return FileVersion32_4;
+
+			return FileVersion32_3_1; // KDBX 3.1 is sufficient
 		}
 
 		private void ComputeKeys(out byte[] pbCipherKey, int cbCipherKey,

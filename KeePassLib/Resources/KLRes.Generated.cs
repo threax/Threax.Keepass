@@ -31,6 +31,7 @@ namespace KeePassLib.Resources
 			m_strCharSetTooFewChars = TryGetEx(dictNew, "CharSetTooFewChars", m_strCharSetTooFewChars);
 			m_strCryptoStreamFailed = TryGetEx(dictNew, "CryptoStreamFailed", m_strCryptoStreamFailed);
 			m_strEncDataTooLarge = TryGetEx(dictNew, "EncDataTooLarge", m_strEncDataTooLarge);
+			m_strEntryLower = TryGetEx(dictNew, "EntryLower", m_strEntryLower);
 			m_strErrorInClipboard = TryGetEx(dictNew, "ErrorInClipboard", m_strErrorInClipboard);
 			m_strExpect100Continue = TryGetEx(dictNew, "Expect100Continue", m_strExpect100Continue);
 			m_strFatalError = TryGetEx(dictNew, "FatalError", m_strFatalError);
@@ -44,7 +45,7 @@ namespace KeePassLib.Resources
 			m_strFileNewVerOrPlgReq = TryGetEx(dictNew, "FileNewVerOrPlgReq", m_strFileNewVerOrPlgReq);
 			m_strFileNewVerReq = TryGetEx(dictNew, "FileNewVerReq", m_strFileNewVerReq);
 			m_strFileSaveCorruptionWarning = TryGetEx(dictNew, "FileSaveCorruptionWarning", m_strFileSaveCorruptionWarning);
-			m_strFileSaveFailed = TryGetEx(dictNew, "FileSaveFailed", m_strFileSaveFailed);
+			m_strFileSaveFailed2 = TryGetEx(dictNew, "FileSaveFailed2", m_strFileSaveFailed2);
 			m_strFileSigInvalid = TryGetEx(dictNew, "FileSigInvalid", m_strFileSigInvalid);
 			m_strFileUnknownCipher = TryGetEx(dictNew, "FileUnknownCipher", m_strFileUnknownCipher);
 			m_strFileUnknownCompression = TryGetEx(dictNew, "FileUnknownCompression", m_strFileUnknownCompression);
@@ -52,12 +53,14 @@ namespace KeePassLib.Resources
 			m_strFinalKeyCreationFailed = TryGetEx(dictNew, "FinalKeyCreationFailed", m_strFinalKeyCreationFailed);
 			m_strFrameworkNotImplExcp = TryGetEx(dictNew, "FrameworkNotImplExcp", m_strFrameworkNotImplExcp);
 			m_strGeneral = TryGetEx(dictNew, "General", m_strGeneral);
+			m_strGroupLower = TryGetEx(dictNew, "GroupLower", m_strGroupLower);
 			m_strInvalidCompositeKey = TryGetEx(dictNew, "InvalidCompositeKey", m_strInvalidCompositeKey);
 			m_strInvalidCompositeKeyHint = TryGetEx(dictNew, "InvalidCompositeKeyHint", m_strInvalidCompositeKeyHint);
 			m_strInvalidDataWhileDecoding = TryGetEx(dictNew, "InvalidDataWhileDecoding", m_strInvalidDataWhileDecoding);
 			m_strKeePass1xHint = TryGetEx(dictNew, "KeePass1xHint", m_strKeePass1xHint);
 			m_strKeyBits = TryGetEx(dictNew, "KeyBits", m_strKeyBits);
 			m_strKeyFileDbSel = TryGetEx(dictNew, "KeyFileDbSel", m_strKeyFileDbSel);
+			m_strKeyHashMismatch = TryGetEx(dictNew, "KeyHashMismatch", m_strKeyHashMismatch);
 			m_strMasterSeedLengthInvalid = TryGetEx(dictNew, "MasterSeedLengthInvalid", m_strMasterSeedLengthInvalid);
 			m_strOldFormat = TryGetEx(dictNew, "OldFormat", m_strOldFormat);
 			m_strPassive = TryGetEx(dictNew, "Passive", m_strPassive);
@@ -81,6 +84,7 @@ namespace KeePassLib.Resources
 			"CharSetTooFewChars",
 			"CryptoStreamFailed",
 			"EncDataTooLarge",
+			"EntryLower",
 			"ErrorInClipboard",
 			"Expect100Continue",
 			"FatalError",
@@ -94,7 +98,7 @@ namespace KeePassLib.Resources
 			"FileNewVerOrPlgReq",
 			"FileNewVerReq",
 			"FileSaveCorruptionWarning",
-			"FileSaveFailed",
+			"FileSaveFailed2",
 			"FileSigInvalid",
 			"FileUnknownCipher",
 			"FileUnknownCompression",
@@ -102,12 +106,14 @@ namespace KeePassLib.Resources
 			"FinalKeyCreationFailed",
 			"FrameworkNotImplExcp",
 			"General",
+			"GroupLower",
 			"InvalidCompositeKey",
 			"InvalidCompositeKeyHint",
 			"InvalidDataWhileDecoding",
 			"KeePass1xHint",
 			"KeyBits",
 			"KeyFileDbSel",
+			"KeyHashMismatch",
 			"MasterSeedLengthInvalid",
 			"OldFormat",
 			"Passive",
@@ -183,6 +189,17 @@ namespace KeePassLib.Resources
 		public static string EncDataTooLarge
 		{
 			get { return m_strEncDataTooLarge; }
+		}
+
+		private static string m_strEntryLower =
+			@"entry";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'entry'.
+		/// </summary>
+		public static string EntryLower
+		{
+			get { return m_strEntryLower; }
 		}
 
 		private static string m_strErrorInClipboard =
@@ -328,15 +345,15 @@ namespace KeePassLib.Resources
 			get { return m_strFileSaveCorruptionWarning; }
 		}
 
-		private static string m_strFileSaveFailed =
-			@"Failed to save the current database to the specified location!";
+		private static string m_strFileSaveFailed2 =
+			@"Failed to save to the specified file!";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'Failed to save the current database to the specified location!'.
+		/// 'Failed to save to the specified file!'.
 		/// </summary>
-		public static string FileSaveFailed
+		public static string FileSaveFailed2
 		{
-			get { return m_strFileSaveFailed; }
+			get { return m_strFileSaveFailed2; }
 		}
 
 		private static string m_strFileSigInvalid =
@@ -373,10 +390,10 @@ namespace KeePassLib.Resources
 		}
 
 		private static string m_strFileVersionUnsupported =
-			@"The file version is unsupported.";
+			@"The file format version is unsupported.";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'The file version is unsupported.'.
+		/// 'The file format version is unsupported.'.
 		/// </summary>
 		public static string FileVersionUnsupported
 		{
@@ -416,11 +433,22 @@ namespace KeePassLib.Resources
 			get { return m_strGeneral; }
 		}
 
-		private static string m_strInvalidCompositeKey =
-			@"The composite key is invalid!";
+		private static string m_strGroupLower =
+			@"group";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'The composite key is invalid!'.
+		/// 'group'.
+		/// </summary>
+		public static string GroupLower
+		{
+			get { return m_strGroupLower; }
+		}
+
+		private static string m_strInvalidCompositeKey =
+			@"The master key is invalid!";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'The master key is invalid!'.
 		/// </summary>
 		public static string InvalidCompositeKey
 		{
@@ -428,10 +456,10 @@ namespace KeePassLib.Resources
 		}
 
 		private static string m_strInvalidCompositeKeyHint =
-			@"Make sure the composite key is correct and try again.";
+			@"Make sure that the master key is correct and try it again.";
 		/// <summary>
 		/// Look up a localized string similar to
-		/// 'Make sure the composite key is correct and try again.'.
+		/// 'Make sure that the master key is correct and try it again.'.
 		/// </summary>
 		public static string InvalidCompositeKeyHint
 		{
@@ -480,6 +508,17 @@ namespace KeePassLib.Resources
 		public static string KeyFileDbSel
 		{
 			get { return m_strKeyFileDbSel; }
+		}
+
+		private static string m_strKeyHashMismatch =
+			@"The key and the hash do not match, i.e. the key or the hash is invalid.";
+		/// <summary>
+		/// Look up a localized string similar to
+		/// 'The key and the hash do not match, i.e. the key or the hash is invalid.'.
+		/// </summary>
+		public static string KeyHashMismatch
+		{
+			get { return m_strKeyHashMismatch; }
 		}
 
 		private static string m_strMasterSeedLengthInvalid =

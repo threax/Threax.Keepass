@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -33,8 +33,11 @@ namespace KeePassLib.Collections
 		private Dictionary<int, ProtectedBinary> m_d =
 			new Dictionary<int, ProtectedBinary>();
 
-		public ProtectedBinarySet()
+		private readonly bool m_bDedupAdd;
+
+		public ProtectedBinarySet(bool bDedupAdd)
 		{
+			m_bDedupAdd = bDedupAdd;
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()
@@ -45,11 +48,6 @@ namespace KeePassLib.Collections
 		public IEnumerator<KeyValuePair<int, ProtectedBinary>> GetEnumerator()
 		{
 			return m_d.GetEnumerator();
-		}
-
-		public void Clear()
-		{
-			m_d.Clear();
 		}
 
 		private int GetFreeID()
@@ -105,11 +103,9 @@ namespace KeePassLib.Collections
 		{
 			if(pb == null) { Debug.Assert(false); return; }
 
-			int i = Find(pb);
-			if(i >= 0) return; // Exists already
+			if(m_bDedupAdd && (Find(pb) >= 0)) return; // Exists already
 
-			i = GetFreeID();
-			m_d[i] = pb;
+			m_d[GetFreeID()] = pb;
 		}
 
 		public void AddFrom(ProtectedBinaryDictionary d)

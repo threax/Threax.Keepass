@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -268,10 +268,9 @@ namespace KeePassLib.Security
 				return;
 			}
 #if !NETSTANDARD2_0
-            if(ProtectedBinary.ProtectedMemorySupported)
+			if(ProtectedBinary.ProtectedMemorySupported)
 			{
-
-                ProtectedMemory.Protect(m_pbData, MemoryProtectionScope.SameProcess);
+				ProtectedMemory.Protect(m_pbData, MemoryProtectionScope.SameProcess);
 
 				m_mp = PbMemProt.ProtectedMemory;
 				return;
@@ -303,9 +302,9 @@ namespace KeePassLib.Security
 #if !NETSTANDARD2_0
 			if(m_mp == PbMemProt.ProtectedMemory)
 				ProtectedMemory.Unprotect(m_pbData, MemoryProtectionScope.SameProcess);
-			else 
+			else
 #endif
-            if (m_mp == PbMemProt.ChaCha20)
+			if (m_mp == PbMemProt.ChaCha20)
 			{
 				byte[] pbIV = new byte[12];
 				MemUtil.UInt64ToBytesEx((ulong)m_lID, pbIV, 4);
@@ -365,22 +364,21 @@ namespace KeePassLib.Security
 			return pbData;
 		}
 
-		private int? m_hash = null;
+		private int? m_oiHash = null;
 		public override int GetHashCode()
 		{
-			if(m_hash.HasValue) return m_hash.Value;
-
-			int h = (m_bProtected ? 0x7B11D289 : 0);
+			lock(m_objSync) { if(m_oiHash.HasValue) return m_oiHash.Value; }
 
 			byte[] pb = ReadData();
-			unchecked
-			{
-				for(int i = 0; i < pb.Length; ++i)
-					h = (h << 3) + h + (int)pb[i];
-			}
-			if(m_bProtected) MemUtil.ZeroByteArray(pb);
+			int h = (int)MemUtil.Hash32(pb, 0, pb.Length);
 
-			m_hash = h;
+			if(m_bProtected)
+			{
+				h ^= 0x57851B93;
+				MemUtil.ZeroByteArray(pb);
+			}
+
+			lock(m_objSync) { m_oiHash = h; }
 			return h;
 		}
 

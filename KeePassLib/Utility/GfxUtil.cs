@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 
 #if !KeePassUAP || NETSTANDARD2_0
@@ -33,6 +34,18 @@ namespace KeePassLib.Utility
 {
 	public static class GfxUtil
 	{
+		private const short ExifTypeUInt16 = 3;
+
+		private const int ExifOrientation = 274;
+		private const ushort ExifOrientationTL = 1;
+		private const ushort ExifOrientationTR = 2;
+		private const ushort ExifOrientationBR = 3;
+		private const ushort ExifOrientationBL = 4;
+		private const ushort ExifOrientationLT = 5;
+		private const ushort ExifOrientationRT = 6;
+		private const ushort ExifOrientationRB = 7;
+		private const ushort ExifOrientationLB = 8;
+
 #if (!KeePassLibSD && !KeePassUAP)
 		private sealed class GfxImage
 		{
@@ -100,9 +113,11 @@ namespace KeePassLib.Utility
 			{
 #if !KeePassLibSD
 				imgSrc = Image.FromStream(s);
+
+				NormalizeOrientation(imgSrc);
+
 				Bitmap bmp = new Bitmap(imgSrc.Width, imgSrc.Height,
 					PixelFormat.Format32bppArgb);
-
 				try
 				{
 					bmp.SetResolution(imgSrc.HorizontalResolution,
@@ -334,8 +349,8 @@ namespace KeePassLib.Utility
 			{
 				g.Clear(Color.Transparent);
 
-				g.SmoothingMode = SmoothingMode.HighQuality;
 				g.CompositingQuality = CompositingQuality.HighQuality;
+				g.SmoothingMode = SmoothingMode.HighQuality;
 
 				int wSrc = img.Width;
 				int hSrc = img.Height;
@@ -424,6 +439,16 @@ namespace KeePassLib.Utility
 #endif // !KeePassLibSD
 #endif // KeePassUAP
 
+		internal static void SetHighQuality(Graphics g)
+		{
+			if(g == null) { Debug.Assert(false); return; }
+
+			g.CompositingQuality = CompositingQuality.HighQuality;
+			g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+			// g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+			g.SmoothingMode = SmoothingMode.HighQuality;
+		}
+
 		internal static string ImageToDataUri(Image img)
 		{
 			if(img == null) { Debug.Assert(false); return string.Empty; }
@@ -436,6 +461,99 @@ namespace KeePassLib.Utility
 			}
 
 			return StrUtil.DataToDataUri(pb, "image/png");
+		}
+
+		internal static ulong HashImage64(Image img)
+		{
+			Bitmap bmp = (img as Bitmap);
+			if(bmp == null) { Debug.Assert(false); return 0; }
+
+			BitmapData bd = null;
+			try
+			{
+				int w = bmp.Width, h = bmp.Height;
+				if((w <= 0) || (h <= 0)) { Debug.Assert(false); return 0; }
+
+				bd = bmp.LockBits(new Rectangle(0, 0, w, h),
+					ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+				if(bd.Stride != (w * 4)) { Debug.Assert(false); return 0; }
+
+				Debug.Assert(Marshal.SizeOf(typeof(int)) == 4);
+				int cp = w * h;
+				int[] v = new int[cp + 2];
+				Marshal.Copy(bd.Scan0, v, 0, cp);
+				v[cp] = w;
+				v[cp + 1] = h;
+
+				return MemUtil.Hash64(v, 0, v.Length);
+			}
+			catch(Exception) { Debug.Assert(false); }
+			finally
+			{
+				if(bd != null) bmp.UnlockBits(bd);
+			}
+
+			return 0;
+		}
+
+		private static void NormalizeOrientation(Image img)
+		{
+			if(img == null) { Debug.Assert(false); return; }
+
+			try
+			{
+				int[] v = img.PropertyIdList;
+				if(v == null) { Debug.Assert(false); return; }
+				if(Array.IndexOf<int>(v, ExifOrientation) < 0) return;
+
+				PropertyItem pi = img.GetPropertyItem(ExifOrientation);
+				if(pi == null) { Debug.Assert(false); return; }
+				if(pi.Type != ExifTypeUInt16) { Debug.Assert(false); return; }
+
+				byte[] pb = pi.Value;
+				if(pb == null) { Debug.Assert(false); return; }
+				if(pb.Length != 2) { Debug.Assert(false); return; }
+
+				// Exif supports both LE and BE; use arch.-dep. BitConverter
+				ushort u = BitConverter.ToUInt16(pb, 0);
+				bool bRemoveProp = true;
+
+				switch(u)
+				{
+					case ExifOrientationTL:
+						bRemoveProp = false;
+						break;
+					case ExifOrientationTR:
+						img.RotateFlip(RotateFlipType.RotateNoneFlipX);
+						break;
+					case ExifOrientationBR:
+						img.RotateFlip(RotateFlipType.Rotate180FlipNone);
+						break;
+					case ExifOrientationBL:
+						img.RotateFlip(RotateFlipType.RotateNoneFlipY);
+						break;
+					case ExifOrientationLT:
+						img.RotateFlip(RotateFlipType.Rotate90FlipX);
+						break;
+					case ExifOrientationRT:
+						img.RotateFlip(RotateFlipType.Rotate90FlipNone);
+						break;
+					case ExifOrientationRB:
+						img.RotateFlip(RotateFlipType.Rotate90FlipY);
+						break;
+					case ExifOrientationLB:
+						img.RotateFlip(RotateFlipType.Rotate270FlipNone);
+						break;
+					default:
+						Debug.Assert(false);
+						bRemoveProp = false;
+						break;
+				}
+
+				if(bRemoveProp) img.RemovePropertyItem(ExifOrientation);
+			}
+			catch(Exception) { Debug.Assert(false); }
 		}
 	}
 }

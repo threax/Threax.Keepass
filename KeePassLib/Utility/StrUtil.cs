@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -317,6 +317,18 @@ namespace KeePassLib.Utility
 			if(RtfIsURtf(str)) str = str.Remove(2, 1); // Remove the 'u'
 
 			return str;
+		}
+
+		internal static string RtfFilterText(string strText)
+		{
+			if(strText == null) { Debug.Assert(false); return string.Empty; }
+
+			// A U+FFFC character causes the rest of the text to be lost.
+			// With '?', the string length, substring indices and
+			// character visibility remain the same.
+			// More special characters (unproblematic) in rich text boxes:
+			// https://docs.microsoft.com/en-us/windows/win32/api/richedit/ns-richedit-gettextex
+			return strText.Replace('\uFFFC', '?');
 		}
 
 		internal static bool ContainsHighChar(string str)
@@ -724,6 +736,16 @@ namespace KeePassLib.Utility
 			return (strText.Substring(0, cchMax - 3) + "...");
 		}
 
+		private static readonly char[] g_vDots = new char[] { '.', '\u2026' };
+		private static readonly char[] g_vDotsWS = new char[] { '.', '\u2026',
+			' ', '\t', '\r', '\n' };
+		internal static string TrimDots(string strText, bool bTrimWhiteSpace)
+		{
+			if(strText == null) { Debug.Assert(false); return string.Empty; }
+
+			return strText.Trim(bTrimWhiteSpace ? g_vDotsWS : g_vDots);
+		}
+
 		public static string GetStringBetween(string strText, int nStartIndex,
 			string strStart, string strEnd)
 		{
@@ -947,54 +969,53 @@ namespace KeePassLib.Utility
 			if(strMenuText == null) throw new ArgumentNullException("strMenuText");
 
 			string str = strMenuText;
+			int iOffset = 0;
+			bool bHasAmp = false;
 
-			for(char ch = 'A'; ch <= 'Z'; ++ch)
+			// Remove keys of the form "(&X)"
+			while(iOffset < str.Length)
 			{
-				string strEnhAcc = @"(&" + ch.ToString() + ")";
-				if(str.IndexOf(strEnhAcc) >= 0)
+				int i = str.IndexOf('&', iOffset);
+				if(i < iOffset) break;
+
+				if((i >= 1) && (str[i - 1] == '(') && ((i + 2) < str.Length) &&
+					(str[i + 2] == ')'))
 				{
-					str = str.Replace(" " + strEnhAcc, string.Empty);
-					str = str.Replace(strEnhAcc, string.Empty);
+					if((i >= 2) && char.IsWhiteSpace(str[i - 2]))
+						str = str.Remove(i - 2, 5);
+					else str = str.Remove(i - 1, 4);
+
+					continue;
 				}
+
+				iOffset = i + 1;
+				bHasAmp = true;
 			}
 
-			str = str.Replace(@"&", string.Empty);
-
-			return str;
+			return (bHasAmp ? str.Replace(@"&", string.Empty) : str);
 		}
 
 		public static string AddAccelerator(string strMenuText,
 			List<char> lAvailKeys)
 		{
-			if(strMenuText == null) { Debug.Assert(false); return null; }
+			if(strMenuText == null) { Debug.Assert(false); return string.Empty; }
 			if(lAvailKeys == null) { Debug.Assert(false); return strMenuText; }
 
-			int xa = -1, xs = 0;
 			for(int i = 0; i < strMenuText.Length; ++i)
 			{
-				char ch = strMenuText[i];
+				char ch = char.ToLowerInvariant(strMenuText[i]);
 
-#if KeePassLibSD
-				char chUpper = char.ToUpper(ch);
-#else
-				char chUpper = char.ToUpperInvariant(ch);
-#endif
-				xa = lAvailKeys.IndexOf(chUpper);
-				if(xa >= 0) { xs = i; break; }
-
-#if KeePassLibSD
-				char chLower = char.ToLower(ch);
-#else
-				char chLower = char.ToLowerInvariant(ch);
-#endif
-				xa = lAvailKeys.IndexOf(chLower);
-				if(xa >= 0) { xs = i; break; }
+				for(int j = 0; j < lAvailKeys.Count; ++j)
+				{
+					if(char.ToLowerInvariant(lAvailKeys[j]) == ch)
+					{
+						lAvailKeys.RemoveAt(j);
+						return strMenuText.Insert(i, @"&");
+					}
+				}
 			}
 
-			if(xa < 0) return strMenuText;
-
-			lAvailKeys.RemoveAt(xa);
-			return strMenuText.Insert(xs, @"&");
+			return strMenuText;
 		}
 
 		public static string EncodeMenuText(string strText)
@@ -1056,7 +1077,7 @@ namespace KeePassLib.Utility
 		}
 
 #if !KeePassLibSD
-		private static readonly char[] m_vPatternPartsSep = new char[] { '*' };
+		private static readonly char[] g_vPatternPartsSep = new char[] { '*' };
 		public static bool SimplePatternMatch(string strPattern, string strText,
 			StringComparison sc)
 		{
@@ -1065,23 +1086,18 @@ namespace KeePassLib.Utility
 
 			if(strPattern.IndexOf('*') < 0) return strText.Equals(strPattern, sc);
 
-			string[] vPatternParts = strPattern.Split(m_vPatternPartsSep,
+			string[] vPatternParts = strPattern.Split(g_vPatternPartsSep,
 				StringSplitOptions.RemoveEmptyEntries);
 			if(vPatternParts == null) { Debug.Assert(false); return true; }
 			if(vPatternParts.Length == 0) return true;
 
 			if(strText.Length == 0) return false;
 
-			if(!strPattern.StartsWith(@"*") && !strText.StartsWith(vPatternParts[0], sc))
-			{
+			if((strPattern[0] != '*') && !strText.StartsWith(vPatternParts[0], sc))
 				return false;
-			}
-
-			if(!strPattern.EndsWith(@"*") && !strText.EndsWith(vPatternParts[
-				vPatternParts.Length - 1], sc))
-			{
+			if((strPattern[strPattern.Length - 1] != '*') && !strText.EndsWith(
+				vPatternParts[vPatternParts.Length - 1], sc))
 				return false;
-			}
 
 			int iOffset = 0;
 			for(int i = 0; i < vPatternParts.Length; ++i)
@@ -1139,7 +1155,7 @@ namespace KeePassLib.Utility
 		/// Normalize new line characters in a string. Input strings may
 		/// contain mixed new line character sequences from all commonly
 		/// used operating systems (i.e. \r\n from Windows, \n from Unix
-		/// and \r from Mac OS.
+		/// and \r from MacOS.
 		/// </summary>
 		/// <param name="str">String with mixed new line characters.</param>
 		/// <param name="bWindows">If <c>true</c>, new line characters
@@ -1279,7 +1295,7 @@ namespace KeePassLib.Utility
 			return (((uBytes - 1UL) / uKB) + 1UL).ToString() + " KB";
 		}
 
-		private static readonly char[] m_vVersionSep = new char[]{ '.', ',' };
+		private static readonly char[] m_vVersionSep = new char[] { '.', ',' };
 		public static ulong ParseVersion(string strVersion)
 		{
 			if(strVersion == null) { Debug.Assert(false); return 0; }
@@ -1426,27 +1442,98 @@ namespace KeePassLib.Utility
 			return v;
 		}
 
-		private static readonly char[] m_vTagSep = new char[] { ',', ';', ':' };
-		public static string TagsToString(List<string> vTags, bool bForDisplay)
+		private static readonly char[] g_vTagSep = new char[] { ',', ';' };
+		internal static string NormalizeTag(string strTag)
 		{
-			if(vTags == null) throw new ArgumentNullException("vTags");
+			if(strTag == null) { Debug.Assert(false); return string.Empty; }
+
+			strTag = strTag.Trim();
+
+			for(int i = g_vTagSep.Length - 1; i >= 0; --i)
+				strTag = strTag.Replace(g_vTagSep[i], '.');
+
+			return strTag;
+		}
+
+		internal static void NormalizeTags(List<string> lTags)
+		{
+			if(lTags == null) { Debug.Assert(false); return; }
+
+			bool bRemoveNulls = false;
+			for(int i = lTags.Count - 1; i >= 0; --i)
+			{
+				string str = NormalizeTag(lTags[i]);
+
+				if(string.IsNullOrEmpty(str))
+				{
+					lTags[i] = null;
+					bRemoveNulls = true;
+				}
+				else lTags[i] = str;
+			}
+
+			if(bRemoveNulls)
+			{
+				Predicate<string> f = delegate(string str) { return (str == null); };
+				lTags.RemoveAll(f);
+			}
+
+			if(lTags.Count >= 2)
+			{
+				// Deduplicate
+				Dictionary<string, bool> d = new Dictionary<string, bool>();
+				for(int i = lTags.Count - 1; i >= 0; --i)
+					d[lTags[i]] = true;
+				if(d.Count != lTags.Count)
+				{
+					lTags.Clear();
+					lTags.AddRange(d.Keys);
+				}
+
+				lTags.Sort(StrUtil.CompareNaturally);
+			}
+		}
+
+		internal static void AddTags(List<string> lTags, IEnumerable<string> eNewTags)
+		{
+			if(lTags == null) { Debug.Assert(false); return; }
+			if(eNewTags == null) { Debug.Assert(false); return; }
+
+			lTags.AddRange(eNewTags);
+			NormalizeTags(lTags);
+		}
+
+		public static string TagsToString(List<string> lTags, bool bForDisplay)
+		{
+			if(lTags == null) throw new ArgumentNullException("lTags");
+
+#if DEBUG
+			// The input should be normalized
+			foreach(string str in lTags) { Debug.Assert(NormalizeTag(str) == str); }
+			List<string> l = new List<string>(lTags);
+			NormalizeTags(l);
+			Debug.Assert(l.Count == lTags.Count);
+#endif
+
+			int n = lTags.Count;
+			if(n == 0) return string.Empty;
+			if(n == 1) return (lTags[0] ?? string.Empty);
 
 			StringBuilder sb = new StringBuilder();
 			bool bFirst = true;
 
-			foreach(string strTag in vTags)
+			foreach(string strTag in lTags)
 			{
 				if(string.IsNullOrEmpty(strTag)) { Debug.Assert(false); continue; }
-				Debug.Assert(strTag.IndexOfAny(m_vTagSep) < 0);
 
-				if(!bFirst)
+				if(bFirst) bFirst = false;
+				else
 				{
 					if(bForDisplay) sb.Append(", ");
 					else sb.Append(';');
 				}
-				sb.Append(strTag);
 
-				bFirst = false;
+				sb.Append(strTag);
 			}
 
 			return sb.ToString();
@@ -1459,13 +1546,9 @@ namespace KeePassLib.Utility
 			List<string> lTags = new List<string>();
 			if(strTags.Length == 0) return lTags;
 
-			string[] vTags = strTags.Split(m_vTagSep);
-			foreach(string strTag in vTags)
-			{
-				string strFlt = strTag.Trim();
-				if(strFlt.Length > 0) lTags.Add(strFlt);
-			}
+			lTags.AddRange(strTags.Split(g_vTagSep));
 
+			NormalizeTags(lTags);
 			return lTags;
 		}
 
@@ -1556,8 +1639,8 @@ namespace KeePassLib.Utility
 
 			string str = strMulti;
 			str = str.Replace("\r\n", " ");
-			str = str.Replace("\r", " ");
-			str = str.Replace("\n", " ");
+			str = str.Replace('\r', ' ');
+			str = str.Replace('\n', ' ');
 
 			return str;
 		}
@@ -1577,14 +1660,16 @@ namespace KeePassLib.Utility
 				if(((ch == ' ') || (ch == '\t') || (ch == '\r') ||
 					(ch == '\n')) && !bQuoted)
 				{
-					if(sbTerm.Length > 0) l.Add(sbTerm.ToString());
-
-					sbTerm.Remove(0, sbTerm.Length);
+					if(sbTerm.Length != 0)
+					{
+						l.Add(sbTerm.ToString());
+						sbTerm.Remove(0, sbTerm.Length);
+					}
 				}
 				else if(ch == '\"') bQuoted = !bQuoted;
 				else sbTerm.Append(ch);
 			}
-			if(sbTerm.Length > 0) l.Add(sbTerm.ToString());
+			if(sbTerm.Length != 0) l.Add(sbTerm.ToString());
 
 			return l;
 		}
@@ -1867,6 +1952,54 @@ namespace KeePassLib.Utility
 			str = str.Replace("\u200E\u200E", "\u200E"); // Remove duplicates
 
 			return str;
+		}
+
+		internal static bool IsValid(string str)
+		{
+			if(str == null) { Debug.Assert(false); return false; }
+
+			int cc = str.Length;
+			for(int i = 0; i < cc; ++i)
+			{
+				char ch = str[i];
+				if(ch == '\0') return false;
+
+				if(char.IsLowSurrogate(ch)) return false;
+				if(char.IsHighSurrogate(ch))
+				{
+					if(++i >= cc) return false; // High surrogate at end
+					if(!char.IsLowSurrogate(str[i])) return false;
+
+					UnicodeCategory uc2 = char.GetUnicodeCategory(str, i - 1);
+					if(uc2 == UnicodeCategory.OtherNotAssigned) return false;
+
+					continue;
+				}
+
+				UnicodeCategory uc = char.GetUnicodeCategory(ch);
+				if(uc == UnicodeCategory.OtherNotAssigned) return false;
+			}
+
+			return true;
+		}
+
+		internal static string RemoveWhiteSpace(string str)
+		{
+			if(str == null) { Debug.Assert(false); return string.Empty; }
+
+			int cc = str.Length;
+			if(cc == 0) return string.Empty;
+
+			StringBuilder sb = new StringBuilder();
+
+			for(int i = 0; i < cc; ++i)
+			{
+				char ch = str[i];
+				if(char.IsWhiteSpace(ch)) continue;
+				sb.Append(ch);
+			}
+
+			return sb.ToString();
 		}
 	}
 }

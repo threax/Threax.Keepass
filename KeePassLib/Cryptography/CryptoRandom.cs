@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Security.Cryptography;
+using System.Security.Cryptography; //Addition, always wanted
 
 #if !KeePassUAP
 using System.Drawing;
@@ -207,7 +207,7 @@ namespace KeePassLib.Cryptography
 #if KeePassUAP && !NETSTANDARD2_0
 				fStr(EnvironmentExt.OSVersion.VersionString);
 #else
-                fStr(Environment.OSVersion.VersionString);
+				fStr(Environment.OSVersion.VersionString);
 #endif
 
 				fI32(Environment.ProcessorCount);
@@ -234,7 +234,7 @@ namespace KeePassLib.Cryptography
 #if KeePassUAP && !NETSTANDARD2_0
 				f(DiagnosticsExt.GetProcessEntropy(), true);
 #elif !KeePassLibSD
-                using (Process p = Process.GetCurrentProcess())
+				using (Process p = Process.GetCurrentProcess())
 				{
 					fI64(p.Handle.ToInt64());
 					fI32(p.HandleCount);

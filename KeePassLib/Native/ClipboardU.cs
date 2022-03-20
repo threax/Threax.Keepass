@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ namespace KeePassLib.Native
 {
 	internal static class ClipboardU
 	{
-		private const string XSel = "xsel";
+		internal const string XSel = "xsel";
 		private const string XSelV = "--version";
 		private const string XSelR = "--output --clipboard";
 		private const string XSelC = "--clear --clipboard";
@@ -155,7 +155,7 @@ namespace KeePassLib.Native
 		private static bool XSelInit()
 		{
 #if !NETSTANDARD2_0
-            if(g_obXSel.HasValue) return g_obXSel.Value;
+			if(g_obXSel.HasValue) return g_obXSel.Value;
 
 			string strTest = NativeLib.RunConsoleApp(XSel, XSelV);
 
@@ -163,9 +163,9 @@ namespace KeePassLib.Native
 			g_obXSel = b;
 			return b;
 #else
-            return false;
+			return false;
 #endif
-        }
+		}
 
 		private static string XSelGetText()
 		{
@@ -176,7 +176,7 @@ namespace KeePassLib.Native
 #else
             return String.Empty;
 #endif
-        }
+		}
 
 		private static bool XSelSetText(string str, bool bMayBlock)
 		{
@@ -197,6 +197,6 @@ namespace KeePassLib.Native
 #else
             return false;
 #endif
-        }
+		}
 	}
 }

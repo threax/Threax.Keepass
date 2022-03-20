@@ -18,25 +18,16 @@
 */
 
 using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace KeePassLib.Interfaces
+namespace KeePassLib.Resources
 {
-	public interface IStructureItem : ITimeLogger // Provides LocationChanged
+	public static partial class KLRes
 	{
-		PwUuid Uuid
+		public static string FileSaveFailed
 		{
-			get;
-			set;
-		}
-
-		PwGroup ParentGroup
-		{
-			get;
-		}
-
-		PwUuid PreviousParentGroup
-		{
-			get;
+			get { return KLRes.FileSaveFailed2; }
 		}
 	}
 }

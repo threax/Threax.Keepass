@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -109,8 +109,7 @@ namespace KeePassLib.Utility
 		/// the returned string is <c>My File.kdb</c>.
 		/// </summary>
 		/// <param name="strPath">Full path of a file.</param>
-		/// <returns>File name of the specified file. The return value is
-		/// an empty string (<c>""</c>) if the input parameter is <c>null</c>.</returns>
+		/// <returns>File name of the specified file.</returns>
 		public static string GetFileName(string strPath)
 		{
 			Debug.Assert(strPath != null); if(strPath == null) throw new ArgumentNullException("strPath");
@@ -275,16 +274,25 @@ namespace KeePassLib.Utility
 
 		public static string FileUrlToPath(string strUrl)
 		{
-			Debug.Assert(strUrl != null);
-			if(strUrl == null) throw new ArgumentNullException("strUrl");
+			if(strUrl == null) { Debug.Assert(false); throw new ArgumentNullException("strUrl"); }
+			if(strUrl.Length == 0) { Debug.Assert(false); return string.Empty; }
 
-			string str = strUrl;
-			if(str.StartsWith("file:///", StrUtil.CaseIgnoreCmp))
-				str = str.Substring(8, str.Length - 8);
+			if(!strUrl.StartsWith(Uri.UriSchemeFile + ":", StrUtil.CaseIgnoreCmp))
+			{
+				Debug.Assert(false);
+				return strUrl;
+			}
 
-			str = str.Replace('/', UrlUtil.LocalDirSepChar);
+			try
+			{
+				Uri uri = new Uri(strUrl);
+				string str = uri.LocalPath;
+				if(!string.IsNullOrEmpty(str)) return str;
+			}
+			catch(Exception) { Debug.Assert(false); }
 
-			return str;
+			Debug.Assert(false);
+			return strUrl;
 		}
 
 		public static bool UnhideFile(string strFile)
@@ -488,25 +496,107 @@ namespace KeePassLib.Utility
 			return str;
 		}
 
-		public static int GetUrlLength(string strText, int nOffset)
+		internal static bool IsUriChar(char ch)
 		{
-			if(strText == null) throw new ArgumentNullException("strText");
-			if(nOffset > strText.Length) throw new ArgumentException(); // Not >= (0 len)
+			Debug.Assert(((ulong)'!' == 0x21) && ((ulong)'~' == 0x7E) &&
+				((ulong)'`' == 0x60));
+			if((ch < '!') || (ch > '~')) return false;
 
-			int iPosition = nOffset, nLength = 0, nStrLen = strText.Length;
-
-			while(iPosition < nStrLen)
+			bool b = true;
+			switch(ch)
 			{
-				char ch = strText[iPosition];
-				++iPosition;
-
-				if((ch == ' ') || (ch == '\t') || (ch == '\r') || (ch == '\n'))
+				case '\"':
+				case '<':
+				case '>':
+				case '\\':
+				case '^':
+				case '`':
+				case '{':
+				case '|':
+				case '}':
+					b = false;
 					break;
 
-				++nLength;
+				default: break;
 			}
 
-			return nLength;
+			return b;
+		}
+
+		internal static bool IsUriSchemeChar(char ch)
+		{
+			return (((ch >= 'A') && (ch <= 'Z')) || ((ch >= 'a') && (ch <= 'z')) ||
+				((ch >= '0') && (ch <= '9')) || (ch == '+') || (ch == '-') ||
+				(ch == '.'));
+		}
+
+		public static int GetUrlLength(string strText, int iOffset)
+		{
+			return GetUrlLength(strText, iOffset, false);
+		}
+
+		internal static int GetUrlLength(string strText, int iOffset, bool bExclStdTerm)
+		{
+			if(strText == null) throw new ArgumentNullException("strText");
+			if(iOffset < 0) throw new ArgumentOutOfRangeException("iOffset");
+
+			int i = iOffset, n = strText.Length;
+			if(iOffset > n) throw new ArgumentOutOfRangeException("iOffset");
+
+			while(i < n)
+			{
+				char ch = strText[i];
+				if(!IsUriChar(ch))
+				{
+					if((ch == '\"') || (ch == '>') || (ch == '}'))
+						bExclStdTerm = false;
+					break;
+				}
+
+				++i;
+			}
+
+			if(bExclStdTerm)
+			{
+				while(i != iOffset)
+				{
+					char ch = strText[i - 1];
+
+					bool bIsStdTerm = false;
+					switch(ch)
+					{
+						case '!':
+						case ',':
+						case '.':
+						case ':':
+						case ';':
+						case '?':
+							bIsStdTerm = true;
+							break;
+
+						default: break;
+					}
+
+					if(bIsStdTerm) --i;
+					else break;
+				}
+			}
+
+			return (i - iOffset);
+		}
+
+		private static readonly string[] g_vKnownSchemes = new string[] {
+			"callto", "file", "ftp", "http", "https", "ldap", "ldaps",
+			"mailto", "news", "nntp", "sftp", "tel", "telnet"
+		};
+		// This method only knows some popular schemes; subset of
+		// https://www.iana.org/assignments/uri-schemes/uri-schemes.xhtml
+		internal static bool IsKnownScheme(string strScheme)
+		{
+			if(strScheme == null) { Debug.Assert(false); return false; }
+
+			string str = strScheme.ToLowerInvariant();
+			return (Array.IndexOf(g_vKnownSchemes, str) >= 0);
 		}
 
 		internal static string GetScheme(string strUrl)
@@ -873,6 +963,35 @@ namespace KeePassLib.Utility
 			catch(Exception) { Debug.Assert(false); }
 
 			return strUri;
+		}
+
+		internal static Dictionary<string, string> ParseQuery(string strQuery)
+		{
+			Dictionary<string, string> d = new Dictionary<string, string>();
+			if(string.IsNullOrEmpty(strQuery)) return d;
+
+			string[] vKvps = strQuery.Split(new char[] { '?', '&' });
+			if(vKvps == null) { Debug.Assert(false); return d; }
+
+			foreach(string strKvp in vKvps)
+			{
+				if(string.IsNullOrEmpty(strKvp)) continue;
+
+				string strKey = strKvp, strValue = string.Empty;
+				int iSep = strKvp.IndexOf('=');
+				if(iSep >= 0)
+				{
+					strKey = strKvp.Substring(0, iSep);
+					strValue = strKvp.Substring(iSep + 1);
+				}
+
+				strKey = Uri.UnescapeDataString(strKey);
+				strValue = Uri.UnescapeDataString(strValue);
+
+				d[strKey] = strValue;
+			}
+
+			return d;
 		}
 	}
 }

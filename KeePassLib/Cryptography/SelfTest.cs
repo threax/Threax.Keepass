@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -143,7 +143,7 @@ namespace KeePassLib.Cryptography
 			aes.ProcessBlock(pbData, 0, pbData, 0);
 			aes.Reset();
 #else
-			using(SymmetricAlgorithm a = CryptoUtil.CreateAes())
+			using (SymmetricAlgorithm a = CryptoUtil.CreateAes())
 			{
 				if(a.BlockSize != 128) // AES block size
 				{
@@ -547,7 +547,7 @@ namespace KeePassLib.Cryptography
 		private static void TestArgon2()
 		{
 #if DEBUG
-			Argon2Kdf kdf = new Argon2Kdf();
+			Argon2Kdf kdf = new Argon2Kdf(Argon2Type.D);
 
 			// ======================================================
 			// From the official Argon2 1.3 reference code package
@@ -588,7 +588,7 @@ namespace KeePassLib.Cryptography
 			byte[] pb = kdf.Transform(pbMsg, p);
 
 			if(!MemUtil.ArraysEqual(pb, pbExpc))
-				throw new SecurityException("Argon2-1");
+				throw new SecurityException("Argon2d-1");
 
 			// ======================================================
 			// From the official Argon2 1.3 reference code package
@@ -606,7 +606,7 @@ namespace KeePassLib.Cryptography
 			pb = kdf.Transform(pbMsg, p);
 
 			if(!MemUtil.ArraysEqual(pb, pbExpc))
-				throw new SecurityException("Argon2-2");
+				throw new SecurityException("Argon2d-2");
 
 			// ======================================================
 			// From the official 'phc-winner-argon2-20151206.zip'
@@ -624,7 +624,7 @@ namespace KeePassLib.Cryptography
 			pb = kdf.Transform(pbMsg, p);
 
 			if(!MemUtil.ArraysEqual(pb, pbExpc))
-				throw new SecurityException("Argon2-3");
+				throw new SecurityException("Argon2d-3");
 
 #if SELFTEST_ARGON2_LONG
 			// ======================================================
@@ -652,7 +652,7 @@ namespace KeePassLib.Cryptography
 			pb = kdf.Transform(pbMsg, p);
 
 			if(!MemUtil.ArraysEqual(pb, pbExpc))
-				throw new SecurityException("Argon2-4");
+				throw new SecurityException("Argon2d-4");
 
 			p.SetUInt64(Argon2Kdf.ParamMemory, (1 << 10) * 1024); // 1 MB
 			p.SetUInt64(Argon2Kdf.ParamIterations, 3);
@@ -667,7 +667,7 @@ namespace KeePassLib.Cryptography
 			pb = kdf.Transform(pbMsg, p);
 
 			if(!MemUtil.ArraysEqual(pb, pbExpc))
-				throw new SecurityException("Argon2-5");
+				throw new SecurityException("Argon2d-5");
 
 #if SELFTEST_ARGON2_LONGER
 			p.SetUInt64(Argon2Kdf.ParamMemory, (1 << 20) * 1024); // 1 GB
@@ -684,9 +684,79 @@ namespace KeePassLib.Cryptography
 			pb = kdf.Transform(pbMsg, p);
 
 			if(!MemUtil.ArraysEqual(pb, pbExpc))
-				throw new SecurityException("Argon2-6");
+				throw new SecurityException("Argon2d-6");
 #endif // SELFTEST_ARGON2_LONGER
 #endif // SELFTEST_ARGON2_LONG
+
+			kdf = new Argon2Kdf(Argon2Type.ID);
+
+			// ======================================================
+			// From the official Argon2 1.3 reference code package
+			// (test vector for Argon2id 1.3); also on
+			// https://tools.ietf.org/html/draft-irtf-cfrg-argon2-12
+
+			p = kdf.GetDefaultParameters();
+			kdf.Randomize(p);
+
+			Debug.Assert(p.GetUInt32(Argon2Kdf.ParamVersion, 0) == 0x13U);
+
+			pbMsg = new byte[32];
+			for(int i = 0; i < pbMsg.Length; ++i) pbMsg[i] = 1;
+
+			p.SetUInt64(Argon2Kdf.ParamMemory, 32 * 1024);
+			p.SetUInt64(Argon2Kdf.ParamIterations, 3);
+			p.SetUInt32(Argon2Kdf.ParamParallelism, 4);
+
+			pbSalt = new byte[16];
+			for(int i = 0; i < pbSalt.Length; ++i) pbSalt[i] = 2;
+			p.SetByteArray(Argon2Kdf.ParamSalt, pbSalt);
+
+			pbKey = new byte[8];
+			for(int i = 0; i < pbKey.Length; ++i) pbKey[i] = 3;
+			p.SetByteArray(Argon2Kdf.ParamSecretKey, pbKey);
+
+			pbAssoc = new byte[12];
+			for(int i = 0; i < pbAssoc.Length; ++i) pbAssoc[i] = 4;
+			p.SetByteArray(Argon2Kdf.ParamAssocData, pbAssoc);
+
+			pbExpc = new byte[32] {
+				0x0D, 0x64, 0x0D, 0xF5, 0x8D, 0x78, 0x76, 0x6C,
+				0x08, 0xC0, 0x37, 0xA3, 0x4A, 0x8B, 0x53, 0xC9,
+				0xD0, 0x1E, 0xF0, 0x45, 0x2D, 0x75, 0xB6, 0x5E,
+				0xB5, 0x25, 0x20, 0xE9, 0x6B, 0x01, 0xE6, 0x59
+			};
+
+			pb = kdf.Transform(pbMsg, p);
+
+			if(!MemUtil.ArraysEqual(pb, pbExpc))
+				throw new SecurityException("Argon2id-1");
+
+			// ======================================================
+			// Computed using the official 'argon2' application
+			// (test vector for Argon2id 1.3)
+
+			p = kdf.GetDefaultParameters();
+
+			pbMsg = StrUtil.Utf8.GetBytes("ABC1234");
+
+			p.SetUInt64(Argon2Kdf.ParamMemory, (1 << 10) * 1024); // 1 MB
+			p.SetUInt64(Argon2Kdf.ParamIterations, 4);
+			p.SetUInt32(Argon2Kdf.ParamParallelism, 4);
+
+			pbSalt = StrUtil.Utf8.GetBytes("somesalt");
+			p.SetByteArray(Argon2Kdf.ParamSalt, pbSalt);
+
+			pbExpc = new byte[32] {
+				0x32, 0x5E, 0x67, 0x27, 0x0D, 0xB7, 0xAD, 0x0A,
+				0x7D, 0xD9, 0x0E, 0xEC, 0x46, 0x5C, 0x80, 0x61,
+				0x0F, 0x04, 0xE2, 0x67, 0x8E, 0xED, 0xF7, 0xE0,
+				0xEF, 0x29, 0x5B, 0x3B, 0x42, 0x5A, 0xCF, 0x7A
+			};
+
+			pb = kdf.Transform(pbMsg, p);
+
+			if(!MemUtil.ArraysEqual(pb, pbExpc))
+				throw new SecurityException("Argon2id-2");
 #endif // DEBUG
 		}
 
@@ -806,7 +876,7 @@ namespace KeePassLib.Cryptography
 		{
 #if (DEBUG && !KeePassLibSD)
 			byte[] pbSecret = StrUtil.Utf8.GetBytes("12345678901234567890");
-			string[] vExp = new string[]{ "755224", "287082", "359152",
+			string[] vExp = new string[] { "755224", "287082", "359152",
 				"969429", "338314", "254676", "287922", "162583", "399871",
 				"520489" };
 
@@ -815,6 +885,39 @@ namespace KeePassLib.Cryptography
 				if(HmacOtp.Generate(pbSecret, (ulong)i, 6, false, -1) != vExp[i])
 					throw new InvalidOperationException("HmacOtp");
 			}
+
+			pbSecret = MemUtil.HexStringToByteArray("3132333435363738393031323334353637383930");
+			if(HmacOtp.GenerateTimeOtp(pbSecret,
+				new DateTime(1970, 1, 1, 0, 0, 59, DateTimeKind.Utc), 0, 8,
+				string.Empty) != "94287082")
+				throw new SecurityException("TimeOtp-SHA1-1");
+			if(HmacOtp.GenerateTimeOtp(pbSecret,
+				new DateTime(2603, 10, 11, 11, 33, 20, DateTimeKind.Utc), 0, 8,
+				string.Empty) != "65353130")
+				throw new SecurityException("TimeOtp-SHA1-2");
+
+			pbSecret = MemUtil.HexStringToByteArray("31323334353637383930313233343536" +
+				"37383930313233343536373839303132");
+			if(HmacOtp.GenerateTimeOtp(pbSecret,
+				new DateTime(1970, 1, 1, 0, 0, 59, DateTimeKind.Utc), 0, 8,
+				"HMAC-SHA-256") != "46119246")
+				throw new SecurityException("TimeOtp-SHA256-1");
+			if(HmacOtp.GenerateTimeOtp(pbSecret,
+				new DateTime(2603, 10, 11, 11, 33, 20, DateTimeKind.Utc), 0, 8,
+				"HMAC-SHA-256") != "77737706")
+				throw new SecurityException("TimeOtp-SHA256-2");
+
+			pbSecret = MemUtil.HexStringToByteArray("31323334353637383930313233343536" +
+				"3738393031323334353637383930313233343536373839303132333435363738" +
+				"39303132333435363738393031323334");
+			if(HmacOtp.GenerateTimeOtp(pbSecret,
+				new DateTime(1970, 1, 1, 0, 0, 59, DateTimeKind.Utc), 0, 8,
+				"HMAC-SHA-512") != "90693936")
+				throw new SecurityException("TimeOtp-SHA512-1");
+			if(HmacOtp.GenerateTimeOtp(pbSecret,
+				new DateTime(2603, 10, 11, 11, 33, 20, DateTimeKind.Utc), 0, 8,
+				"HMAC-SHA-512") != "47863826")
+				throw new SecurityException("TimeOtp-SHA512-2");
 #endif
 		}
 
@@ -1004,17 +1107,17 @@ namespace KeePassLib.Cryptography
 			pbExp = Encoding.ASCII.GetBytes("Key provider based on one-time passwords.");
 			if(!MemUtil.ArraysEqual(pbRes, pbExp)) throw new Exception("Base32-7");
 
-			int i = 0 - 0x10203040;
-			pbRes = MemUtil.Int32ToBytes(i);
+			const int iE = 0 - 0x10203040;
+			pbRes = MemUtil.Int32ToBytes(iE);
 			if(MemUtil.ByteArrayToHexString(pbRes) != "C0CFDFEF")
 				throw new Exception("MemUtil-8"); // Must be little-endian
-			if(MemUtil.BytesToUInt32(pbRes) != (uint)i)
+			if(MemUtil.BytesToUInt32(pbRes) != unchecked((uint)iE))
 				throw new Exception("MemUtil-9");
-			if(MemUtil.BytesToInt32(pbRes) != i)
+			if(MemUtil.BytesToInt32(pbRes) != iE)
 				throw new Exception("MemUtil-10");
 
 			ArrayHelperEx<char> ah = MemUtil.ArrayHelperExOfChar;
-			for(int j = 0; j < 30; ++j)
+			for(int i = 0; i < 30; ++i)
 			{
 				string strA = r.Next(30).ToString();
 				string strB = r.Next(30).ToString();
@@ -1027,13 +1130,40 @@ namespace KeePassLib.Cryptography
 					Math.Sign(string.CompareOrdinal(strA, strB))))
 					throw new Exception("MemUtil-12");
 			}
+
+			try
+			{
+				Dictionary<uint, bool> d = new Dictionary<uint, bool>();
+
+				pb = new byte[24];
+				for(int i = 0; i < pb.Length; ++i) pb[i] = (byte)(i + 1);
+				for(int i = 0; i < pb.Length; ++i)
+				{
+					for(int cb = 1; (i + cb) <= pb.Length; ++cb)
+						d.Add(MemUtil.Hash32(pb, i, cb), true); // Throws on dup.
+				}
+
+				for(int cb = 0; cb < 32; ++cb)
+				{
+					pb = new byte[cb];
+					d.Add(MemUtil.Hash32(pb, 0, cb), true);
+
+					for(int i = 0; i < cb; ++i)
+					{
+						pb[i] = 0x80;
+						d.Add(MemUtil.Hash32(pb, 0, cb), true);
+						pb[i] = 0;
+					}
+				}
+			}
+			catch(Exception) { throw new Exception("Hash32"); }
 #endif
 		}
 
 		private static void TestStrUtil()
 		{
 #if DEBUG
-			string[] vSeps = new string[]{ "ax", "b", "c" };
+			string[] vSeps = new string[] { "ax", "b", "c" };
 			const string str1 = "axbqrstcdeax";
 			List<string> v1 = StrUtil.SplitWithSep(str1, vSeps, true);
 
@@ -1049,7 +1179,7 @@ namespace KeePassLib.Cryptography
 			if(v1[8].Length > 0) throw new InvalidOperationException("StrUtil-10");
 
 			const string str2 = "12ab56";
-			List<string> v2 = StrUtil.SplitWithSep(str2, new string[]{ "AB" }, false);
+			List<string> v2 = StrUtil.SplitWithSep(str2, new string[] { "AB" }, false);
 			if(v2.Count != 3) throw new InvalidOperationException("StrUtil-11");
 			if(!v2[0].Equals("12")) throw new InvalidOperationException("StrUtil-12");
 			if(!v2[1].Equals("AB")) throw new InvalidOperationException("StrUtil-13");
@@ -1148,6 +1278,13 @@ namespace KeePassLib.Cryptography
 				throw new InvalidOperationException("StrUtil-NewLine9");
 			if(!StrUtil.IsNewLineNormalized(string.Empty.ToCharArray(), false))
 				throw new InvalidOperationException("StrUtil-NewLine10");
+
+			if(StrUtil.RemoveAccelerator(@"&Test") != "Test")
+				throw new InvalidOperationException("StrUtil-Accel1");
+			if(StrUtil.RemoveAccelerator(@"Test(&T)") != "Test")
+				throw new InvalidOperationException("StrUtil-Accel2");
+			if(StrUtil.RemoveAccelerator(@"Test (TA) (&T) (TB)") != "Test (TA) (TB)")
+				throw new InvalidOperationException("StrUtil-Accel3");
 #endif
 		}
 
@@ -1190,6 +1327,18 @@ namespace KeePassLib.Cryptography
 				throw new InvalidOperationException("UrlUtil-H6");
 			if(UrlUtil.GetHost(@"s://u:p@d.tld:p/p?q#f") != "d.tld")
 				throw new InvalidOperationException("UrlUtil-H7");
+
+			if(!NativeLib.IsUnix()) // Windows
+			{
+				if(UrlUtil.FileUrlToPath("file:///C:/Windows/Win.ini") !=
+					"C:\\Windows\\Win.ini")
+					throw new Exception("UrlUtil-FUTP-W");
+			}
+			else // Unix
+			{
+				if(UrlUtil.FileUrlToPath("file:///etc/fstab") != "/etc/fstab")
+					throw new Exception("UrlUtil-FUTP-U");
+			}
 
 			if(NativeLib.IsUnix()) return;
 

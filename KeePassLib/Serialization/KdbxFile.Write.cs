@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -95,7 +95,7 @@ namespace KeePassLib.Serialization
 			byte[] pbCipherKey = null;
 			byte[] pbHmacKey64 = null;
 
-			m_pbsBinaries.Clear();
+			m_pbsBinaries = new ProtectedBinarySet(true);
 			m_pbsBinaries.AddFrom(pgRoot);
 
 			List<Stream> lStreams = new List<Stream>();
@@ -106,6 +106,10 @@ namespace KeePassLib.Serialization
 
 			try
 			{
+				// Fix history entries (should not be necessary; just for safety,
+				// as e.g. XPath searches depend on correct history entry UUIDs)
+				if(m_pwDatabase.MaintainBackups()) { Debug.Assert(false); }
+
 				m_uFileVersion = GetMinKdbxVersion();
 
 				int cbEncKey, cbEncIV;
@@ -514,6 +518,16 @@ namespace KeePassLib.Serialization
 			WriteObject(ElemEnableSearching, StrUtil.BoolToStringEx(pg.EnableSearching), false);
 			WriteObject(ElemLastTopVisibleEntry, pg.LastTopVisibleEntry);
 
+			if(m_uFileVersion >= FileVersion32_4_1)
+			{
+				if(!pg.PreviousParentGroup.Equals(PwUuid.Zero))
+					WriteObject(ElemPreviousParentGroup, pg.PreviousParentGroup);
+
+				List<string> lTags = pg.Tags;
+				if(lTags.Count != 0)
+					WriteObject(ElemTags, StrUtil.TagsToString(lTags, false), true);
+			}
+
 			if(pg.CustomData.Count > 0)
 				WriteList(ElemCustomData, pg.CustomData);
 		}
@@ -538,7 +552,15 @@ namespace KeePassLib.Serialization
 			WriteObject(ElemFgColor, StrUtil.ColorToUnnamedHtml(pe.ForegroundColor, true), false);
 			WriteObject(ElemBgColor, StrUtil.ColorToUnnamedHtml(pe.BackgroundColor, true), false);
 			WriteObject(ElemOverrideUrl, pe.OverrideUrl, true);
+
+			if((m_uFileVersion >= FileVersion32_4_1) && !pe.QualityCheck)
+				WriteObject(ElemQualityCheck, false);
+
 			WriteObject(ElemTags, StrUtil.TagsToString(pe.Tags, false), true);
+
+			if((m_uFileVersion >= FileVersion32_4_1) &&
+				!pe.PreviousParentGroup.Equals(PwUuid.Zero))
+				WriteObject(ElemPreviousParentGroup, pe.PreviousParentGroup);
 
 			WriteList(ElemTimes, pe);
 
@@ -589,7 +611,7 @@ namespace KeePassLib.Serialization
 
 			foreach(AutoTypeAssociation a in cfgAutoType.Associations)
 				WriteObject(ElemAutoTypeItem, ElemWindow, ElemKeystrokeSequence,
-					new KeyValuePair<string, string>(a.WindowName, a.Sequence));
+					new KeyValuePair<string, string>(a.WindowName, a.Sequence), null);
 
 			m_xmlWriter.WriteEndElement();
 		}
@@ -609,7 +631,7 @@ namespace KeePassLib.Serialization
 			WriteObject(ElemUsageCount, times.UsageCount);
 			WriteObject(ElemLocationChanged, times.LocationChanged);
 
-			m_xmlWriter.WriteEndElement(); // Name
+			m_xmlWriter.WriteEndElement();
 		}
 
 		private void WriteList(string name, PwObjectList<PwEntry> value, bool bIsHistory)
@@ -663,7 +685,13 @@ namespace KeePassLib.Serialization
 			m_xmlWriter.WriteStartElement(name);
 
 			foreach(KeyValuePair<string, string> kvp in value)
-				WriteObject(ElemStringDictExItem, ElemKey, ElemValue, kvp);
+			{
+				DateTime? odtLastMod = null;
+				if(m_uFileVersion >= FileVersion32_4_1)
+					odtLastMod = value.GetLastModificationTime(kvp.Key);
+
+				WriteObject(ElemStringDictExItem, ElemKey, ElemValue, kvp, odtLastMod);
+			}
 
 			m_xmlWriter.WriteEndElement();
 		}
@@ -674,14 +702,22 @@ namespace KeePassLib.Serialization
 
 			m_xmlWriter.WriteStartElement(ElemCustomIcons);
 
-			foreach(PwCustomIcon pwci in m_pwDatabase.CustomIcons)
+			foreach(PwCustomIcon ci in m_pwDatabase.CustomIcons)
 			{
 				m_xmlWriter.WriteStartElement(ElemCustomIconItem);
 
-				WriteObject(ElemCustomIconItemID, pwci.Uuid);
+				WriteObject(ElemCustomIconItemID, ci.Uuid);
 
-				string strData = Convert.ToBase64String(pwci.ImageDataPng);
+				string strData = Convert.ToBase64String(ci.ImageDataPng);
 				WriteObject(ElemCustomIconItemData, strData, false);
+
+				if(m_uFileVersion >= FileVersion32_4_1)
+				{
+					if(ci.Name.Length != 0)
+						WriteObject(ElemName, ci.Name, true);
+					if(ci.LastModificationTime.HasValue)
+						WriteObject(ElemLastModTime, ci.LastModificationTime.Value);
+				}
 
 				m_xmlWriter.WriteEndElement();
 			}
@@ -782,17 +818,21 @@ namespace KeePassLib.Serialization
 			else WriteObject(name, TimeUtil.SerializeUtc(value), false);
 		}
 
-		private void WriteObject(string name, string strKeyName,
-			string strValueName, KeyValuePair<string, string> kvp)
+		private void WriteObject(string name, string strKeyName, string strValueName,
+			KeyValuePair<string, string> kvp, DateTime? odtLastMod)
 		{
 			m_xmlWriter.WriteStartElement(name);
 
 			m_xmlWriter.WriteStartElement(strKeyName);
 			m_xmlWriter.WriteString(StrUtil.SafeXmlString(kvp.Key));
 			m_xmlWriter.WriteEndElement();
+
 			m_xmlWriter.WriteStartElement(strValueName);
 			m_xmlWriter.WriteString(StrUtil.SafeXmlString(kvp.Value));
 			m_xmlWriter.WriteEndElement();
+
+			if(odtLastMod.HasValue)
+				WriteObject(ElemLastModTime, odtLastMod.Value);
 
 			m_xmlWriter.WriteEndElement();
 		}
@@ -842,7 +882,7 @@ namespace KeePassLib.Serialization
 				// string transformation here. By default, language-dependent conversions
 				// should be applied, otherwise characters could be rendered incorrectly
 				// (code page problems).
-				if(m_bLocalizedNames)
+				if(g_bLocalizedNames)
 				{
 					StringBuilder sb = new StringBuilder();
 					foreach(char ch in strValue)
@@ -853,8 +893,7 @@ namespace KeePassLib.Serialization
 						// page area
 						if(char.IsSymbol(ch) || char.IsSurrogate(ch))
 						{
-							System.Globalization.UnicodeCategory cat =
-								CharUnicodeInfo.GetUnicodeCategory(ch);
+							UnicodeCategory cat = CharUnicodeInfo.GetUnicodeCategory(ch);
 							// Map character to correct position in code page
 							chMapped = (char)((int)cat * 32 + ch);
 						}
@@ -980,6 +1019,25 @@ namespace KeePassLib.Serialization
 			m_xmlWriter.WriteEndElement();
 		}
 
+		internal static void WriteGroup(Stream msOutput, PwDatabase pdContext,
+			PwGroup pg)
+		{
+			if(msOutput == null) throw new ArgumentNullException("msOutput");
+			// pdContext may be null
+			if(pg == null) throw new ArgumentNullException("pg");
+
+			PwDatabase pd = new PwDatabase();
+			pd.New(new IOConnectionInfo(), new CompositeKey());
+
+			pd.RootGroup = pg.CloneDeep();
+			pd.RootGroup.ParentGroup = null;
+
+			PwDatabase.CopyCustomIcons(pdContext, pd, pd.RootGroup, true);
+
+			KdbxFile f = new KdbxFile(pd);
+			f.Save(msOutput, null, KdbxFormat.PlainXml, null);
+		}
+
 		[Obsolete]
 		public static bool WriteEntries(Stream msOutput, PwEntry[] vEntries)
 		{
@@ -993,60 +1051,15 @@ namespace KeePassLib.Serialization
 			// pdContext may be null
 			if(vEntries == null) { Debug.Assert(false); return false; }
 
-			/* KdbxFile f = new KdbxFile(pwDatabase);
-			f.m_format = KdbxFormat.PlainXml;
-
-			XmlTextWriter xtw = null;
-			try { xtw = new XmlTextWriter(msOutput, StrUtil.Utf8); }
-			catch(Exception) { Debug.Assert(false); return false; }
-			if(xtw == null) { Debug.Assert(false); return false; }
-
-			f.m_xmlWriter = xtw;
-
-			xtw.Formatting = Formatting.Indented;
-			xtw.IndentChar = '\t';
-			xtw.Indentation = 1;
-
-			xtw.WriteStartDocument(true);
-			xtw.WriteStartElement(ElemRoot);
-
-			foreach(PwEntry pe in vEntries)
-				f.WriteEntry(pe, false);
-
-			xtw.WriteEndElement();
-			xtw.WriteEndDocument();
-
-			xtw.Flush();
-			xtw.Close();
-			return true; */
-
-			PwDatabase pd = new PwDatabase();
-			pd.New(new IOConnectionInfo(), new CompositeKey());
-
-			PwGroup pg = pd.RootGroup;
-			if(pg == null) { Debug.Assert(false); return false; }
+			PwGroup pg = new PwGroup(true, true);
 
 			foreach(PwEntry pe in vEntries)
 			{
-				PwUuid pu = pe.CustomIconUuid;
-				if(!pu.Equals(PwUuid.Zero) && (pd.GetCustomIconIndex(pu) < 0))
-				{
-					int i = -1;
-					if(pdContext != null) i = pdContext.GetCustomIconIndex(pu);
-					if(i >= 0)
-					{
-						PwCustomIcon ci = pdContext.CustomIcons[i];
-						pd.CustomIcons.Add(ci);
-					}
-					else { Debug.Assert(pdContext == null); }
-				}
-
 				PwEntry peCopy = pe.CloneDeep();
 				pg.AddEntry(peCopy, true);
 			}
 
-			KdbxFile f = new KdbxFile(pd);
-			f.Save(msOutput, null, KdbxFormat.PlainXml, null);
+			WriteGroup(msOutput, pdContext, pg);
 			return true;
 		}
 	}

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -234,7 +234,7 @@ namespace KeePassLib.Serialization
 
 			char chSep = strToDecompile[0];
 			string[] vParts = strToDecompile.Substring(1, strToDecompile.Length -
-				1).Split(new char[]{ chSep });
+				1).Split(new char[] { chSep });
 			if(vParts.Length < 4) throw new ArgumentException();
 
 			IOConnectionInfo s = new IOConnectionInfo();
@@ -312,16 +312,14 @@ namespace KeePassLib.Serialization
 		public static IOConnectionInfo FromPath(string strPath)
 		{
 			IOConnectionInfo ioc = new IOConnectionInfo();
-
 			ioc.Path = strPath;
-			ioc.CredSaveMode = IOCredSaveMode.NoSave;
-
 			return ioc;
 		}
 
 		public bool CanProbablyAccess()
 		{
-			if(IsLocalFile()) return File.Exists(m_strUrl);
+			if(IsLocalFile())
+				return IOConnection.FileExists(this, false); // Raises event
 
 			return true;
 		}
@@ -334,18 +332,14 @@ namespace KeePassLib.Serialization
 
 		public void ClearCredentials(bool bDependingOnRememberMode)
 		{
-			if((bDependingOnRememberMode == false) ||
-				(m_ioCredSaveMode == IOCredSaveMode.NoSave))
-			{
+			if((m_ioCredSaveMode == IOCredSaveMode.NoSave) ||
+				!bDependingOnRememberMode)
 				m_strUser = string.Empty;
-			}
 
-			if((bDependingOnRememberMode == false) ||
-				(m_ioCredSaveMode == IOCredSaveMode.NoSave) ||
-				(m_ioCredSaveMode == IOCredSaveMode.UserNameOnly))
-			{
+			if((m_ioCredSaveMode == IOCredSaveMode.NoSave) ||
+				(m_ioCredSaveMode == IOCredSaveMode.UserNameOnly) ||
+				!bDependingOnRememberMode)
 				m_strPassword = string.Empty;
-			}
 		}
 
 		public void Obfuscate(bool bObf)

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ namespace KeePassLib.Cryptography.Cipher
 	public sealed class StandardAesEngine : ICipherEngine
 	{
 #if !KeePassUAP || NETSTANDARD2_0
-        private const CipherMode SaeCipherMode = CipherMode.CBC;
+		private const CipherMode SaeCipherMode = CipherMode.CBC;
 		private const PaddingMode SaePaddingMode = PaddingMode.PKCS7;
 #endif
 

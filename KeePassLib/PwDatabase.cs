@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2019 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2022 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -49,8 +49,6 @@ namespace KeePassLib
 		internal const int DefaultHistoryMaxItems = 10; // -1 = unlimited
 		internal const long DefaultHistoryMaxSize = 6 * 1024 * 1024; // -1 = unlimited
 
-		private static bool m_bPrimaryCreated = false;
-
 		// Initializations: see Clear()
 		private PwGroup m_pgRootGroup = null;
 		private PwObjectList<PwDeletedObject> m_vDeletedObjects = new PwObjectList<PwDeletedObject>();
@@ -97,7 +95,7 @@ namespace KeePassLib
 		private int m_nHistoryMaxItems = DefaultHistoryMaxItems;
 		private long m_lHistoryMaxSize = DefaultHistoryMaxSize; // In bytes
 
-		private StringDictionaryEx m_dCustomData = new StringDictionaryEx();
+		private StringDictionaryEx m_dCustomData = new StringDictionaryEx(true);
 		private VariantDictionary m_dPublicCustomData = new VariantDictionary();
 
 		private byte[] m_pbHashOfFileOnDisk = null;
@@ -108,7 +106,7 @@ namespace KeePassLib
 
 		private IStatusLogger m_slStatus = null;
 
-		private static string m_strLocalizedAppName = string.Empty;
+		private static string g_strLocalizedAppName = string.Empty;
 
 		// private const string StrBackupExtension = ".bak";
 
@@ -116,16 +114,14 @@ namespace KeePassLib
 		/// Get the root group that contains all groups and entries stored in the
 		/// database.
 		/// </summary>
-		/// <returns>Root group. The return value is <c>null</c>, if no database
-		/// has been opened.</returns>
+		/// <returns>Root group. The return value is <c>null</c>, if the database
+		/// is not open.</returns>
 		public PwGroup RootGroup
 		{
 			get { return m_pgRootGroup; }
 			set
 			{
-				Debug.Assert(value != null);
-				if(value == null) throw new ArgumentNullException("value");
-
+				if(value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
 				m_pgRootGroup = value;
 			}
 		}
@@ -167,8 +163,7 @@ namespace KeePassLib
 			get { return m_pwUserKey; }
 			set
 			{
-				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
-
+				if(value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
 				m_pwUserKey = value;
 			}
 		}
@@ -187,8 +182,8 @@ namespace KeePassLib
 			get { return m_strName; }
 			set
 			{
-				Debug.Assert(value != null);
-				if(value != null) m_strName = value;
+				if(value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+				m_strName = value;
 			}
 		}
 
@@ -206,8 +201,8 @@ namespace KeePassLib
 			get { return m_strDesc; }
 			set
 			{
-				Debug.Assert(value != null);
-				if(value != null) m_strDesc = value;
+				if(value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+				m_strDesc = value;
 			}
 		}
 
@@ -225,8 +220,8 @@ namespace KeePassLib
 			get { return m_strDefaultUserName; }
 			set
 			{
-				Debug.Assert(value != null);
-				if(value != null) m_strDefaultUserName = value;
+				if(value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+				m_strDefaultUserName = value;
 			}
 		}
 
@@ -284,8 +279,8 @@ namespace KeePassLib
 			get { return m_uuidDataCipher; }
 			set
 			{
-				Debug.Assert(value != null);
-				if(value != null) m_uuidDataCipher = value;
+				if(value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+				m_uuidDataCipher = value;
 			}
 		}
 
@@ -312,7 +307,7 @@ namespace KeePassLib
 			get { return m_kdfParams; }
 			set
 			{
-				if(value == null) throw new ArgumentNullException("value");
+				if(value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
 				m_kdfParams = value;
 			}
 		}
@@ -325,8 +320,7 @@ namespace KeePassLib
 			get { return m_memProtConfig; }
 			set
 			{
-				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
-				
+				if(value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
 				m_memProtConfig = value;
 			}
 		}
@@ -362,7 +356,7 @@ namespace KeePassLib
 			get { return m_pwLastSelectedGroup; }
 			set
 			{
-				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
+				if(value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
 				m_pwLastSelectedGroup = value;
 			}
 		}
@@ -372,7 +366,7 @@ namespace KeePassLib
 			get { return m_pwLastTopVisibleGroup; }
 			set
 			{
-				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
+				if(value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
 				m_pwLastTopVisibleGroup = value;
 			}
 		}
@@ -388,7 +382,7 @@ namespace KeePassLib
 			get { return m_pwRecycleBin; }
 			set
 			{
-				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
+				if(value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
 				m_pwRecycleBin = value;
 			}
 		}
@@ -408,7 +402,7 @@ namespace KeePassLib
 			get { return m_pwEntryTemplatesGroup; }
 			set
 			{
-				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
+				if(value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
 				m_pwEntryTemplatesGroup = value;
 			}
 		}
@@ -512,8 +506,12 @@ namespace KeePassLib
 		/// </summary>
 		public static string LocalizedAppName
 		{
-			get { return m_strLocalizedAppName; }
-			set { Debug.Assert(value != null); m_strLocalizedAppName = value; }
+			get { return g_strLocalizedAppName; }
+			set
+			{
+				if(value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+				g_strLocalizedAppName = value;
+			}
 		}
 
 		/// <summary>
@@ -521,8 +519,6 @@ namespace KeePassLib
 		/// </summary>
 		public PwDatabase()
 		{
-			if(m_bPrimaryCreated == false) m_bPrimaryCreated = true;
-
 			Clear();
 		}
 
@@ -575,7 +571,7 @@ namespace KeePassLib
 			m_nHistoryMaxItems = DefaultHistoryMaxItems;
 			m_lHistoryMaxSize = DefaultHistoryMaxSize;
 
-			m_dCustomData = new StringDictionaryEx();
+			m_dCustomData = new StringDictionaryEx(true);
 			m_dPublicCustomData = new VariantDictionary();
 
 			m_pbHashOfFileOnDisk = null;
@@ -589,7 +585,7 @@ namespace KeePassLib
 		/// Initialize the class for managing a new database. Previously loaded
 		/// data is deleted.
 		/// </summary>
-		/// <param name="ioConnection">IO connection of the new database.</param>
+		/// <param name="ioConnection">I/O connection of the new database.</param>
 		/// <param name="pwKey">Key to open the database.</param>
 		public void New(IOConnectionInfo ioConnection, CompositeKey pwKey)
 		{
@@ -614,7 +610,7 @@ namespace KeePassLib
 		/// <summary>
 		/// Open a database. The URL may point to any supported data source.
 		/// </summary>
-		/// <param name="ioSource">IO connection to load the database from.</param>
+		/// <param name="ioSource">I/O connection to load the database from.</param>
 		/// <param name="pwKey">Key used to open the specified database.</param>
 		/// <param name="slLogger">Logger, which gets all status messages.</param>
 		public void Open(IOConnectionInfo ioSource, CompositeKey pwKey,
@@ -910,18 +906,19 @@ namespace KeePassLib
 			// Delete *after* relocating, because relocating might empty
 			// some groups that are marked for deletion (and objects
 			// that weren't relocated yet might prevent the deletion)
-			Dictionary<PwUuid, PwDeletedObject> dOrgDel = CreateDeletedObjectsPool();
+			Dictionary<PwUuid, PwDeletedObject> dDel = CreateDeletedObjectsPool();
 			if(mm == PwMergeMethod.Synchronize)
-				MergeInDeletionInfo(pdSource.m_vDeletedObjects, dOrgDel);
-			ApplyDeletions(m_pgRootGroup, dOrgDel);
+				MergeInDeletionInfo(pdSource.m_vDeletedObjects, dDel);
+			ApplyDeletions(m_pgRootGroup, dDel);
 			// The list and the dictionary should be kept in sync
-			Debug.Assert(m_vDeletedObjects.UCount == (uint)dOrgDel.Count);
+			Debug.Assert(m_vDeletedObjects.UCount == (uint)dDel.Count);
 
 			// Must be called *after* merging groups, because group UUIDs
 			// are required for recycle bin and entry template UUIDs
 			MergeInDbProperties(pdSource, mm);
 
-			MergeInCustomIcons(pdSource);
+			MergeInCustomIcons(pdSource, dDel);
+			Debug.Assert(m_vDeletedObjects.UCount == (uint)dDel.Count);
 
 			MaintainBackups();
 
@@ -929,15 +926,78 @@ namespace KeePassLib
 			m_slStatus = slPrevStatus;
 		}
 
-		private void MergeInCustomIcons(PwDatabase pdSource)
+		private void MergeInCustomIcons(PwDatabase pdSource,
+			Dictionary<PwUuid, PwDeletedObject> dDel)
 		{
-			foreach(PwCustomIcon pwci in pdSource.CustomIcons)
-			{
-				if(GetCustomIconIndex(pwci.Uuid) >= 0) continue;
+			bool bIconsMod = false;
 
-				m_vCustomIcons.Add(pwci); // PwCustomIcon is immutable
-				m_bUINeedsIconUpdate = true;
+			Dictionary<PwUuid, int> d = new Dictionary<PwUuid, int>();
+			for(int i = m_vCustomIcons.Count - 1; i >= 0; --i)
+				d[m_vCustomIcons[i].Uuid] = i;
+			Debug.Assert(d.Count == m_vCustomIcons.Count); // UUIDs unique
+
+			foreach(PwCustomIcon ciS in pdSource.m_vCustomIcons)
+			{
+				int iT;
+				if(d.TryGetValue(ciS.Uuid, out iT))
+				{
+					PwCustomIcon ciT = m_vCustomIcons[iT];
+
+					DateTime? odtT = ciT.LastModificationTime;
+					DateTime? odtS = ciS.LastModificationTime;
+
+					if(odtT.HasValue && odtS.HasValue)
+					{
+						if(odtT.Value >= odtS.Value) continue;
+					}
+					else if(odtT.HasValue) continue;
+					else if(!odtS.HasValue) continue; // Both no time
+
+					m_vCustomIcons[iT] = ciS.Clone();
+				}
+				else
+				{
+					d[ciS.Uuid] = m_vCustomIcons.Count;
+					m_vCustomIcons.Add(ciS.Clone());
+				}
+
+				bIconsMod = true;
 			}
+
+			List<PwDeletedObject> lObsoleteDel = new List<PwDeletedObject>();
+			foreach(KeyValuePair<PwUuid, PwDeletedObject> kvpDel in dDel)
+			{
+				int iT;
+				if(d.TryGetValue(kvpDel.Key, out iT))
+				{
+					PwCustomIcon ci = m_vCustomIcons[iT];
+					if(ci == null) { Debug.Assert(false); continue; } // Dup. del. obj.?
+
+					DateTime? odt = ci.LastModificationTime;
+
+					if(odt.HasValue && (odt.Value > kvpDel.Value.DeletionTime))
+						lObsoleteDel.Add(kvpDel.Value);
+					else
+					{
+						m_vCustomIcons[iT] = null; // Preserve indices, removed below
+						bIconsMod = true;
+					}
+				}
+			}
+
+			Predicate<PwCustomIcon> f = delegate(PwCustomIcon ci) { return (ci == null); };
+			m_vCustomIcons.RemoveAll(f);
+
+			foreach(PwDeletedObject pdo in lObsoleteDel)
+			{
+				// Prevent future deletion attempts
+				if(!m_vDeletedObjects.Remove(pdo)) { Debug.Assert(false); }
+				if(!dDel.Remove(pdo.Uuid)) { Debug.Assert(false); }
+			}
+
+			if(bIconsMod) m_bUINeedsIconUpdate = true;
+
+			FixCustomIconRefs();
 		}
 
 		private Dictionary<PwUuid, PwDeletedObject> CreateDeletedObjectsPool()
@@ -1278,7 +1338,9 @@ namespace KeePassLib
 				PwObjectBlock<T> b = new PwObjectBlock<T>();
 
 				DateTime dtLoc;
-				PwObjectPoolEx pPool = GetBestPool(t, ppOrg, ppSrc, out dtLoc);
+				PwUuid puPrevParent;
+				PwObjectPoolEx pPool = GetBestPool(t, ppOrg, ppSrc, out dtLoc,
+					out puPrevParent);
 				b.Add(t, dtLoc, pPool);
 
 				lBlocks.Add(b);
@@ -1313,7 +1375,7 @@ namespace KeePassLib
 					}
 					if(idSrcNext == 0) break;
 
-					pPool = GetBestPool(tNext, ppOrg, ppSrc, out dtLoc);
+					pPool = GetBestPool(tNext, ppOrg, ppSrc, out dtLoc, out puPrevParent);
 					b.Add(tNext, dtLoc, pPool);
 
 					++u;
@@ -1326,16 +1388,18 @@ namespace KeePassLib
 		}
 
 		private static PwObjectPoolEx GetBestPool<T>(T t, PwObjectPoolEx ppOrg,
-			PwObjectPoolEx ppSrc, out DateTime dtLoc)
+			PwObjectPoolEx ppSrc, out DateTime dtLoc, out PwUuid puPrevParent)
 			where T : class, ITimeLogger, IStructureItem, IDeepCloneable<T>
 		{
 			PwObjectPoolEx p = null;
 			dtLoc = TimeUtil.SafeMinValueUtc;
+			puPrevParent = PwUuid.Zero;
 
 			IStructureItem ptOrg = ppOrg.GetItemByUuid(t.Uuid);
 			if(ptOrg != null)
 			{
 				dtLoc = ptOrg.LocationChanged;
+				puPrevParent = ptOrg.PreviousParentGroup;
 				p = ppOrg;
 			}
 
@@ -1343,6 +1407,7 @@ namespace KeePassLib
 			if((ptSrc != null) && (ptSrc.LocationChanged > dtLoc))
 			{
 				dtLoc = ptSrc.LocationChanged;
+				puPrevParent = ptSrc.PreviousParentGroup;
 				p = ppSrc;
 			}
 
@@ -1379,8 +1444,13 @@ namespace KeePassLib
 			GroupHandler gh = delegate(PwGroup pgSub)
 			{
 				DateTime dt;
-				if(GetBestPool<PwGroup>(pgSub, ppOrg, ppSrc, out dt) != null)
+				PwUuid puPrevParent;
+				if(GetBestPool<PwGroup>(pgSub, ppOrg, ppSrc, out dt,
+					out puPrevParent) != null)
+				{
 					pgSub.LocationChanged = dt;
+					pgSub.PreviousParentGroup = puPrevParent;
+				}
 				else { Debug.Assert(false); }
 				return true;
 			};
@@ -1388,8 +1458,13 @@ namespace KeePassLib
 			EntryHandler eh = delegate(PwEntry pe)
 			{
 				DateTime dt;
-				if(GetBestPool<PwEntry>(pe, ppOrg, ppSrc, out dt) != null)
+				PwUuid puPrevParent;
+				if(GetBestPool<PwEntry>(pe, ppOrg, ppSrc, out dt,
+					out puPrevParent) != null)
+				{
 					pe.LocationChanged = dt;
+					pe.PreviousParentGroup = puPrevParent;
+				}
 				else { Debug.Assert(false); }
 				return true;
 			};
@@ -1510,13 +1585,35 @@ namespace KeePassLib
 
 			foreach(KeyValuePair<string, string> kvp in pdSource.m_dCustomData)
 			{
-				if(bSourceNewer || !m_dCustomData.Exists(kvp.Key))
-					m_dCustomData.Set(kvp.Key, kvp.Value);
+				DateTime? odtT = m_dCustomData.GetLastModificationTime(kvp.Key);
+				DateTime? odtS = pdSource.m_dCustomData.GetLastModificationTime(kvp.Key);
+
+				if(bForce)
+					m_dCustomData.Set(kvp.Key, kvp.Value, odtS);
+				else if(odtT.HasValue && odtS.HasValue)
+				{
+					if(odtS.Value > odtT.Value)
+						m_dCustomData.Set(kvp.Key, kvp.Value, odtS);
+				}
+				else if(odtT.HasValue) { } // Assume T > S (newer KeePass version)
+				else if(odtS.HasValue)
+					m_dCustomData.Set(kvp.Key, kvp.Value, odtS);
+				else
+				{
+					if(bSourceNewer || !m_dCustomData.Exists(kvp.Key))
+						m_dCustomData.Set(kvp.Key, kvp.Value, null);
+				}
 			}
 
-			VariantDictionary vdLocal = m_dPublicCustomData; // Backup
-			m_dPublicCustomData = (VariantDictionary)pdSource.m_dPublicCustomData.Clone();
-			if(!bSourceNewer) vdLocal.CopyTo(m_dPublicCustomData); // Merge
+			// 'Clone' duplicates deep values (e.g. byte arrays)
+			VariantDictionary vdS = (VariantDictionary)pdSource.m_dPublicCustomData.Clone();
+			if(bForce || bSourceNewer)
+				vdS.CopyTo(m_dPublicCustomData);
+			else
+			{
+				m_dPublicCustomData.CopyTo(vdS);
+				m_dPublicCustomData = vdS;
+			}
 		}
 
 		private void MergeEntryHistory(PwEntry pe, PwEntry peSource,
@@ -1609,11 +1706,11 @@ namespace KeePassLib
 		/// <returns>Index of the icon.</returns>
 		public int GetCustomIconIndex(PwUuid pwIconId)
 		{
-			for(int i = 0; i < m_vCustomIcons.Count; ++i)
+			int n = m_vCustomIcons.Count;
+			for(int i = 0; i < n; ++i)
 			{
-				PwCustomIcon pwci = m_vCustomIcons[i];
-				if(pwci.Uuid.Equals(pwIconId))
-					return i;
+				PwCustomIcon ci = m_vCustomIcons[i];
+				if(ci.Uuid.Equals(pwIconId)) return i;
 			}
 
 			// Debug.Assert(false); // Do not assert
@@ -1624,14 +1721,12 @@ namespace KeePassLib
 		{
 			if(pbPngData == null) { Debug.Assert(false); return -1; }
 
-			for(int i = 0; i < m_vCustomIcons.Count; ++i)
+			int n = m_vCustomIcons.Count;
+			for(int i = 0; i < n; ++i)
 			{
-				PwCustomIcon pwci = m_vCustomIcons[i];
-				byte[] pbEx = pwci.ImageDataPng;
+				byte[] pbEx = m_vCustomIcons[i].ImageDataPng;
 				if(pbEx == null) { Debug.Assert(false); continue; }
-
-				if(MemUtil.ArraysEqual(pbEx, pbPngData))
-					return i;
+				if(MemUtil.ArraysEqual(pbEx, pbPngData)) return i;
 			}
 
 			return -1;
@@ -1670,7 +1765,7 @@ namespace KeePassLib
 			{
 				if((w >= 0) && (h >= 0))
 					return m_vCustomIcons[nIndex].GetImage(w, h);
-				else return m_vCustomIcons[nIndex].GetImage(); // No assert
+				return m_vCustomIcons[nIndex].GetImage(); // No assert
 			}
 			else { Debug.Assert(false); }
 
@@ -1678,67 +1773,62 @@ namespace KeePassLib
 		}
 #endif
 
-		public bool DeleteCustomIcons(List<PwUuid> vUuidsToDelete)
+		public bool DeleteCustomIcons(List<PwUuid> lUuids)
 		{
-			Debug.Assert(vUuidsToDelete != null);
-			if(vUuidsToDelete == null) throw new ArgumentNullException("vUuidsToDelete");
-			if(vUuidsToDelete.Count <= 0) return true;
+			if(lUuids == null) { Debug.Assert(false); throw new ArgumentNullException("lUuids"); }
+			if(lUuids.Count == 0) return false;
+
+			Dictionary<PwUuid, bool> dToDel = new Dictionary<PwUuid, bool>();
+			foreach(PwUuid pu in lUuids) { dToDel[pu] = true; }
+
+			DateTime dt = DateTime.UtcNow;
+			for(int i = m_vCustomIcons.Count - 1; i >= 0; --i)
+			{
+				PwUuid pu = m_vCustomIcons[i].Uuid;
+				if(dToDel.ContainsKey(pu))
+				{
+					m_vCustomIcons[i] = null; // Removed below
+					m_vDeletedObjects.Add(new PwDeletedObject(pu, dt));
+				}
+			}
+
+			Predicate<PwCustomIcon> f = delegate(PwCustomIcon ci) { return (ci == null); };
+			m_vCustomIcons.RemoveAll(f);
+
+			FixCustomIconRefs();
+			return true;
+		}
+
+		private void FixCustomIconRefs()
+		{
+			Dictionary<PwUuid, bool> d = new Dictionary<PwUuid, bool>();
+			foreach(PwCustomIcon ci in m_vCustomIcons) { d[ci.Uuid] = true; }
 
 			GroupHandler gh = delegate(PwGroup pg)
 			{
-				PwUuid uuidThis = pg.CustomIconUuid;
-				if(uuidThis.Equals(PwUuid.Zero)) return true;
-
-				foreach(PwUuid uuidDelete in vUuidsToDelete)
-				{
-					if(uuidThis.Equals(uuidDelete))
-					{
-						pg.CustomIconUuid = PwUuid.Zero;
-						break;
-					}
-				}
-
+				PwUuid pu = pg.CustomIconUuid;
+				if(pu.Equals(PwUuid.Zero)) return true;
+				if(!d.ContainsKey(pu)) pg.CustomIconUuid = PwUuid.Zero;
 				return true;
 			};
 
 			EntryHandler eh = delegate(PwEntry pe)
 			{
-				RemoveCustomIconUuid(pe, vUuidsToDelete);
+				FixCustomIconRefs(pe, d);
 				return true;
 			};
 
 			gh(m_pgRootGroup);
-			if(!m_pgRootGroup.TraverseTree(TraversalMethod.PreOrder, gh, eh))
-			{
-				Debug.Assert(false);
-				return false;
-			}
-
-			foreach(PwUuid pwUuid in vUuidsToDelete)
-			{
-				int nIndex = GetCustomIconIndex(pwUuid);
-				if(nIndex >= 0) m_vCustomIcons.RemoveAt(nIndex);
-			}
-
-			return true;
+			m_pgRootGroup.TraverseTree(TraversalMethod.PreOrder, gh, eh);
 		}
 
-		private static void RemoveCustomIconUuid(PwEntry pe, List<PwUuid> vToDelete)
+		private void FixCustomIconRefs(PwEntry pe, Dictionary<PwUuid, bool> d)
 		{
-			PwUuid uuidThis = pe.CustomIconUuid;
-			if(uuidThis.Equals(PwUuid.Zero)) return;
+			PwUuid pu = pe.CustomIconUuid;
+			if(pu.Equals(PwUuid.Zero)) return;
+			if(!d.ContainsKey(pu)) pe.CustomIconUuid = PwUuid.Zero;
 
-			foreach(PwUuid uuidDelete in vToDelete)
-			{
-				if(uuidThis.Equals(uuidDelete))
-				{
-					pe.CustomIconUuid = PwUuid.Zero;
-					break;
-				}
-			}
-
-			foreach(PwEntry peHistory in pe.History)
-				RemoveCustomIconUuid(peHistory, vToDelete);
+			foreach(PwEntry peH in pe.History) FixCustomIconRefs(peH, d);
 		}
 
 		private int GetTotalObjectUuidCount()
@@ -1856,7 +1946,7 @@ namespace KeePassLib
 				catch(Exception) { Debug.Assert(false); }
 			}
 
-			if(bFastCopySuccess == false)
+			if(!bFastCopySuccess)
 			{
 				using(Stream sIn = IOConnection.OpenRead(m_ioSource))
 				{
@@ -2029,59 +2119,115 @@ namespace KeePassLib
 
 		public uint DeleteUnusedCustomIcons()
 		{
-			List<PwUuid> lToDelete = new List<PwUuid>();
-			foreach(PwCustomIcon pwci in m_vCustomIcons)
-				lToDelete.Add(pwci.Uuid);
+			Dictionary<PwUuid, bool> dToDel = new Dictionary<PwUuid, bool>();
+			foreach(PwCustomIcon ci in m_vCustomIcons) { dToDel[ci.Uuid] = true; }
 
 			GroupHandler gh = delegate(PwGroup pg)
 			{
-				PwUuid pwUuid = pg.CustomIconUuid;
-				if((pwUuid == null) || pwUuid.Equals(PwUuid.Zero)) return true;
-
-				for(int i = 0; i < lToDelete.Count; ++i)
-				{
-					if(lToDelete[i].Equals(pwUuid))
-					{
-						lToDelete.RemoveAt(i);
-						break;
-					}
-				}
-
+				PwUuid pu = pg.CustomIconUuid;
+				if(!pu.Equals(PwUuid.Zero)) dToDel.Remove(pu);
 				return true;
 			};
 
 			EntryHandler eh = delegate(PwEntry pe)
 			{
-				PwUuid pwUuid = pe.CustomIconUuid;
-				if((pwUuid == null) || pwUuid.Equals(PwUuid.Zero)) return true;
-
-				for(int i = 0; i < lToDelete.Count; ++i)
-				{
-					if(lToDelete[i].Equals(pwUuid))
-					{
-						lToDelete.RemoveAt(i);
-						break;
-					}
-				}
-
+				RemoveCustomIconsFromDict(dToDel, pe);
 				return true;
 			};
 
 			gh(m_pgRootGroup);
 			m_pgRootGroup.TraverseTree(TraversalMethod.PreOrder, gh, eh);
 
-			uint uDeleted = 0;
-			foreach(PwUuid pwDel in lToDelete)
+			uint cDel = (uint)dToDel.Count;
+			if(cDel != 0)
 			{
-				int nIndex = GetCustomIconIndex(pwDel);
-				if(nIndex < 0) { Debug.Assert(false); continue; }
-
-				m_vCustomIcons.RemoveAt(nIndex);
-				++uDeleted;
+				DeleteCustomIcons(new List<PwUuid>(dToDel.Keys));
+				m_bUINeedsIconUpdate = true;
 			}
 
-			if(uDeleted > 0) m_bUINeedsIconUpdate = true;
-			return uDeleted;
+			return cDel;
+		}
+
+		private static void RemoveCustomIconsFromDict(Dictionary<PwUuid, bool> d,
+			PwEntry pe)
+		{
+			PwUuid pu = pe.CustomIconUuid;
+			if(!pu.Equals(PwUuid.Zero)) d.Remove(pu);
+
+			foreach(PwEntry peH in pe.History) RemoveCustomIconsFromDict(d, peH);
+		}
+
+		internal static void CopyCustomIcons(PwDatabase pdFrom, PwDatabase pdTo,
+			PwGroup pgSelect, bool bResetIfUnknown)
+		{
+			if(pgSelect == null) { Debug.Assert(false); return; }
+
+			Dictionary<PwUuid, PwCustomIcon> dFrom = new Dictionary<PwUuid, PwCustomIcon>();
+			if(pdFrom != null)
+			{
+				foreach(PwCustomIcon ci in pdFrom.m_vCustomIcons)
+					dFrom[ci.Uuid] = ci;
+			}
+
+			Dictionary<PwUuid, int> dTo = new Dictionary<PwUuid, int>();
+			if(pdTo != null)
+			{
+				for(int i = pdTo.m_vCustomIcons.Count - 1; i >= 0; --i)
+					dTo[pdTo.m_vCustomIcons[i].Uuid] = i;
+			}
+
+			GFunc<PwUuid, bool> fEnsureIcon = delegate(PwUuid puIcon)
+			{
+				if(puIcon.Equals(PwUuid.Zero)) return true;
+				if(pdTo == null) { Debug.Assert(false); return false; }
+
+				PwCustomIcon ciFrom;
+				if(!dFrom.TryGetValue(puIcon, out ciFrom)) { Debug.Assert(false); return false; }
+
+				int iTo;
+				if(dTo.TryGetValue(puIcon, out iTo))
+				{
+					PwCustomIcon ciTo = pdTo.m_vCustomIcons[iTo];
+
+					DateTime? odtFrom = ciFrom.LastModificationTime;
+					DateTime? odtTo = ciTo.LastModificationTime;
+
+					if(odtFrom.HasValue && odtTo.HasValue)
+					{
+						if(odtFrom.Value <= odtTo.Value) return true;
+					}
+					else if(odtTo.HasValue) return true;
+					else if(!odtFrom.HasValue) return true; // Both no time
+
+					pdTo.m_vCustomIcons[iTo] = ciFrom.Clone();
+				}
+				else
+				{
+					dTo[puIcon] = pdTo.m_vCustomIcons.Count;
+					pdTo.m_vCustomIcons.Add(ciFrom.Clone());
+				}
+
+				pdTo.Modified = true;
+				pdTo.UINeedsIconUpdate = true;
+				return true;
+			};
+
+			GroupHandler gh = delegate(PwGroup pgCur)
+			{
+				bool bTo = fEnsureIcon(pgCur.CustomIconUuid);
+				if(!bTo && bResetIfUnknown) pgCur.CustomIconUuid = PwUuid.Zero;
+				return true;
+			};
+
+			EntryHandler eh = delegate(PwEntry peCur)
+			{
+				bool bTo = fEnsureIcon(peCur.CustomIconUuid);
+				if(!bTo && bResetIfUnknown) peCur.CustomIconUuid = PwUuid.Zero;
+				return true;
+			};
+
+			gh(pgSelect);
+			pgSelect.TraverseTree(TraversalMethod.PreOrder, gh, eh);
 		}
 	}
 }

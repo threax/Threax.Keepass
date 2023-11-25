@@ -1,37 +1,19 @@
 {
-  "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
-    "iisExpress": {
-      "applicationUrl": "https://localhost:44353/",
-      "sslPort": 44353
-    }
-  },
   "profiles": {
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "launchBrowser": true,
-      "environmentVariables": {
-        "ASPNETCORE_preventHostingStartup": "True",
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
     "Threax.Keepass": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://localhost:64199/"
+      "applicationUrl": "https://localhost:44353/"
     },
     "Setup Db": {
       "commandName": "Project",
       "commandLineArgs": "tools migrate seed",
-      "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "applicationUrl": "http://localhost:64199/"
+      }
     },
     "Update Client": {
       "commandName": "Project",

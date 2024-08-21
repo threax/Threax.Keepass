@@ -31,6 +31,7 @@
       {
         "input": [
           "wwwroot/lib/jquery/dist/jquery.min.js",
+          "wwwroot/lib/@popperjs/core/dist/umd/popper.min.js",
           "wwwroot/lib/bootstrap/dist/js/bootstrap.min.js",
           "wwwroot/lib/moment/min/moment.min.js",
           "wwwroot/lib/tslib.js",

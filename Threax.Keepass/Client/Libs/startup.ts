@@ -1,7 +1,7 @@
 ﻿import * as hr from 'htmlrapier/src/main';
 import * as datetime from 'htmlrapier.bootstrap.datetime/src/main';
 import * as bootstrap from 'htmlrapier.bootstrap/src/main';
-import * as bootstrap4form from 'htmlrapier.form.bootstrap4/src/main';
+import * as bootstrapform from 'htmlrapier.form.bootstrap/src/main';
 import * as controller from 'htmlrapier/src/controller';
 import * as WindowFetch from 'htmlrapier/src/windowfetch';
 import * as tokenmanager from 'htmlrapier.accesstoken/src/manager';
@@ -46,7 +46,7 @@ export function createBuilder(options?: Options) {
         hr.setup();
         datetime.setup();
         bootstrap.setup();
-        bootstrap4form.setup();
+        bootstrapform.setup();
 
         //Create builder
         builder = new controller.InjectedControllerBuilder();

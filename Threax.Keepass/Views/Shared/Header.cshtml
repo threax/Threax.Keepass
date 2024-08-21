@@ -2,14 +2,14 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-brand-app" data-hr-controller="appMenu">
     <div class="container">
         <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">@config.SiteName</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="navbar-collapse collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto" data-hr-view="menuItems">
                 <li data-hr-controller="hr-opendbbutton" class="nav-item"><a class="nav-link" href="#" data-hr-on-click="show">Manage Db</a></li>
                 <li class="nav-item dropdown startHidden" data-hr-toggle="admin" data-hr-class-on="d-block">
-                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="adminMenu">Admin <span class="caret"></span></a>
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="adminMenu">Admin <span class="caret"></span></a>
                     <div class="dropdown-menu" aria-labelledby="adminMenu">
                         <a class="dropdown-item startHidden" data-hr-class-on="d-block" data-hr-toggle="users" asp-area="" asp-controller="Admin" asp-action="Users">Users</a>
                     </div>
@@ -18,7 +18,7 @@
 
             <ul class="navbar-nav startHidden" data-hr-toggle="loggedInArea" data-hr-class-on="d-block">
                 <li class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="userMenu" data-hr-view="userInfo">{{userName}} <span class="caret"></span></a>
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="userMenu" data-hr-view="userInfo">{{userName}} <span class="caret"></span></a>
                     <div class="dropdown-menu" aria-labelledby="userMenu">
                         <a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
                     </div>

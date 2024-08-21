@@ -26,7 +26,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Threax.AspNetCore.CSP" Version="1.4.0" />
-    <PackageReference Include="Threax.AspNetCore.Models" Version="8.0.0" />
+    <PackageReference Include="Threax.AspNetCore.Models" Version="18.0.0" />
     <PackageReference Include="Threax.AspNetCore.Mvc.CacheUi" Version="3.0.2" />
     <PackageReference Include="Threax.AspNetCore.Tracking" Version="2.0.4" />
     <PackageReference Include="Threax.AspNetCore.Validators" Version="2.0.2" />
@@ -38,14 +38,14 @@
     <PackageReference Include="Threax.AspNetCore.BuiltInTools" Version="6.0.0" />
     <PackageReference Include="Threax.AspNetCore.CorsManager" Version="3.1.2" />
     <PackageReference Include="Threax.AspNetCore.ExceptionFilter" Version="6.0.2" />
-    <PackageReference Include="Threax.AspNetCore.Halcyon.Client" Version="11.0.1" />
-    <PackageReference Include="Threax.AspNetCore.Halcyon.Client.OpenIdConnect" Version="3.0.0" />
-    <PackageReference Include="Threax.AspNetCore.Halcyon.ClientGen.Tools" Version="8.0.0" />
-    <PackageReference Include="Threax.AspNetCore.Halcyon.Ext" Version="15.0.0" />
-    <PackageReference Include="Threax.AspNetCore.Halcyon.ClientGen" Version="15.0.0" />
+    <PackageReference Include="Threax.AspNetCore.Halcyon.Client" Version="18.0.0" />
+    <PackageReference Include="Threax.AspNetCore.Halcyon.Client.OpenIdConnect" Version="18.0.0" />
+    <PackageReference Include="Threax.AspNetCore.Halcyon.ClientGen.Tools" Version="18.0.0" />
+    <PackageReference Include="Threax.AspNetCore.Halcyon.Ext" Version="18.0.0" />
+    <PackageReference Include="Threax.AspNetCore.Halcyon.ClientGen" Version="18.0.0" />
     <PackageReference Include="Threax.Extensions.Configuration.SchemaBinder" Version="2.0.1" />
     <PackageReference Include="Threax.AspNetCore.Docker.Certs" Version="2.0.0" />
-    <PackageReference Include="HtmlRapier.TagHelpers" Version="8.2.1" />
+    <PackageReference Include="HtmlRapier.TagHelpers" Version="9.0.0" />
     <PackageReference Include="Threax.ReflectedServices" Version="1.0.1" />
     <PackageReference Include="Threax.Sqlite.Ext" Version="3.0.0" />
     <PackageReference Include="Threax.AspNetCore.JwtCookieAuth" Version="11.0.0" />

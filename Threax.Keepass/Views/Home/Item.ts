@@ -55,14 +55,10 @@ class EditExtensions extends CrudItemEditorControllerExtensions {
 
     public async copyPassword(evt: Event): Promise<void> {
         evt.preventDefault();
-
-        this.copyElement.value = this.passwordCopyElement.value;
-        this.copyElement.select();
-        this.copyElement.setSelectionRange(0, 99999); /*For mobile devices*/
-        document.execCommand("copy");
-        this.copyElement.value = "";
-        this.passwordCopyElement.value = "";
+        
         this.copyToggle.off();
+
+        await navigator.clipboard.writeText(this.passwordCopyElement.value);
     }
 
     public async clearPassword(evt: Event): Promise<void> {

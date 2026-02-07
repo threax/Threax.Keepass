@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.IO;
 using Threax.AspNetCore.BuiltInTools;
@@ -25,7 +26,7 @@ namespace Threax.Keepass
         /// </summary>
         /// <param name="args">The args to use for the builder.</param>
         /// <returns>The constructed IWebHost.</returns>
-        public static IWebHost BuildWebHost(string[] args)
+        public static IHost BuildWebHost(string[] args)
         {
             return BuildWebHostWithConfig(args);
         }
@@ -36,10 +37,13 @@ namespace Threax.Keepass
         /// <param name="args">The args to use for the builder.</param>
         /// <param name="toolsConfigName">The name of the tools config to load, or null to not load these configs.</param>
         /// <returns>The constructed IWebHost.</returns>
-        public static IWebHost BuildWebHostWithConfig(string[] args, String toolsConfigName = null)
+        public static IHost BuildWebHostWithConfig(string[] args, String toolsConfigName = null)
         {
-            var webHostBuilder = WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
+            var webHostBuilder = new HostBuilder()
+                .ConfigureWebHostDefaults(webHostBuilder =>
+                {
+                    webHostBuilder.UseStartup<Startup>();
+                })
                 .ConfigureAppConfiguration((hostContext, config) =>
                 {
                     var env = hostContext.HostingEnvironment;

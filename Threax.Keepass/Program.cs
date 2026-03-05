@@ -50,15 +50,15 @@ namespace Threax.Keepass
                     config.Sources.Clear();
 
                     //./appsettings.json - Main settings file, shared between all instances
-                    config.AddJsonFileWithInclude("appsettings.json", optional: true, reloadOnChange: true);
+                    config.AddJsonFileWithInclude("appsettings.json", optional: true, reloadOnChange: false);
 
                     //./appsettings.{environment}.json - Local development settings files, loaded per environment, no need to deploy to server
-                    config.AddJsonFileWithInclude($"appsettings.{env.EnvironmentName}.json", optional: true);
+                    config.AddJsonFileWithInclude($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: false);
 
                     //./appsettings.tools.json - Local development tools settings files, loaded in tools mode, no need to deploy to server
                     if (toolsConfigName != null)
                     {
-                        config.AddJsonFileWithInclude($"appsettings.{toolsConfigName}.json", optional: true);
+                        config.AddJsonFileWithInclude($"appsettings.{toolsConfigName}.json", optional: true, reloadOnChange: false);
                     }
 
                     //Build the config so far and load the KeyPerFilePath.

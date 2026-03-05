@@ -86,5 +86,7 @@ namespace Threax.Keepass
         /// Set this to true to add user secrets. Good for development. Default: false
         /// </summary>
         public bool AddUserSecrets { get; set; }
+
+        public bool UseRazorRuntimeCompilation { get; set; }
     }
 }

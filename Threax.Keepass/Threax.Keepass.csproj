@@ -27,7 +27,7 @@
     </PackageReference>
     <PackageReference Include="Threax.AspNetCore.CSP" Version="1.4.0" />
     <PackageReference Include="Threax.AspNetCore.Models" Version="19.0.0" />
-    <PackageReference Include="Threax.AspNetCore.Mvc.CacheUi" Version="3.0.2" />
+    <PackageReference Include="Threax.AspNetCore.Mvc.CacheUi" Version="4.0.0" />
     <PackageReference Include="Threax.AspNetCore.Tracking" Version="2.0.4" />
     <PackageReference Include="Threax.AspNetCore.Validators" Version="2.0.2" />
     <PackageReference Include="Threax.AspNetCore.IdServerAuth" Version="12.0.0" />

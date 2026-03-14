@@ -1,18 +1,13 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Threax.Keepass.InputModels;
-using Threax.Keepass.Repository;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Threax.AspNetCore.BuiltInTools;
-using Threax.AspNetCore.Models;
 using Threax.AspNetCore.UserBuilder.Entities;
-using Threax.Sqlite.Ext;
 using Threax.Keepass.Mappers;
+using Threax.Sqlite.Ext;
 
 namespace Threax.Keepass.Database
 {
@@ -49,27 +44,7 @@ namespace Threax.Keepass.Database
         /// <returns></returns>
         public static IServiceCollection AddAppMapper(this IServiceCollection services, bool includeAutomapperConfig = false)
         {
-            //Setup mappings between your objects here
-            //Check out the AutoMapper docs for more info
-            //https://github.com/AutoMapper/AutoMapper/wiki
-            var mapperConfig = new MapperConfiguration(cfg =>
-            {
-                //Auto find profile classes
-                var profiles = typeof(AppDatabaseServiceExtensions).GetTypeInfo().Assembly.GetTypes()
-                    .Where(t => t.IsSubclassOf(typeof(Profile)))
-                    .Select(i => Activator.CreateInstance(i) as Profile)
-                    .ToList();
-
-                cfg.AddProfiles(profiles);
-            });
-
-            if (includeAutomapperConfig)
-            {
-                services.AddSingleton<MapperConfiguration>(mapperConfig);
-            }
-
-            //Register the AppMapper, The Automapper config is hidden behind the AppMapper, which is what should be used by your classes.
-            services.AddScoped<AppMapper>(s => new AppMapper(mapperConfig.CreateMapper(s.GetRequiredService)));
+            services.AddScoped<AppMapper>();
 
             return services;
         }

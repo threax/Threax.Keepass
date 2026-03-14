@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,11 +12,14 @@ namespace Threax.Keepass.Mappers
     /// </summary>
     public partial class AppMapper
     {
-        private IMapper mapper;
-
-        public AppMapper(IMapper mapper)
+        public AppMapper()
         {
-            this.mapper = mapper;
+
+        }
+
+        private DateTime GetCreated(DateTime created)
+        {
+            return created == DateTime.MinValue ? DateTime.UtcNow : created;
         }
     }
 }

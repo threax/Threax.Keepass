@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 using Halcyon.HAL.Attributes;
 using Threax.AspNetCore.Halcyon.Ext;
 using Threax.AspNetCore.Models;
-using Threax.AspNetCore.Tracking;
 
 namespace Threax.Keepass.Database 
 {
-    public partial class ItemEntity : ICreatedModified
+    public partial class ItemEntity
     {
         [Key]
         public Guid ItemId { get; set; }

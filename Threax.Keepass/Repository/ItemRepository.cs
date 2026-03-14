@@ -1,4 +1,3 @@
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Threax.Keepass.Database;
 using Threax.Keepass.InputModels;

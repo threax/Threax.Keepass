@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Halcyon.HAL.Attributes;
 using Threax.AspNetCore.Halcyon.Ext;
 using Threax.AspNetCore.Models;
-using Threax.AspNetCore.Tracking;
 using Threax.Keepass.Controllers.Api;
 using Threax.AspNetCore.Halcyon.Ext.ValueProviders;
 
@@ -19,7 +18,7 @@ namespace Threax.Keepass.ViewModels
     [HalActionLink(typeof(ItemsController), nameof(ItemsController.Update))]
     [HalActionLink(typeof(ItemsController), nameof(ItemsController.Delete))]
     [DeclareHalLink(typeof(ItemsController), nameof(ItemsController.GetPassword))]
-    public partial class Item : ICreatedModified, IHalLinkProvider
+    public partial class Item : IHalLinkProvider
     {
         public Guid ItemId { get; set; }
 
